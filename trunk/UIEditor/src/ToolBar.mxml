@@ -2,7 +2,10 @@
 <s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
 				   xmlns:s="library://ns.adobe.com/flex/spark"
 				   xmlns:mx="library://ns.adobe.com/flex/mx"
-				   width="800" height="50" backgroundColor="#E1E1E1">
+				   width="608" height="38" backgroundColor="#E1E1E1">
+	<s:layout>
+		<s:HorizontalLayout/>
+	</s:layout>
 	
 	<fx:Script>
 		<![CDATA[
@@ -16,6 +19,12 @@
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
-	<s:Image x="5" y="6" click="image1_clickHandler(event)"
-			 source="@Embed('assets/adressbook_32.png')" toolTip="xxx" buttonMode="true"/>
+	<s:Image source="@Embed('assets/notes_add_32.png')" toolTip="新建" buttonMode="true"/>
+	<s:Image source="@Embed('assets/notes_accept_32.png')" toolTip="发布" buttonMode="true"/>
+	<s:Image source="@Embed('assets/accept_32.png')" toolTip="保存" buttonMode="true"/>
+	<s:Image source="@Embed('assets/settings_32.png')" toolTip="设置" buttonMode="true"/>
+	<s:Image buttonMode="true" source="@Embed('assets/size_both_32.png')"/>
+	<s:Image source="@Embed('assets/view_32.png')" toolTip="预览" buttonMode="true"/>
+	<s:Image source="@Embed('assets/zoom_out_32.png')" toolTip="点击缩小视图（Ctrl + -）" buttonMode="true"/>
+	<s:Image source="@Embed('assets/zoom_in_32.png')" toolTip="点击缩小视图（Ctrl + +）" buttonMode="true"/>
 </s:BorderContainer>
