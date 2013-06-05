@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				   xmlns:s="library://ns.adobe.com/flex/spark"
+				   xmlns:mx="library://ns.adobe.com/flex/mx"
+				   width="800" height="50" backgroundColor="#E1E1E1">
+	
+	<fx:Script>
+		<![CDATA[
+			protected function image1_clickHandler(event:MouseEvent):void
+			{
+				
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Image x="5" y="6" click="image1_clickHandler(event)"
+			 source="@Embed('assets/adressbook_32.png')" toolTip="xxx" buttonMode="true"/>
+</s:BorderContainer>
