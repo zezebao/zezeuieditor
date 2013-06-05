@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:ns1="*"
+					   minWidth="500"
+					   minHeight="400"
+					   addedToStage="addToStage(event)"
+					   >
+	<s:layout>
+		<s:HorizontalLayout/>
+	</s:layout>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.*;
+			import mx.events.ResizeEvent;
+			
+			public function addToStage(evt:Event):void
+			{
+				stage.addEventListener(Event.RESIZE,onResizeHandler);
+			}
+			
+			protected function onResizeHandler(event:ResizeEvent):void
+			{
+				if(!stage)return;
+			}
+			
+		]]>
+	</fx:Script>
+	<ns1:UIMenuBar />
+</s:WindowedApplication>
