@@ -6,6 +6,7 @@
 			iconField="@icon"
 			itemClick="menuHandler(event)"
 			initialize="init(event)"
+			dataProvider="{menuBarCollection}"
 			>
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
@@ -22,9 +23,10 @@
 			public var menuBarCollection:XMLListCollection;
 			
 			
-			private function menuHandler(evt:MenuEvent):void  {
-				
-				if (evt.item.@data != "top") {
+			private function menuHandler(evt:MenuEvent):void  
+			{
+				if (evt.item.@data != "top") 
+				{
 					Alert.show("Label: " + evt.item.@label + "\n" + 
 						"Data: " + evt.item.@data, "Clicked menu item");
 				}
@@ -32,11 +34,10 @@
 			
 			protected function init(event:FlexEvent):void
 			{
-				menuBarCollection = new XMLListCollection(MenuType.menubarXML);			
+				MenuType.setup();
+				menuBarCollection = new XMLListCollection(MenuType.menubarXML);		
 			}
 			
 		]]>
 	</fx:Script>
-	<mx:dataProvider={menuBarCollection}> 
-	</mx:dataProvider> 
 </mx:MenuBar>
