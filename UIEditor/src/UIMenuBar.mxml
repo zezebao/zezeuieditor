@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:MenuBar xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			xmlns:s="library://ns.adobe.com/flex/spark" 
+			xmlns:mx="library://ns.adobe.com/flex/mx"
+			labelField="@label"
+			iconField="@icon"
+			itemClick="menuHandler(event)"
+			initialize="init(event)"
+			>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import data.MenuType;
+			
+			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.events.MenuEvent;
+			[Bindable]
+			public var menuBarCollection:XMLListCollection;
+			
+			
+			private function menuHandler(evt:MenuEvent):void  {
+				
+				if (evt.item.@data != "top") {
+					Alert.show("Label: " + evt.item.@label + "\n" + 
+						"Data: " + evt.item.@data, "Clicked menu item");
+				}
+			}
+			
+			protected function init(event:FlexEvent):void
+			{
+				menuBarCollection = new XMLListCollection(MenuType.menubarXML);			
+			}
+			
+		]]>
+	</fx:Script>
+	<mx:dataProvider={menuBarCollection}> 
+	</mx:dataProvider> 
+</mx:MenuBar>
