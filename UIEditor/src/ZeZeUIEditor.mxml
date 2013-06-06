@@ -29,19 +29,30 @@
 			protected function onResizeHandler(event:Event=null):void
 			{
 				if(!stage)return;
-				toolBar.width = uiMenuBar.width = stage.stageWidth;
 				group.height = stage.stageHeight - group.y + _offset;
+			}
+			
+			[Bindable]
+			public var selectedNode:XML;
+			
+			// Event handler for the Tree control change event.
+			public function treeChanged(evt:Event):void {
+				selectedNode = Tree(evt.target).selectedItem as XML;
+				trace(selectedNode.toString());
 			}
 			
 		]]>
 	</fx:Script>
-	<ns1:ToolBar id="toolBar" x="0" y="22" />
-	<ns1:UIMenuBar id="uiMenuBar" x="0" y="0" width="695"/>
+	<ns1:ToolBar id="toolBar" width="100%" x="0" y="22" />
+	<ns1:UIMenuBar id="uiMenuBar" x="0" y="0" width="100%" symbolColor="#FFFFFF"/>
 	<!-- Panel添加伸缩 -->
 	<s:Group id="group" left="0" top="58" width="100%" height="634" y="65">
 			<mx:DividedBox direction="horizontal" width="100%" height="100%">
 				<mx:VDividedBox direction="vertical" width="25%" height="100%">
 					<s:Panel title="Panel 1" width="100%" height="100%">
+						<mx:Tree id="myTree" width="100%" height="100%" change="treeChanged(event);"
+								 contentBackgroundColor="#FFFFFF" dataProvider="{treeData}"
+								 labelField="@label" showRoot="false"/>
 					</s:Panel>
 					<s:Panel title="Panel 2" width="100%" height="100%">
 					</s:Panel>
@@ -56,4 +67,33 @@
 				</mx:VDividedBox>
 			</mx:DividedBox>
 	</s:Group>
+	
+	<fx:Declarations>
+		<fx:XMLList id="treeData">
+			<node label="Mail Box">
+				<node label="Inbox">
+					<node label="Marketing"/>
+					<node label="Product Management"/>
+					<node label="Personal"/>
+				</node>
+				<node label="Outbox">
+					<node label="Professional"/>
+					<node label="Personal"/>
+				</node>
+				<node label="Spam"/>
+				<node label="Sent"/>
+				<node label="Inbox">
+					<node label="Marketing"/>
+					<node label="Product Management"/>
+					<node label="Personal"/>
+				</node>
+				<node label="Outbox">
+					<node label="Professional"/>
+					<node label="Personal"/>
+				</node>
+				<node label="Spam"/>
+				<node label="Sent"/>
+			</node>
+		</fx:XMLList>
+	</fx:Declarations>
 </s:WindowedApplication>
