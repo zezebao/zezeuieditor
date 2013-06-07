@@ -16,7 +16,10 @@
 	<fx:Script>
 		<![CDATA[
 			import mx.collections.*;
+			import mx.containers.TitleWindow;
+			import mx.events.CloseEvent;
 			import mx.events.ResizeEvent;
+			import mx.managers.PopUpManager;
 			
 			private var _offset:Number = 5;
 			
@@ -39,6 +42,23 @@
 			public function treeChanged(evt:Event):void {
 				selectedNode = Tree(evt.target).selectedItem as XML;
 				trace(selectedNode.toString());
+//				var box:VDividedBox = new VDividedBox();
+//				box.autoLayout = true;
+//				box.addElement(new Panel());
+//				dbox.addElementAt(box,0);
+//				PopUpManager.createPopUp(this,TitleWindow,true);
+				var title:TitleWindow = new TitleWindow();
+				title.showCloseButton = true;
+				title.width = 500;
+				title.height = 500;
+				title.x = 100;
+				PopUpManager.addPopUp(title,this,false);
+				title.addEventListener(Event.CLOSE,onCloseHandler);
+			}
+			
+			protected function onCloseHandler(event:CloseEvent):void
+			{
+				PopUpManager.removePopUp(event.currentTarget as TitleWindow);				
 			}
 			
 		]]>
@@ -47,7 +67,7 @@
 	<ns1:UIMenuBar id="uiMenuBar" x="0" y="0" width="100%" symbolColor="#FFFFFF"/>
 	<!-- Panel添加伸缩 -->
 	<s:Group id="group" left="0" top="58" width="100%" height="634" y="65">
-			<mx:DividedBox direction="horizontal" width="100%" height="100%">
+		<mx:DividedBox id="dbox" direction="horizontal" width="100%" height="100%">
 				<mx:VDividedBox direction="vertical" width="25%" height="100%">
 					<s:Panel title="Panel 1" width="100%" height="100%">
 						<mx:Tree id="myTree" width="100%" height="100%" change="treeChanged(event);"
@@ -67,7 +87,6 @@
 				</mx:VDividedBox>
 			</mx:DividedBox>
 	</s:Group>
-	
 	<fx:Declarations>
 		<fx:XMLList id="treeData">
 			<node label="Mail Box">
