@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="400" height="300" addedToStage="panel1_addedToStageHandler(event)"
+		 dragEnter="group1_dragEnterHandler(event)" dragExit="panel1_dragExitHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import avmplus.getQualifiedClassName;
+			
+			import data.Direction;
+			
+			import event.UIEvent;
+			
+			import flash.utils.describeType;
+			
+			import mhqy.ui.label.MAssetLabel;
+			
+			import mx.core.UIComponent;
+			import mx.events.DragEvent;
+			
+			import utils.UICreater;
+			
+			private var _uiContainer:UIComponent;
+			private var _popContainer:UIComponent;
+			private var _topContainer:UIComponent;
+			
+			private var _direction:int = 0;
+			
+			protected function panel1_addedToStageHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				_uiContainer = new UIComponent();
+				_uiContainer.graphics.beginFill(0,0);
+				_uiContainer.graphics.drawRect(0,0,3000,3000);
+				_uiContainer.graphics.endFill();
+				addElement(_uiContainer);
+				_popContainer = new UIComponent();
+				addElement(_popContainer);
+				_topContainer = new UIComponent();
+				addElement(_topContainer);
+				
+//				_topContainer.addChild(new CursorSprite());
+				
+				initEvent();
+				
+				trace(getQualifiedClassName(MAssetLabel));
+			}
+			
+			private function initEvent():void
+			{
+				this.addEventListener(MouseEvent.MOUSE_DOWN, unSelectedHotRectHandler);
+				stage.addEventListener(KeyboardEvent.KEY_DOWN,onKeyDownHandler);
+				stage.addEventListener(KeyboardEvent.KEY_UP,onKeyUpHandler);	
+				App.addEventListener(UIEvent.LAYERS_SELECT_UPDATE,onSelectUpdateHandler);
+			}
+			
+			protected function onKeyDownHandler(evt:KeyboardEvent):void
+			{
+				switch(evt.keyCode)
+				{
+					case Keyboard.A:
+					case Keyboard.LEFT:
+						_direction = _direction | Direction.LEFT;
+						break;
+					case Keyboard.D:
+					case Keyboard.RIGHT:
+						_direction = _direction | Direction.RIGHT;
+						break;
+					case Keyboard.W:
+					case Keyboard.UP:
+						_direction = _direction | Direction.UP;
+						break;
+					case Keyboard.S:
+					case Keyboard.DOWN:
+						_direction = _direction | Direction.DOWN;
+						break;
+					
+				}
+				if(_direction != 0)
+				{
+					this.addEventListener(Event.ENTER_FRAME,onETHandler);
+				}
+			}
+			
+			protected function onKeyUpHandler(evt:KeyboardEvent):void
+			{
+				switch(evt.keyCode)
+				{
+					case Keyboard.A:
+					case Keyboard.LEFT:
+						_direction = _direction & 0;
+						break;
+					case Keyboard.S:
+					case Keyboard.RIGHT:
+						_direction = _direction & 0;
+						break;
+					case Keyboard.W:
+					case Keyboard.UP:
+						_direction = _direction & 0;
+						break;
+					case Keyboard.D:
+					case Keyboard.DOWN:
+						_direction = _direction & 0;
+						break;
+				}
+				if(_direction == 0)
+				{
+					this.removeEventListener(Event.ENTER_FRAME,onETHandler);
+				}
+			}
+			
+			protected function onETHandler(event:Event):void
+			{
+				App.hotRectManager.moveDir(_direction);	
+			}
+			
+			private function unSelectedHotRectHandler(evt:MouseEvent):void 
+			{
+				trace(evt.currentTarget,evt.target);
+				App.hotRectManager.unSelectAll();
+				stage.focus = this;
+				App.dispathEvent(new UIEvent(UIEvent.STAGE_SELECT_UPDATE,[]));
+			}
+			
+			protected function group1_dragEnterHandler(event:DragEvent):void
+			{
+				trace(event);
+			}
+			
+			protected function panel1_dragExitHandler(evt:DragEvent):void
+			{
+				var child:DisplayObject = UICreater.create(App.dragVo.classVo);
+				if(child)
+				{
+					var hotRect:HotRectControl = new HotRectControl(child);
+					hotRect.move(mouseX,mouseY);
+					hotRect.selctedHander = updateLayerSelects;
+					_uiContainer.addChild(hotRect);
+					
+					hotRect.uiInfo = App.dragVo.classVo.info;
+				}
+				
+				App.layerManager.layerPanel.setChild(_uiContainer);
+			}
+			
+			private function onSelectUpdateHandler(evt:UIEvent):void
+			{
+				var arr:Array = evt.data as Array;
+				for (var i:int = 0; i < _uiContainer.numChildren; i++) 
+				{
+					var item:HotRectControl = _uiContainer.getChildAt(i) as HotRectControl;
+					var bool:Boolean = false;
+					for (var j:int = 0; j < arr.length; j++) 
+					{
+						if(i == arr[j])
+						{
+							bool = true;
+							break;
+						}
+					}
+					item.selected = bool;
+				}
+			}
+			
+			private function updateLayerSelects():void
+			{
+				var arr:Array = [];
+				for (var i:int = 0; i < _uiContainer.numChildren; i++) 
+				{
+					var item:HotRectControl = _uiContainer.getChildAt(i) as HotRectControl;
+					if(item.selected)arr.push(i);
+				}
+				App.dispathEvent(new UIEvent(UIEvent.STAGE_SELECT_UPDATE,arr));
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Scroller width="100%" height="100%">
+		<s:Group> 
+			<mx:Image left="0" top="0" width="100%" height="100%"/> 
+		</s:Group>        
+	</s:Scroller>
+</s:Panel>

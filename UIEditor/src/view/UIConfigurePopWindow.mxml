@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="482" height="374"
+			   title="项目配置"
+			   initialize="init()"
+			   addedToStage="onAddToStage(event)"
+			   >
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import data.Config;
+			
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			
+			private var file:File = new File();
+			
+			private function init(evt:Event=null):void
+			{
+				file.addEventListener(Event.SELECT,onSelectHandler);
+				addEventListener(Event.CLOSE,onCloseHandler);
+			}
+			
+			protected function swcsPathSelect(event:MouseEvent):void
+			{
+				file.browseForDirectory("Select a directory");				
+			}
+			
+			protected function onSelectHandler(event:Event):void
+			{
+				var arr:Array = file.getDirectoryListing();		
+				swcsPathLabel.text = file.nativePath;
+				Config.swcsPath = file.nativePath;
+			}
+			
+			protected function onCloseHandler(event:CloseEvent):void
+			{
+				PopUpManager.removePopUp(this);				
+			}
+			
+			protected function onAddToStage(event:Event):void
+			{
+//				this.x = 				
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Label x="22" y="15" text="资源SWCS路径"/>
+	<s:TextInput id="swcsPathLabel" x="110" y="9" width="323" click="swcsPathSelect(event)"/>
+</s:TitleWindow>

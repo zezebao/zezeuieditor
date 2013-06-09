@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+		 addedToStage="addToStage(event)"
+		 >
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import data.Config;
+			import data.vo.SwfVo;
+			
+			import event.UIEvent;
+			
+			import manager.ModelManager;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.XMLListCollection;
+			import mx.events.DragEvent;
+			import mx.events.ListEvent;
+			
+			import uidata.UIData;
+			import uidata.UIElementBaseInfo;
+			import uidata.vo.UIClassVo;
+			
+			import utils.GetSwfAllClass;
+			
+			private const NODE:String = "node_item";
+			
+			protected var browserFile:File;
+			protected var loadIndex:int = 0;
+			protected var loader:Loader;
+			protected var urlLoader:URLLoader;
+			protected var swfAry:Array = [];//swf文件列表
+			private var _path:String
+			
+			protected function addToStage(event:Event):void
+			{
+				_path = Config.swcsPath;
+				loadAllSwf();
+			}
+			
+			private function loadAllSwf():void
+			{
+				if(_path == "")
+				{
+					return;
+				}
+				browserFile = new File(_path);
+				var fileAry:Array = browserFile.getDirectoryListing();
+				if(fileAry!=null && fileAry.length>0)
+				{
+					for(var i:int=0;i<fileAry.length;i++)
+					{
+						var file:File = fileAry[i];
+						if(file.exists && file.extension == "swf")
+						{
+							var swfVo:SwfVo = new SwfVo();
+							swfVo.path = file.url;
+							swfVo.name = file.name;
+							swfVo.classAry = [];
+							swfAry.push(swfVo);
+						}
+					}
+				}
+				if(swfAry.length>0)
+				{
+					queueLoad(loadIndex);
+				}
+				ModelManager.getInstance().swfAry = swfAry;
+			}
+			
+			private function queueLoad(index:int):void
+			{
+				var swfVo:SwfVo = swfAry[index];
+				urlLoader = new URLLoader();
+				urlLoader.dataFormat = URLLoaderDataFormat.BINARY;
+				urlLoader.addEventListener(Event.COMPLETE,urlLoadCompleteHandler);			
+				urlLoader.load(new URLRequest(swfVo.path));
+//				loader = new Loader();
+//				loader.load(new URLRequest(swfVo.path),new LoaderContext(false,ApplicationDomain.currentDomain));
+//				loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loadCompleteHandler);
+			}
+			
+			protected function urlLoadCompleteHandler(evt:Event):void
+			{
+				evt.target;
+				loader = new Loader();
+				var loaderContext:LoaderContext = new LoaderContext(false,ApplicationDomain.currentDomain); 
+				　　loaderContext.allowLoadBytesCodeExecution = true; 
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loadCompleteHandler);
+				loader.loadBytes(evt.target.data,loaderContext);
+			}
+			
+			private function loadCompleteHandler(evt:Event):void
+			{
+				loader.contentLoaderInfo.removeEventListener(Event.COMPLETE,loadCompleteHandler);
+				var loaderInfo:LoaderInfo = evt.currentTarget as LoaderInfo;
+				var swfVo:SwfVo = swfAry[loadIndex];
+				swfVo.loaderInfo = loaderInfo;
+				swfVo.classAry = GetSwfAllClass.getSWFClassName(loaderInfo.bytes);
+				loadIndex++;
+				if(loadIndex==swfAry.length)
+				{
+					//全部加载完成]
+					loadIndex = 0;
+					showInitInfo();
+	//				preveiw.setData(swfAry);
+					setData(swfAry);
+				}else
+				{
+					queueLoad(loadIndex);
+				}
+			}
+			
+			private function showInitInfo():void
+			{
+				var content:String = "";
+				content += "资源初始化完成："+swfAry.length+"个swf\n";
+				for(var i:int = 0;i<swfAry.length-1;i++)
+				{
+					for(var j:int = i+1;j<swfAry.length;j++)
+					{
+						var swfVo1:SwfVo = swfAry[i];
+						var swfVo2:SwfVo = swfAry[j];
+						for(var m:int = 0;m<swfVo1.classAry.length;m++)
+						{
+							for(var n:int = 0;n<swfVo2.classAry.length;n++)
+							{
+								if(swfVo1.classAry[m] == swfVo2.classAry[n])
+								{
+									content += (swfVo1.name+" AND "+swfVo2.name+"存在同样的类名："+swfVo1.classAry[m]+"\n");
+								}
+							}
+						}
+					}
+					content += "【" + swfAry[i].name + "】  ";
+				}
+//				trace(content);
+			}
+			
+			public function setData(ary:Array):void
+			{
+				var i:int;
+				var temp:ArrayCollection;
+				//这里要用children或者categories关键字来指定某个结点的子结点，而且这两个关键字是不能改变的，它们被定义在tree的实现里面。
+				var arrayData:ArrayCollection = new ArrayCollection();
+				
+				//UI元件
+				var len:int = UIData.UIClassArr.length;
+				temp = new ArrayCollection();
+				for (i = 0; i < len; i++) 
+				{
+					var uiClassVo:UIClassVo = UIData.UIClassArr[i];
+					temp.addItem({label:uiClassVo.className,data:uiClassVo});
+				}
+				arrayData.addItem({label:"UI元件库",type:NODE,children:temp});
+				
+				//模板库
+				temp = new ArrayCollection();
+				arrayData.addItem({label:"模板文件库",type:NODE,children:temp});
+				
+				//资源库
+				temp = new ArrayCollection();
+				for(i = 0;i<ary.length;i++)
+				{
+					var swfVo:SwfVo = ary[i];
+					temp = new ArrayCollection();
+					for(var j:int = 0;j<swfVo.classAry.length;j++)
+					{
+						temp.addItem({label:swfVo.classAry[j],data:new UIClassVo(swfVo.classAry[j],new UIElementBaseInfo())});
+					}
+					arrayData.addItem({label:swfVo.name,type:NODE,children:temp});
+				}
+				
+				libraryTree.dataProvider = arrayData;
+			}
+			
+			protected function libraryTree_changeHandler(evt:ListEvent):void
+			{
+				var selectedNode:Object = Tree(evt.target).selectedItem;
+				if(selectedNode.type != NODE)
+				{
+					App.dispathEvent(new UIEvent(UIEvent.LIBRARY_SELECT_ITEM,selectedNode.data));
+				}
+			}
+			
+			private var _isDrag:Boolean;
+			private var _currentOverItem:UIClassVo;
+			
+			protected function dragStartHandler(evt:DragEvent):void
+			{
+				var tree:Tree = evt.currentTarget as Tree;
+				_isDrag = true;
+				App.dragVo.classVo = _currentOverItem;
+				if(evt.relatedObject)
+				{
+					trace("拖动：" + App.dragVo.classVo.className);
+				}
+			}
+			
+			protected function libraryTree_itemRollOverHandler(evt:ListEvent):void
+			{
+				if(!_isDrag && evt.itemRenderer.data.type != NODE)
+				{
+					_currentOverItem = evt.itemRenderer.data.data as UIClassVo;
+				}
+			}
+			
+			protected function libraryTree_dragCompleteHandler(event:DragEvent):void
+			{
+				_isDrag = false;
+				App.dragVo.classVo = null;
+				trace(event);
+			}
+			
+		]]>
+	</fx:Script>
+	<mx:Tree id="libraryTree" labelField="label" width="100%" height="100%" 
+			 dragEnabled="true" 
+			 itemRollOver="libraryTree_itemRollOverHandler(event)" 
+			 dragStart="dragStartHandler(event)"
+			 dragComplete="libraryTree_dragCompleteHandler(event)"
+			 change="libraryTree_changeHandler(event)" contentBackgroundColor="#FFFFFF"></mx:Tree>
+</s:Panel>

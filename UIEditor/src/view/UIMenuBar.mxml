@@ -12,19 +12,29 @@
 			import data.MenuType;
 			
 			import mx.collections.XMLListCollection;
+			import mx.containers.TitleWindow;
 			import mx.controls.Alert;
 			import mx.events.FlexEvent;
 			import mx.events.MenuEvent;
+			import mx.managers.PopUpManager;
 			[Bindable]
 			public var menuBarCollection:XMLListCollection;
 			
 			
 			private function menuHandler(evt:MenuEvent):void  
 			{
-				if (evt.item.@data != "top") 
+//				PopUpManager.addPopUp(UIConfigurePopWindow.instance,stage,true);
+				
+				
+				switch(int(evt.item.@data))
 				{
-					Alert.show("Label: " + evt.item.@label + "\n" + 
-						"Data: " + evt.item.@data, "Clicked menu item");
+					case MenuType.PROJECT_SEETING:
+						var title:UIConfigurePopWindow = new UIConfigurePopWindow();
+						title.width = 500;
+						title.height = 500;
+						title.x = 100;
+						PopUpManager.addPopUp(title,this,true);
+						break;
 				}
 			}
 			

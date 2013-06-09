@@ -1,4 +1,4 @@
-package feilong
+package data
 {
 	public class Direction
 	{
