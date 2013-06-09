@@ -1,5 +1,7 @@
-package feilong
+package view
 {
+	import data.Direction;
+	
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
@@ -21,80 +23,54 @@ package feilong
 	import ghostcat.ui.CursorSprite;
 	import ghostcat.util.display.DisplayUtil;
 	
+	import uidata.UIElementBaseInfo;
+	
 	/**
 	 * 图像变形控制器，点击自动选中，并调整大小
 	 */
-	public class UIControlRect extends GBase
+	public class HotRectControl extends GBase
 	{
-		/*** 选择的对象数组 */
-		private static var selectedRects:Array = [];
-		/**取消全部选择*/
-		public static function unSelectAll():void
-		{
-			for (var i:int = selectedRects.length - 1;i>=0;i--)
-			{
-				var rect:UIControlRect = selectedRects[i];
-				rect.selected = false;
-			}
-			selectedRects = [];
-		}
-		/***八向位图数据* @param direction    00000000 */		
-		public static function moveDir(direction:int):void
-		{
-			for (var i:int = selectedRects.length - 1;i>=0;i--)
-			{
-				var rect:UIControlRect = selectedRects[i];
-				var vec:Vector.<int> = Direction.getDirect(direction);
-				for (var j:int = 0; j < vec.length; j++) 
-				{
-					switch(vec[j])
-					{
-						case Direction.UP:
-							rect.y -= 1;
-							break;
-						case Direction.DOWN:
-							rect.y += 1;
-							break;
-						case Direction.LEFT:
-							rect.x -= 1;
-							break;
-						case Direction.RIGHT:
-							rect.x += 1;
-							break;
-					}
-				}
-			}
-		}
+		private var _uiInfo:UIElementBaseInfo;
 		
 		/*** 容纳控制点的容器*/
-		public var controlCotainer:Sprite;
-		/**
-		 * 线型
-		 */
-		public var lineStyle:GraphicsLineStyle = new GraphicsLineStyle(0,0);
-		/**
-		 * 填充
-		 */
-		public var fill:GraphicsFill = new GraphicsFill(0xFFFFFF,0.5);
+		protected var controlCotainer:Sprite;
+		/*** 线型*/
+		protected var lineStyle:GraphicsLineStyle = new GraphicsLineStyle(0,0);
+		/*** 填充*/
+		protected var fill:GraphicsFill = new GraphicsFill(0xFFFFFF,0.5);
 		
-		public var fillControl:GBase;
-		public var topLeftControl:DragPoint;
-		public var topRightControl:DragPoint;
-		public var bottomLeftControl:DragPoint;
-		public var bottomRightControl:DragPoint;
-		public var topLineControl:DragPoint;
-		public var bottomLineControl:DragPoint;
-		public var leftLineControl:DragPoint;
-		public var rightLineControl:DragPoint;
+		protected var fillControl:GBase;
+		protected var topLeftControl:DragPoint;
+		protected var topRightControl:DragPoint;
+		protected var bottomLeftControl:DragPoint;
+		protected var bottomRightControl:DragPoint;
+		protected var topLineControl:DragPoint;
+		protected var bottomLineControl:DragPoint;
+		protected var leftLineControl:DragPoint;
+		protected var rightLineControl:DragPoint;
 		
 		private var _lockX:Boolean = false;
+		private var _lockY:Boolean = false;
 		
-		public function UIControlRect(skin:*=null,pointSkin:* = null,replace:Boolean=true)
+		public function HotRectControl(skin:*=null,pointSkin:* = null,replace:Boolean=true)
 		{
 			createControl(pointSkin);
 			super(skin,replace);
 		}
-		
+
+		public function get uiInfo():UIElementBaseInfo
+		{
+			return _uiInfo;
+		}
+
+		public function set uiInfo(value:UIElementBaseInfo):void
+		{
+			_uiInfo = value;
+//			createControl(null);
+//			super.skin = _uiInfo.className;
+			
+		}
+
 		/**设置是否可改变大小*/
 		public function set canChange(value:Boolean):void
 		{
@@ -117,7 +93,6 @@ package feilong
 		{
 			return _lockX;
 		}
-		
 		public function set lockX(value:Boolean):void
 		{
 			_lockX = value;
@@ -125,13 +100,10 @@ package feilong
 			topLeftControl.visible = topRightControl.visible = bottomLeftControl.visible = bottomRightControl.visible = !_lockY || !_lockY
 		}
 		
-		private var _lockY:Boolean = false;
-		
 		public function get lockY():Boolean
 		{
 			return _lockY;
 		}
-		
 		public function set lockY(value:Boolean):void
 		{
 			_lockY = value;
@@ -145,25 +117,24 @@ package feilong
 			this.addEventListener(MouseEvent.MOUSE_DOWN,mouseDownHandler);
 			stage.addEventListener(MouseEvent.MOUSE_UP,mouseUpHandler);
 		}
-		
 		/** @inheritDoc*/
-		public override function set selected(v:Boolean):void
+		public override function set selected(value:Boolean):void
 		{
-			super.selected = v;
+			super.selected = value;
 			
 			var index:int;
-			index = selectedRects.indexOf(this);
-			if (v)
+			index = App.hotRectManager.selectedRects.indexOf(this);
+			if (value)
 			{
 				if (index == -1)
-					selectedRects.push(this);
+					App.hotRectManager.selectedRects.push(this);
 			}
 			else
 			{
 				if (index != -1)
-					selectedRects.splice(index,1);
+					App.hotRectManager.selectedRects.splice(index,1);
 			}
-			this.controlCotainer.visible = v;
+			this.controlCotainer.visible = value;
 		}
 		/** @inheritDoc*/
 		override public function setContent(skin:*, replace:Boolean=true) : void
@@ -234,10 +205,10 @@ package feilong
 			controlCotainer.addChild(rightLineControl);
 		}
 		
-		override public function set skin(v:*):void
+		override public function set skin(value:*):void
 		{
 			createControl(null);
-			super.skin = v;
+			super.skin = value;
 		}
 		
 		
@@ -405,10 +376,7 @@ package feilong
 		
 		private function fillMouseDownHandler(event:MouseEvent):void
 		{
-			for each (var rect:UIControlRect in selectedRects)
-			{
-				DragManager.startDrag(rect,null,null,stopDargHandler);
-			}
+			App.hotRectManager.startDrag();
 		}
 		
 		private function stopDargHandler(evt:DragEvent):void
@@ -416,20 +384,28 @@ package feilong
 			trace("当前位置：",this.x,this.y);
 		}
 		
-		private function mouseDownHandler(event:MouseEvent):void
+		private function mouseDownHandler(evt:MouseEvent):void
 		{
-			event.stopImmediatePropagation();
+			evt.stopImmediatePropagation();
 			if (selected)
 			{
-				if(event.shiftKey)
+				if(evt.shiftKey)
 					selected = false;
 				return;
 			}
-			if (!event.shiftKey)
-				unSelectAll();
+			if (!evt.shiftKey)
+				App.hotRectManager.unSelectAll();
 			selected = true;
+			if(_selctedHander != null)_selctedHander();
 			
-			fillMouseDownHandler(event);
+			fillMouseDownHandler(evt);
+		}
+		
+		private var _selctedHander:Function;
+		/**选中的时候触发*/
+		public function set selctedHander(value:Function):void
+		{
+			_selctedHander = value;
 		}
 		
 		private function mouseUpHandler(event:MouseEvent):void

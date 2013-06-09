@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="28">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			
+			import spark.events.TextOperationEvent;
+			
+			private var _name:String;
+			private var _value:int;
+			
+			private function update():void
+			{
+				dispatchEvent(new Event(Event.CHANGE));
+			}
+			
+			public function setData(label:String,value:int = -1):void
+			{
+				nameLabel.text = label;
+				if(value != -1)valueLabel.text = value.toString();
+			}
+			
+			protected function valueLabel_focusOutHandler(event:FocusEvent):void
+			{
+				_value = int(valueLabel.text);
+				update();				
+			}
+			
+			public function getName():String
+			{
+				return _name;
+			}
+			
+			public function getValue():int
+			{
+				return _value;
+			}
+			
+			public function dispose():void
+			{
+				if(parent)
+				{
+					Group(parent).removeElement(this);
+				}
+			}
+			
+		]]>
+	</fx:Script>
+		
+	<s:Label id="nameLabel" x="10" y="10" width="35" text="标签"/>
+	<s:TextInput id="valueLabel" x="47" y="4" width="194" restrict="0-9" focusOut="valueLabel_focusOutHandler(event)"
+				 prompt="value input"/>
+</s:Group>

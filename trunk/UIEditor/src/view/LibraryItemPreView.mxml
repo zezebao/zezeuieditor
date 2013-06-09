@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+		 addedToStage="group1_addedToStageHandler(event)"
+		 resize="group1_resizeHandler(event)"
+		 >
+	
+	<fx:Script>
+		<![CDATA[
+			import event.UIEvent;
+			
+			import flash.utils.getDefinitionByName;
+			
+			import mx.core.UIComponent;
+			import mx.events.ResizeEvent;
+			
+			import uidata.vo.UIClassVo;
+			
+			import utils.UICreater;
+			
+			private var _itemCon:UIComponent;
+			
+			protected function group1_addedToStageHandler(event:Event):void
+			{
+				initView();
+				initEvent();				
+			}
+			
+			private function initView():void
+			{
+				_itemCon = new UIComponent();
+				addElementAt(_itemCon,0);
+			}
+			
+			private function initEvent():void
+			{
+				App.addEventListener(UIEvent.LIBRARY_SELECT_ITEM,selectItemHandler);				
+			}
+			
+			private function selectItemHandler(evt:UIEvent):void
+			{
+				while(_itemCon.numChildren){_itemCon.removeChildAt(0);}
+				var classVo:UIClassVo = evt.data as UIClassVo;
+				var child:DisplayObject = UICreater.create(classVo);
+				typeLabel.text = "";
+				if(child)
+				{
+					_itemCon.addChild(child);
+					setChildPos(child);
+					if(child is MovieClip)
+					{
+						typeLabel.text = "MovieClip";
+					}else if(child is Bitmap)
+					{
+						typeLabel.text = "BitmapData";
+					}
+				}
+			}
+			
+			private function setChildPos(child:DisplayObject):void
+			{
+				var scaleValue:Number = 1;
+				if(child.width > this.width)
+				{
+					scaleValue = width / child.width;
+				}else if(child.height > this.height)
+				{
+					scaleValue = height / child.height;
+				}
+				child.scaleX = child.scaleY = scaleValue;
+				child.x = (this.width - child.width) / 2;
+				child.y = (this.height - child.height) / 2;
+			}
+			
+			protected function group1_resizeHandler(event:ResizeEvent):void
+			{
+				//改变库元件显示大小
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:Label id="typeLabel" height="20" width="100%" mouseEnabled="false"/>
+</s:Group>

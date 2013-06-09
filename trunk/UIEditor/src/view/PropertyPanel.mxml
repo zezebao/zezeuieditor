@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+		 addedToStage="addToStageHandler(event)"
+		 >
+	
+	<fx:Script>
+		<![CDATA[
+			import event.UIEvent;
+			
+			import mx.collections.ArrayCollection;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import uidata.UIClassType;
+			import uidata.UIElementBorderInfo;
+			import uidata.vo.PropertyVo;
+			
+			import view.item.PropertyItemView;
+			
+			private var _itemList:Vector.<PropertyItemView> = new Vector.<PropertyItemView>();
+			
+			protected function addToStageHandler(event:Event):void
+			{
+				initData();
+				initEvent();		
+			}
+			
+			private function initEvent():void
+			{
+				App.addEventListener(UIEvent.LAYERS_SELECT_UPDATE,itemSelectHandler);
+				App.addEventListener(UIEvent.STAGE_SELECT_UPDATE,itemSelectHandler);
+			}
+			
+			private function itemSelectHandler(evt:UIEvent):void
+			{
+				group.visible = false;
+				if(App.hotRectManager.selectedRects.length == 0)
+				{
+					//
+				}else if(App.hotRectManager.selectedRects.length == 1)
+				{
+					//
+					group.visible = true;
+					var rect:HotRectControl = App.hotRectManager.selectedRects[0];
+					var vec:Vector.<PropertyVo> = rect.uiInfo.getPropertys();
+					createPropertyItems(vec);
+				}else
+				{
+					//
+				}
+			}
+			
+			private function initData():void
+			{
+				var array:ArrayCollection = new ArrayCollection();
+				array.addItem({label:"UI_BITMAP",value:UIClassType.UIBITMAP});
+				array.addItem({label:"UI_BORDER",value:UIClassType.UIDEFAULTBORDER});
+				array.addItem({label:"UI_BAR",value:UIClassType.UIDEFAULTBAR});
+				combobox.dataProvider = array;
+				combobox.selectedIndex = 0;
+			}
+			
+			protected function combobox_changeHandler(event:IndexChangeEvent):void
+			{
+				inputLabel.text = combobox.selectedItem.label;
+				switch(combobox.selectedItem.value)
+				{
+					case UIClassType.UIDEFAULTBORDER:
+						var rect:HotRectControl = App.hotRectManager.selectedRects[0];
+						rect.uiInfo = new UIElementBorderInfo();
+						var vec:Vector.<PropertyVo> = rect.uiInfo.getPropertys();
+						createPropertyItems(vec);
+						break;
+					case UIClassType.UIDEFAULTBAR:
+						
+						break;
+				}
+				
+			}
+			
+			private function createPropertyItems(vec:Vector.<PropertyVo>):void
+			{
+				for (var i:int = 0; i < _itemList.length; i++) 
+				{
+					_itemList[i].dispose();
+				}
+				_itemList = new Vector.<PropertyItemView>();
+				for (var i:int = 0; i < vec.length; i++) 
+				{
+					var item:PropertyItemView = new PropertyItemView();
+					item.setData(vec[i].proterty2);
+					vGroup.addElement(item);
+					_itemList.push(item);
+					item.addEventListener(Event.CHANGE,onItemChangeHandler);
+				}
+			}
+			
+			protected function onItemChangeHandler(event:Event):void
+			{
+								
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:VGroup id="vGroup" y="38" width="100%" height="100%">
+	</s:VGroup>
+	<s:Group id="group" visible="false" width="100%" height="41">
+		<s:ComboBox id="combobox" x="159" y="10" width="100%" change="combobox_changeHandler(event)"/>
+		<s:Label x="15" y="18" text="type:"/>
+		<s:TextInput id="inputLabel" x="54" y="10" width="93" enabled="false"/>
+	</s:Group>
+</s:Panel>

@@ -4,19 +4,29 @@ package data
 
 	public class MenuType
 	{
-		/**菜单栏目起始ID 1000*/
+		/**主菜单【菜单栏目起始ID 1000】*/
+		public static const PROJECT:int = 1000;
 		public static const MAIN:int = 1001;
 		public static const EDIT:int = 1002;
+		/**子菜单[起始ID 10000]*/
+		public static const PROJECT_SEETING:uint = 10001;
+		public static const PROJECT_OPEN:uint = 10002;			//打开项目
+		
+		
 		
 		public static var MEAN_TYPES:Vector.<MenuInfo>;
 		
 		public static function setup():void
 		{
 			MEAN_TYPES = new Vector.<MenuInfo>();
+			MEAN_TYPES.push(new MenuInfo(PROJECT,"项目"));
 			MEAN_TYPES.push(new MenuInfo(MAIN,"菜单"));
 			MEAN_TYPES.push(new MenuInfo(EDIT,"编辑"));
 			
 			//
+			getMenuInfoByType(PROJECT).add(new MenuInfo(PROJECT_SEETING,"项目配置"));
+			getMenuInfoByType(PROJECT).add(new MenuInfo(PROJECT_OPEN,"打开项目"));
+			
 			getMenuInfoByType(MAIN).add(new MenuInfo(1,"打开 Ctrl + O"));
 			getMenuInfoByType(MAIN).add(new MenuInfo(2,"保存"));
 			
