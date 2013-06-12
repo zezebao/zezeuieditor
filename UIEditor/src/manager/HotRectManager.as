@@ -46,18 +46,12 @@ package manager
 		}
 		
 		/**开始拖动*/
-		public function startDrag(bounds:Rectangle=null):void
+		public function startDrag(bounds:Rectangle=null, startHandler:Function=null, stopHandler:Function=null, onHandler:Function=null, type:String="direct", lockCenter:Boolean=false, upWhenLeave:Boolean=false, collideByRect:Boolean=false):void
 		{
 			for each (var rect:HotRectControl in selectedRects)
 			{
-				DragManager.startDrag(rect,bounds,null,stopDargHandler);
+				DragManager.startDrag(rect,bounds,startHandler,stopHandler,onHandler,type,lockCenter,upWhenLeave);
 			}
-		}
-		
-		private function stopDargHandler(evt:DragEvent):void
-		{
-			evt;
-//			trace("当前位置：",this.x,this.y);
 		}
 		
 		/***八向位图数据* @param direction    00000000 */		
@@ -85,6 +79,7 @@ package manager
 							break;
 					}
 				}
+				rect.updatePos();
 			}
 		}
 		

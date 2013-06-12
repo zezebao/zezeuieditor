@@ -7,38 +7,69 @@
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
+			import event.UIEvent;
+			
+			import fl.data.DataProvider;
+			
 			import mx.core.UIComponent;
 			
+			import spark.events.IndexChangeEvent;
 			import spark.events.TextOperationEvent;
 			
-			private var _name:String;
-			private var _value:int;
+			import uidata.UIElementBaseInfo;
+			import uidata.vo.PropertyVo;
+			
+			private var _info:UIElementBaseInfo;
+			private var _property:String;
+			private var _propertyVo:PropertyVo;
 			
 			private function update():void
 			{
-				dispatchEvent(new Event(Event.CHANGE));
+				_info[_property] = getValue();
+				_info.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_PROPERTY,_propertyVo.isChangeView));
 			}
 			
-			public function setData(label:String,value:int = -1):void
+			public function setData(property:String,propertyVo:PropertyVo,info:UIElementBaseInfo):void
 			{
-				nameLabel.text = label;
-				if(value != -1)valueLabel.text = value.toString();
+				_property = property;
+				_propertyVo = propertyVo;
+				_info = info;
+				
+				valueLabel.visible = true;
+				combobox.visible = false;
+				
+				if(_propertyVo.dataProvider)
+				{
+					valueLabel.visible = false;
+					combobox.visible = true;
+					combobox.dataProvider = _propertyVo.dataProvider;
+					for(var i:int=0;i<combobox.dataProvider.length;i++){
+						var obj:Object = combobox.dataProvider.getItemAt(i);
+						if(obj.data == info[property])
+						{
+							combobox.selectedIndex = i;
+							break;
+						}
+					}
+					combobox.closeDropDown(false);
+				}
+				else if(_propertyVo.proClass == Number || _propertyVo.proClass == int)
+				{
+					valueLabel.restrict = "0-9";					
+				}
+				
+				nameLabel.text = property;
+				valueLabel.text = String(info[property]);
 			}
 			
 			protected function valueLabel_focusOutHandler(event:FocusEvent):void
 			{
-				_value = int(valueLabel.text);
-				update();				
+				update();
 			}
 			
-			public function getName():String
+			public function updateView():void
 			{
-				return _name;
-			}
-			
-			public function getValue():int
-			{
-				return _value;
+				setData(_property,_propertyVo,_info);
 			}
 			
 			public function dispose():void
@@ -49,10 +80,41 @@
 				}
 			}
 			
+			protected function combobox_changeHandler(event:IndexChangeEvent):void
+			{
+				update();				
+			}
+			
+			protected function valueLabel_keyDownHandler(evt:KeyboardEvent):void
+			{
+				if(evt.keyCode == Keyboard.ENTER)
+				{
+					update();
+				}
+			}
+			
+			private function getValue():*
+			{
+				if(_propertyVo.dataProvider)
+				{
+					return combobox.selectedItem.data;
+				}
+				else if(_propertyVo.proClass == Number || _propertyVo.proClass == int)
+				{
+					return parseInt(valueLabel.text);			
+				}else if(_propertyVo.proClass == String)
+				{
+					return valueLabel.text;
+				}
+				return 0;
+			}
+			
 		]]>
 	</fx:Script>
 		
-	<s:Label id="nameLabel" x="10" y="10" width="35" text="标签"/>
-	<s:TextInput id="valueLabel" x="47" y="4" width="194" borderColor="#FFFFFF"
-				 focusOut="valueLabel_focusOutHandler(event)" prompt="value input" restrict="0-9"/>
+	<s:Label id="nameLabel" x="10" y="10" width="60%" text="标签"/>
+	<s:TextInput id="valueLabel" x="84" y="3" width="218" borderColor="#FFFFFF" chromeColor="#FFFFFF"
+				 contentBackgroundColor="#F2F2F2" focusOut="valueLabel_focusOutHandler(event)" keyDown="valueLabel_keyDownHandler(event)"
+				 prompt="value input"/>
+	<s:ComboBox id="combobox" x="84" y="3" width="111" change="combobox_changeHandler(event)"/>
 </s:Group>

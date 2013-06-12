@@ -155,7 +155,7 @@
 				for (i = 0; i < len; i++) 
 				{
 					var uiClassVo:UIClassVo = UIData.UIClassArr[i];
-					temp.addItem({label:uiClassVo.className,data:uiClassVo});
+					temp.addItem({label:uiClassVo.describe,data:uiClassVo});
 				}
 				arrayData.addItem({label:"UI元件库",type:NODE,children:temp});
 				

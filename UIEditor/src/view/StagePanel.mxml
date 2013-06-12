@@ -176,7 +176,7 @@
 				var child:DisplayObject = UICreater.create(App.dragVo.classVo);
 				if(child)
 				{
-					var hotRect:HotRectControl = new HotRectControl(child);
+					var hotRect:HotRectControl = new HotRectControl();
 					hotRect.x = _uiContainer.mouseX;
 					hotRect.y = _uiContainer.mouseY;
 					hotRect.selctedHander = updateLayerSelects;
