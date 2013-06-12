@@ -25,6 +25,7 @@ package uidata
 	import mhqy.ui.mcache.splits.MCacheSplit4Line;
 	import mhqy.ui.progress.ProgressBar;
 	
+	import mhsm.commom.CellBgAsset1;
 	import mhsm.ui.BarAsset1;
 	import mhsm.ui.BarAsset3;
 	import mhsm.ui.BarAsset6;
@@ -36,11 +37,11 @@ package uidata
 	import mhsm.ui.BorderAsset8;
 	import mhsm.ui.BorderAsset9;
 	import mhsm.ui.BtnAsset7;
-	import mhsm.ui.CellBgAsset1;
-	import mhsm.ui.CellBgAsset2;
-	import mhsm.ui.CellBgAsset3;
-	import mhsm.ui.CellBgAsset4;
-	import mhsm.ui.CellBgAsset5;
+//	import mhsm.ui.CellBgAsset1;
+//	import mhsm.ui.CellBgAsset2;
+//	import mhsm.ui.CellBgAsset3;
+//	import mhsm.ui.CellBgAsset4;
+//	import mhsm.ui.CellBgAsset5;
 	
 	import uidata.vo.UIClassVo;
 	
@@ -94,11 +95,12 @@ package uidata
 			new UIClassVo(BarAsset6,new UIElementBaseInfo()),
 			new UIClassVo(BarAsset8,new UIElementBaseInfo()),
 			new UIClassVo(BtnAsset7,new UIElementBaseInfo()),
-			new UIClassVo(CellBgAsset1,new UIElementBaseInfo()),
-			new UIClassVo(CellBgAsset2,new UIElementBaseInfo()),
-			new UIClassVo(CellBgAsset3,new UIElementBaseInfo()),
-			new UIClassVo(CellBgAsset4,new UIElementBaseInfo()),
-			new UIClassVo(CellBgAsset5,new UIElementBaseInfo()),
+//			new UIClassVo(CellBgAsset1,new UIElementBaseInfo()),
+//			new UIClassVo(CellBgAsset2,new UIElementBaseInfo()),
+//			new UIClassVo(CellBgAsset3,new UIElementBaseInfo()),
+//			new UIClassVo(CellBgAsset4,new UIElementBaseInfo()),
+//			new UIClassVo(CellBgAsset5,new UIElementBaseInfo()),
 		];
+		
 	}
 }

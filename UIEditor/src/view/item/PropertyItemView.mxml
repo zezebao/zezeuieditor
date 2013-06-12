@@ -53,6 +53,6 @@
 	</fx:Script>
 		
 	<s:Label id="nameLabel" x="10" y="10" width="35" text="标签"/>
-	<s:TextInput id="valueLabel" x="47" y="4" width="194" restrict="0-9" focusOut="valueLabel_focusOutHandler(event)"
-				 prompt="value input"/>
+	<s:TextInput id="valueLabel" x="47" y="4" width="194" borderColor="#FFFFFF"
+				 focusOut="valueLabel_focusOutHandler(event)" prompt="value input" restrict="0-9"/>
 </s:Group>

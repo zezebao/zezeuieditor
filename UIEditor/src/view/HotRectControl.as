@@ -52,10 +52,22 @@ package view
 		private var _lockX:Boolean = false;
 		private var _lockY:Boolean = false;
 		
+		private var _locked:Boolean;
+		
 		public function HotRectControl(skin:*=null,pointSkin:* = null,replace:Boolean=true)
 		{
 			createControl(pointSkin);
 			super(skin,replace);
+		}
+
+		public function get locked():Boolean
+		{
+			return _locked;
+		}
+
+		public function set locked(value:Boolean):void
+		{
+			_locked = value;
 		}
 
 		public function get uiInfo():UIElementBaseInfo
@@ -127,7 +139,10 @@ package view
 			if (value)
 			{
 				if (index == -1)
+				{
 					App.hotRectManager.selectedRects.push(this);
+					if(_selctedHander != null)_selctedHander();
+				}
 			}
 			else
 			{
@@ -376,7 +391,7 @@ package view
 		
 		private function fillMouseDownHandler(event:MouseEvent):void
 		{
-			App.hotRectManager.startDrag();
+			App.hotRectManager.startDrag(new Rectangle(0,0,2000,2000));
 		}
 		
 		private function stopDargHandler(evt:DragEvent):void
@@ -389,14 +404,13 @@ package view
 			evt.stopImmediatePropagation();
 			if (selected)
 			{
-				if(evt.shiftKey)
+				if(evt.ctrlKey)
 					selected = false;
 				return;
 			}
-			if (!evt.shiftKey)
+			if (!evt.ctrlKey)
 				App.hotRectManager.unSelectAll();
 			selected = true;
-			if(_selctedHander != null)_selctedHander();
 			
 			fillMouseDownHandler(evt);
 		}
