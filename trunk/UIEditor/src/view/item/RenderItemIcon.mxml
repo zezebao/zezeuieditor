@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Image xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 mouseDown="image1_mouseDownHandler(event)"
+		 mouseUp="image1_mouseUpHandler(event)"
+		 addedToStage="image1_addedToStageHandler(event)"
+		 >
+	
+	<fx:Script>
+		<![CDATA[
+			
+			protected function image1_mouseDownHandler(evt:MouseEvent):void
+			{
+				evt.stopImmediatePropagation();
+				evt.stopPropagation();
+			}
+			
+			protected function image1_clickHandler(event:MouseEvent):void
+			{
+				
+			}
+			
+			protected function image1_mouseUpHandler(event:MouseEvent):void
+			{
+				trace("iconClicked");
+				var parent:LayerItemRender = this.parent as LayerItemRender;
+				parent.locked = !parent.locked;
+				source = parent.locked ? "assets/security_closed_16.png" : "assets/security_open_16.png";
+			}
+			
+			protected function image1_addedToStageHandler(event:Event):void
+			{
+				var parent:LayerItemRender = this.parent as LayerItemRender;
+				source = parent.locked ? "assets/security_closed_16.png" : "assets/security_open_16.png";
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+</s:Image>

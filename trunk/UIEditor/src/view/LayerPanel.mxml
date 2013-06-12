@@ -10,13 +10,18 @@
 		<![CDATA[
 			import event.UIEvent;
 			
+			import flash.utils.getQualifiedClassName;
+			
 			import mx.collections.ArrayCollection;
 			import mx.collections.ArrayList;
 			import mx.collections.IList;
 			import mx.collections.XMLListCollection;
+			import mx.controls.listClasses.ListItemRenderer;
 			
 			import spark.events.IndexChangeEvent;
 			import spark.modules.Module;
+			
+			import view.item.RenderItemIcon;
 			
 			private var _container:DisplayObjectContainer;
 			
@@ -47,7 +52,7 @@
 					var item:HotRectControl = _container.getChildAt(i) as HotRectControl;
 					if(item)
 					{
-						dp.addItem({"label":item.name,"type":1,"info":item.uiInfo});
+						dp.addItem({"label": i + ":" + getQualifiedClassName(item.content),"type":1,"info":item.uiInfo,"icon":RenderItemIcon});
 						if(item.selected)seletcedArr.push(count);
 						count ++;
 					}
@@ -56,19 +61,102 @@
 				itemList.selectedIndices = seletcedArr;
 			}
 			
+			public function getContainer():DisplayObjectContainer
+			{
+				return _container;
+			}
+			
 			protected function upClickHandler(event:MouseEvent):void
 			{
-							
+				upHandler();
 			}
 			
 			protected function downClickHandler(event:MouseEvent):void
 			{
-				
+				downHandler();
 			}
 			
 			protected function delClickHandler(event:MouseEvent):void
 			{
+				delHandler();
+			}
+			
+			//上下顶底删
+			public function upHandler():void
+			{
+				if(!canHandle)return;
+				for (var i:int = 0; i < App.hotRectManager.selectedRects.length; i++) 
+				{
+					var index:int = _container.getChildIndex(App.hotRectManager.selectedRects[i]);
+					if(index < _container.numChildren - 1)
+					{
+						_container.swapChildrenAt(index,index + 1);
+					}
+				}
+				setChild(_container);
+			}
+			
+			public function downHandler():void
+			{
+				if(!canHandle)return;
+				for (var i:int = 0; i < App.hotRectManager.selectedRects.length; i++) 
+				{
+					var index:int = _container.getChildIndex(App.hotRectManager.selectedRects[i]);
+					if(index > 0)
+					{
+						_container.swapChildrenAt(index,index - 1);
+					}
+				}
+				setChild(_container);
+			}
+			
+			public function topHandler():void
+			{
+				if(!canHandle)return;
+				if(App.hotRectManager.selectedRects.length > 1)
+				{
+					trace("顶底只能对一个元素有效");
+					return;
+				}
+				for (var i:int = 0; i < App.hotRectManager.selectedRects.length; i++) 
+				{
+					var index:int = _container.getChildIndex(App.hotRectManager.selectedRects[i]);
+					_container.swapChildrenAt(index,_container.numChildren - 1);
+				}
+				setChild(_container);
+			}
+			
+			public function bottomHandler():void
+			{
+				if(!canHandle)return;
+				if(App.hotRectManager.selectedRects.length > 1)
+				{
+					trace("顶底只能对一个元素有效");
+					return;
+				}
+				for (var i:int = 0; i < App.hotRectManager.selectedRects.length; i++) 
+				{
+					var index:int = _container.getChildIndex(App.hotRectManager.selectedRects[i]);
+					_container.swapChildrenAt(index,0);
+				}
+				setChild(_container);
+			}
+			
+			public function delHandler():void
+			{
+				if(!canHandle)return;
+				for (var i:int = 0; i < App.hotRectManager.selectedRects.length; i++) 
+				{
+					App.hotRectManager.selectedRects[i].destory();
+				}
+				App.hotRectManager.selectedRects = new Vector.<HotRectControl>();
 				
+				setChild(_container);
+			}
+			
+			private function get canHandle():Boolean
+			{
+				return (App.hotRectManager.selectedRects.length > 0) && _container;
 			}
 			
 			private function selectionChangingHandler():void 
@@ -92,9 +180,10 @@
 	</fx:Declarations>
 	<s:Group id="layersGroup" width="100%" height="90%">
 		<mx:List id="itemList" width="100%" height="100%" color="#000000" contentBackgroundColor="#FFFFFF"
-			 allowMultipleSelection="true"
+			itemRenderer="view.item.LayerItemRender"
+			allowMultipleSelection="true"
 			iconField="icon" labelField="label"
-			click="selectionChangingHandler();"
+			change="selectionChangingHandler();"
 			>
 		</mx:List>
 	</s:Group>

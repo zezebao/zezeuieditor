@@ -64,7 +64,6 @@
 			
 			protected function combobox_changeHandler(event:IndexChangeEvent):void
 			{
-				inputLabel.text = combobox.selectedItem.label;
 				switch(combobox.selectedItem.value)
 				{
 					case UIClassType.UIDEFAULTBORDER:
@@ -82,12 +81,13 @@
 			
 			private function createPropertyItems(vec:Vector.<PropertyVo>):void
 			{
-				for (var i:int = 0; i < _itemList.length; i++) 
+				var i:int
+				for (i = 0; i < _itemList.length; i++) 
 				{
 					_itemList[i].dispose();
 				}
 				_itemList = new Vector.<PropertyItemView>();
-				for (var i:int = 0; i < vec.length; i++) 
+				for (i = 0; i < vec.length; i++) 
 				{
 					var item:PropertyItemView = new PropertyItemView();
 					item.setData(vec[i].proterty2);
@@ -111,8 +111,7 @@
 	<s:VGroup id="vGroup" y="38" width="100%" height="100%">
 	</s:VGroup>
 	<s:Group id="group" visible="false" width="100%" height="41">
-		<s:ComboBox id="combobox" x="159" y="10" width="100%" change="combobox_changeHandler(event)"/>
+		<s:ComboBox id="combobox" x="48" y="11" width="50%" change="combobox_changeHandler(event)"/>
 		<s:Label x="15" y="18" text="type:"/>
-		<s:TextInput id="inputLabel" x="54" y="10" width="93" enabled="false"/>
 	</s:Group>
 </s:Panel>

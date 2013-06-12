@@ -43,19 +43,20 @@
 	<s:Group id="group" left="0" top="58" width="100%" height="634" y="65">
 		<mx:DividedBox id="dbox" direction="horizontal" width="100%" height="100%">
 				<mx:VDividedBox direction="vertical" width="25%" height="100%">
-					<s:Panel title="元件预览" width="100%" height="30%">
+					<s:Panel width="100%" height="30%" chromeColor="#CFCFCF" title="元件预览">
 						<view:LibraryItemPreView width="100%" height="100%">
 						</view:LibraryItemPreView>
 					</s:Panel>
-					<view:LibraryPanel id="libraryPanel" title="资源" width="100%" height="70%">
+					<view:LibraryPanel id="libraryPanel" width="100%" height="70%"
+									   chromeColor="#CFCFCF" title="资源">
 					</view:LibraryPanel>
 				</mx:VDividedBox>
-				<view:StagePanel title="舞台" width="50%" height="100%">
+				<view:StagePanel width="50%" height="100%" chromeColor="#CFCFCF" title="舞台">
 				</view:StagePanel>
 				<mx:VDividedBox direction="vertical" width="25%" height="100%">
-					<view:PropertyPanel title="属性" width="100%" height="100%">
+					<view:PropertyPanel width="100%" height="100%" chromeColor="#CFCFCF" title="属性">
 					</view:PropertyPanel>
-					<view:LayerPanel title="层级" width="100%" height="100%">
+					<view:LayerPanel width="100%" height="100%" chromeColor="#CFCFCF" title="层级">
 					</view:LayerPanel>
 				</mx:VDividedBox>
 			</mx:DividedBox>

@@ -26,7 +26,7 @@ package
 		public static function setup(appStage:Stage,app:ZeZeUIEditor):void
 		{
 			stage = appStage;
-			UIManager.setup(stage,movieManager,null);
+			UIManager.setup(stage,movieManager);
 		}
 		
 		//------------库元件拖动数据--------------------

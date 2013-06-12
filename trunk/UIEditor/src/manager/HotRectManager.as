@@ -1,6 +1,12 @@
 package manager
 {
+	import data.AlignType;
 	import data.Direction;
+	
+	import event.UIEvent;
+	
+	import flash.display.DisplayObjectContainer;
+	import flash.geom.Rectangle;
 	
 	import ghostcat.events.DragEvent;
 	import ghostcat.manager.DragManager;
@@ -15,7 +21,7 @@ package manager
 		
 		private var _selectedRects:Vector.<HotRectControl> = new Vector.<HotRectControl>();
 
-		/*** 选择的对象数组 */
+		/*** 选择的对象数组(已根据子项的) */
 		public function get selectedRects():Vector.<HotRectControl>
 		{
 			return _selectedRects;
@@ -27,7 +33,7 @@ package manager
 		{
 			_selectedRects = value;
 		}
-
+		
 		/**取消全部选择*/
 		public function unSelectAll():void
 		{
@@ -40,11 +46,11 @@ package manager
 		}
 		
 		/**开始拖动*/
-		public function startDrag():void
+		public function startDrag(bounds:Rectangle=null):void
 		{
 			for each (var rect:HotRectControl in selectedRects)
 			{
-				DragManager.startDrag(rect,null,null,stopDargHandler);
+				DragManager.startDrag(rect,bounds,null,stopDargHandler);
 			}
 		}
 		
@@ -79,6 +85,99 @@ package manager
 							break;
 					}
 				}
+			}
+		}
+		
+		//对齐
+		public function autoAlign(type:int):void
+		{
+			if(selectedRects.length <= 0)return;
+			var tx:Number = selectedRects[0].x;
+			var ty:Number = selectedRects[0].y;
+			var targetIndex:int = 0;
+			var i:int;
+			switch(type)
+			{
+				case AlignType.LEFT:
+					for (i = 0; i < selectedRects.length; i++) 
+					{
+						if(tx > selectedRects[i].x)
+						{
+							tx = selectedRects[i].x;
+							targetIndex = i;
+						}
+					}
+					break;
+				case AlignType.RIGHT:
+					for (i = 0; i < selectedRects.length; i++) 
+					{
+						if(tx < selectedRects[i].x)
+						{
+							tx = selectedRects[i].x;
+							targetIndex = i;
+						}
+					}
+					break;
+				case AlignType.UP:
+					for (i = 0; i < selectedRects.length; i++) 
+					{
+						if(ty > selectedRects[i].y)
+						{
+							ty = selectedRects[i].y;
+							targetIndex = i;
+						}
+					}
+					break;
+				case AlignType.DOWN:
+					for (i = 0; i < selectedRects.length; i++) 
+					{
+						if(ty < selectedRects[i].y)
+						{
+							ty = selectedRects[i].y;
+							targetIndex = i;
+						}
+					}
+					break;
+			}
+			
+			switch(type)
+			{
+				case AlignType.LEFT:
+					for (i = 0; i < selectedRects.length; i++) 
+					{
+						selectedRects[i].x = tx;
+					}
+					break;
+				case AlignType.RIGHT:
+					for (i = 0; i < selectedRects.length; i++) 
+					{
+						selectedRects[i].x = selectedRects[targetIndex].x + selectedRects[targetIndex].width - selectedRects[i].width;
+					}
+					break;
+				case AlignType.UP:
+					for (i = 0; i < selectedRects.length; i++) 
+					{
+						selectedRects[i].y = ty;
+					}
+					break;
+				case AlignType.DOWN:
+					for (i = 0; i < selectedRects.length; i++) 
+					{
+						selectedRects[i].y = selectedRects[targetIndex].y + selectedRects[targetIndex].height - selectedRects[i].height;
+					}
+					break;
+				case AlignType.CENTER_H:
+					for (i = 0; i < selectedRects.length; i++) 
+					{
+						selectedRects[i].x = selectedRects[targetIndex].x + selectedRects[targetIndex].width / 2 - selectedRects[i].width / 2;
+					}
+					break;
+				case AlignType.CENTER_V:
+					for (i = 0; i < selectedRects.length; i++) 
+					{
+						selectedRects[i].y = selectedRects[targetIndex].y + selectedRects[targetIndex].height / 2 - selectedRects[i].height / 2;
+					}
+					break;
 			}
 		}
 	}

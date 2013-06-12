@@ -2,29 +2,66 @@
 <s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
 				   xmlns:s="library://ns.adobe.com/flex/spark"
 				   xmlns:mx="library://ns.adobe.com/flex/mx"
-				   width="608" height="38" backgroundColor="#E1E1E1">
+				   width="608" height="18" backgroundColor="#E1E1E1">
 	<s:layout>
 		<s:HorizontalLayout/>
 	</s:layout>
 	
 	<fx:Script>
 		<![CDATA[
+			import data.AlignType;
+
+
+
+
 			protected function image1_clickHandler(event:MouseEvent):void
 			{
 				
 			}
+			
+			//align
+			protected function leftAlignClick(event:MouseEvent):void
+			{
+				App.hotRectManager.autoAlign(AlignType.LEFT);
+			}
+			protected function rightAlinClick(event:MouseEvent):void
+			{
+				App.hotRectManager.autoAlign(AlignType.RIGHT);
+			}
+			protected function centerAlinClick(event:MouseEvent):void
+			{
+				App.hotRectManager.autoAlign(AlignType.CENTER_H);
+			}
+			protected function upAlinClick(event:MouseEvent):void
+			{
+				App.hotRectManager.autoAlign(AlignType.UP);
+			}
+			protected function vCenterAlinClick(event:MouseEvent):void
+			{
+				App.hotRectManager.autoAlign(AlignType.CENTER_V);
+			}
+			protected function downAlinClick(event:MouseEvent):void
+			{
+				App.hotRectManager.autoAlign(AlignType.DOWN);
+			}
+			
 		]]>
 	</fx:Script>
 	
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
-	<s:Image source="@Embed('assets/notes_add_32.png')" toolTip="新建" buttonMode="true"/>
-	<s:Image source="@Embed('assets/notes_accept_32.png')" toolTip="发布" buttonMode="true"/>
-	<s:Image source="@Embed('assets/accept_32.png')" toolTip="保存" buttonMode="true"/>
-	<s:Image source="@Embed('assets/settings_32.png')" toolTip="设置" buttonMode="true"/>
-	<s:Image buttonMode="true" source="@Embed('assets/size_both_32.png')"/>
-	<s:Image source="@Embed('assets/view_32.png')" toolTip="预览" buttonMode="true"/>
-	<s:Image source="@Embed('assets/zoom_out_32.png')" toolTip="点击缩小视图（Ctrl + -）" buttonMode="true"/>
-	<s:Image source="@Embed('assets/zoom_in_32.png')" toolTip="点击缩小视图（Ctrl + +）" buttonMode="true"/>
+	<s:Image source="@Embed('assets/systemIcons/folder.gif')" toolTip="新建" buttonMode="true"/>
+	<s:Image source="@Embed('assets/systemIcons/save.gif')" toolTip="保存" buttonMode="true"/>
+	<s:Image source="@Embed('assets/systemIcons/P_MainRunnableAs_Sm_N.png')" toolTip="发布" buttonMode="true"/>
+	<s:Image width="20" height="17" buttonMode="true" source="@Embed('assets/settings_32.png')"
+			 toolTip="设置"/>
+	<s:Image buttonMode="true" source="@Embed('assets/systemIcons/zoomin_nav.gif')" toolTip="放大"/>
+	<s:Image source="@Embed('assets/systemIcons/zoomout_nav.gif')" toolTip="缩小" buttonMode="true"/>
+	<s:Image source="@Embed('assets/systemIcons/left_alin.png')" toolTip="左对齐" buttonMode="true" click="leftAlignClick(event)"/>
+	<s:Image source="@Embed('assets/systemIcons/center_alin.png')" toolTip="中对齐（竖）" buttonMode="true" click="centerAlinClick(event)"/>
+	<s:Image source="@Embed('assets/systemIcons/right_alin.png')" toolTip="右对齐" buttonMode="true" click="rightAlinClick(event)"/>
+	<s:Image source="@Embed('assets/systemIcons/up_alin.png')" toolTip="上对齐" buttonMode="true" click="upAlinClick(event)"/>
+	<s:Image source="@Embed('assets/systemIcons/v_center_alin.png')" toolTip="中对齐（横）" buttonMode="true" click="vCenterAlinClick(event)"/>
+	<s:Image source="@Embed('assets/systemIcons/down_alin.png')" toolTip="下对齐" buttonMode="true" click="downAlinClick(event)"/>
 </s:BorderContainer>

@@ -3,7 +3,8 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark"
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 width="400" height="300" addedToStage="panel1_addedToStageHandler(event)"
-		 dragEnter="group1_dragEnterHandler(event)" dragExit="panel1_dragExitHandler(event)">
+		 backgroundColor="0xcccccc" chromeColor="#CFCFCF" dragEnter="group1_dragEnterHandler(event)"
+		 dragExit="panel1_dragExitHandler(event)" resize="panel1_resizeHandler(event)">
 	<fx:Script>
 		<![CDATA[
 			import avmplus.getQualifiedClassName;
@@ -14,37 +15,49 @@
 			
 			import flash.utils.describeType;
 			
+			import ghostcat.ui.CursorSprite;
+			
+			import manager.LayerManager;
+			
 			import mhqy.ui.label.MAssetLabel;
 			
 			import mx.core.UIComponent;
 			import mx.events.DragEvent;
+			import mx.events.ResizeEvent;
 			
 			import utils.UICreater;
 			
+			//容器
 			private var _uiContainer:UIComponent;
-			private var _popContainer:UIComponent;
-			private var _topContainer:UIComponent;
+			private var _hitContainer:UIComponent;//选择热区辅助
+			private var _uiMask:UIComponent;
 			
 			private var _direction:int = 0;
 			
+			//拖动区域
+			private var _oldX:Number;
+			private var _oldY:Number;
+			
 			protected function panel1_addedToStageHandler(event:Event):void
 			{
-				// TODO Auto-generated method stub
+				_uiMask = new UIComponent();
+				addElement(_uiMask);
+				_uiMask.graphics.beginFill(0,0);
+				_uiMask.graphics.drawRect(0,0,this.width,this.height);
+				_uiMask.graphics.endFill();
+					
 				_uiContainer = new UIComponent();
-				_uiContainer.graphics.beginFill(0,0);
+				_uiContainer.graphics.beginFill(0xffffff,1);
 				_uiContainer.graphics.drawRect(0,0,3000,3000);
 				_uiContainer.graphics.endFill();
 				addElement(_uiContainer);
-				_popContainer = new UIComponent();
-				addElement(_popContainer);
-				_topContainer = new UIComponent();
-				addElement(_topContainer);
+				_uiContainer.mask = _uiMask;
+				_hitContainer = new UIComponent();
+				addElement(_hitContainer);
 				
-//				_topContainer.addChild(new CursorSprite());
+//				_uiContainer.addChild(new CursorSprite());
 				
 				initEvent();
-				
-				trace(getQualifiedClassName(MAssetLabel));
 			}
 			
 			private function initEvent():void
@@ -52,11 +65,14 @@
 				this.addEventListener(MouseEvent.MOUSE_DOWN, unSelectedHotRectHandler);
 				stage.addEventListener(KeyboardEvent.KEY_DOWN,onKeyDownHandler);
 				stage.addEventListener(KeyboardEvent.KEY_UP,onKeyUpHandler);	
+				this.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN,onRightDownHandler);
+				stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP,onRightUpHandler);
 				App.addEventListener(UIEvent.LAYERS_SELECT_UPDATE,onSelectUpdateHandler);
 			}
 			
 			protected function onKeyDownHandler(evt:KeyboardEvent):void
 			{
+				trace("按钮按下：",evt.keyCode);
 				switch(evt.keyCode)
 				{
 					case Keyboard.A:
@@ -69,11 +85,30 @@
 						break;
 					case Keyboard.W:
 					case Keyboard.UP:
-						_direction = _direction | Direction.UP;
+						if(evt.ctrlKey && evt.shiftKey)
+						{
+							App.layerManager.layerHandler(LayerManager.TOP);
+						}else if(evt.ctrlKey)
+						{
+							App.layerManager.layerHandler(LayerManager.UP);
+						}else{
+							_direction = _direction | Direction.UP;
+						}
 						break;
 					case Keyboard.S:
 					case Keyboard.DOWN:
-						_direction = _direction | Direction.DOWN;
+						if(evt.ctrlKey && evt.shiftKey)
+						{
+							App.layerManager.layerHandler(LayerManager.BOTTOM);
+						}else if(evt.ctrlKey)
+						{
+							App.layerManager.layerHandler(LayerManager.DOWN);
+						}else{
+							_direction = _direction | Direction.DOWN;
+						}
+						break;
+					case Keyboard.DELETE:
+						App.layerManager.layerHandler(LayerManager.DEL);
 						break;
 					
 				}
@@ -91,17 +126,17 @@
 					case Keyboard.LEFT:
 						_direction = _direction & 0;
 						break;
-					case Keyboard.S:
+					case Keyboard.D:
 					case Keyboard.RIGHT:
 						_direction = _direction & 0;
 						break;
 					case Keyboard.W:
 					case Keyboard.UP:
-						_direction = _direction & 0;
+						_direction = _direction & 0;	
 						break;
-					case Keyboard.D:
+					case Keyboard.S:
 					case Keyboard.DOWN:
-						_direction = _direction & 0;
+						_direction = _direction & 0;	
 						break;
 				}
 				if(_direction == 0)
@@ -117,10 +152,18 @@
 			
 			private function unSelectedHotRectHandler(evt:MouseEvent):void 
 			{
-				trace(evt.currentTarget,evt.target);
-				App.hotRectManager.unSelectAll();
 				stage.focus = this;
-				App.dispathEvent(new UIEvent(UIEvent.STAGE_SELECT_UPDATE,[]));
+				if(App.hotRectManager.selectedRects.length > 0)
+				{
+					App.hotRectManager.unSelectAll();
+					App.dispathEvent(new UIEvent(UIEvent.STAGE_SELECT_UPDATE,[]));
+				}
+				
+				_oldX = _uiContainer.mouseX;
+				_oldY = _uiContainer.mouseY;
+				
+				stage.addEventListener(MouseEvent.MOUSE_MOVE,onMouseMoveHandler);
+				stage.addEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
 			}
 			
 			protected function group1_dragEnterHandler(event:DragEvent):void
@@ -134,7 +177,8 @@
 				if(child)
 				{
 					var hotRect:HotRectControl = new HotRectControl(child);
-					hotRect.move(mouseX,mouseY);
+					hotRect.x = _uiContainer.mouseX;
+					hotRect.y = _uiContainer.mouseY;
 					hotRect.selctedHander = updateLayerSelects;
 					_uiContainer.addChild(hotRect);
 					
@@ -174,6 +218,65 @@
 				App.dispathEvent(new UIEvent(UIEvent.STAGE_SELECT_UPDATE,arr));
 			}
 			
+			protected function onMouseUpHandler(event:MouseEvent):void
+			{
+				stage.removeEventListener(MouseEvent.MOUSE_MOVE,onMouseMoveHandler);
+				stage.removeEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
+				
+				for (var i:int = 0; i < _uiContainer.numChildren; i++) 
+				{
+					var hotRect:HotRectControl = _uiContainer.getChildAt(i) as HotRectControl;
+					if(hotRect)
+					{
+						if(hotRect.hitTestObject(_hitContainer))hotRect.selected = true;
+					}
+				}
+				_hitContainer.graphics.clear();
+			}
+			
+			protected function onMouseMoveHandler(event:MouseEvent):void
+			{
+				_hitContainer.graphics.clear();
+				_hitContainer.graphics.lineStyle(1,0x00ff00,1);
+				_hitContainer.graphics.drawRect(rect.x,rect.y,rect.width,rect.height);
+				_hitContainer.graphics.endFill();
+			}
+			
+			private function get rect():Rectangle
+			{
+				return new Rectangle(
+					(_oldX < _uiContainer.mouseX) ? _oldX : _uiContainer.mouseX,
+					(_oldY < _uiContainer.mouseY) ? _oldY : _uiContainer.mouseY,
+					Math.abs(_uiContainer.mouseX - _oldX),
+					Math.abs(_uiContainer.mouseY - _oldY)
+					);
+			}
+			
+			protected function onRightDownHandler(event:MouseEvent):void
+			{
+				_uiContainer.startDrag(false);
+				Mouse.cursor = MouseCursor.HAND;
+			}
+			
+			protected function onRightUpHandler(event:MouseEvent):void
+			{
+				_uiContainer.stopDrag();
+				Mouse.cursor = MouseCursor.AUTO;
+				_hitContainer.x = _uiContainer.x;
+				_hitContainer.y = _uiContainer.y;
+			}
+			
+			protected function panel1_resizeHandler(event:ResizeEvent):void
+			{
+				if(_uiMask)
+				{
+					_uiMask.graphics.clear();
+					_uiMask.graphics.beginFill(0,0);
+					_uiMask.graphics.drawRect(0,0,this.width,this.height);
+					_uiMask.graphics.endFill();
+				}
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -181,7 +284,6 @@
 	</fx:Declarations>
 	<s:Scroller width="100%" height="100%">
 		<s:Group> 
-			<mx:Image left="0" top="0" width="100%" height="100%"/> 
 		</s:Group>        
 	</s:Scroller>
 </s:Panel>
