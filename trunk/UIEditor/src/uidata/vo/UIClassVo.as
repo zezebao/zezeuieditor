@@ -5,6 +5,7 @@ package uidata.vo
 	
 	import flash.display.DisplayObject;
 	
+	import uidata.UIClassType;
 	import uidata.UIElementBaseInfo;
 
 	/**
@@ -33,5 +34,18 @@ package uidata.vo
 			}
 			this.info = info;
 		}
+		
+		public function get describe():String
+		{
+			switch(info.type)
+			{
+				case UIClassType.UIBITMAP:return "UI_BITMAP";
+				case UIClassType.UIDEFAULTBAR:return "UI_BAR";
+				case UIClassType.UIDEFAULTBORDER:return "UI_BORDER";
+				case UIClassType.UIDEFAULTBUTTON:return "UI_BTN";
+			}
+			return "";
+		}
+		
 	}
 }

@@ -2,7 +2,10 @@ package view
 {
 	import data.Direction;
 	
+	import event.UIEvent;
+	
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -22,6 +25,8 @@ package view
 	import ghostcat.parse.graphics.GraphicsRect;
 	import ghostcat.ui.CursorSprite;
 	import ghostcat.util.display.DisplayUtil;
+	
+	import test111111111111111.UIElementCreatorTest;
 	
 	import uidata.UIElementBaseInfo;
 	
@@ -78,11 +83,43 @@ package view
 		public function set uiInfo(value:UIElementBaseInfo):void
 		{
 			_uiInfo = value;
-//			createControl(null);
-//			super.skin = _uiInfo.className;
+			_uiInfo.addEventListener(UIEvent.INFO_UPDATE_PROPERTY,onInfoChangeHandler);
+			if(!_uiInfo.canScale)
+			{
+				lockX = false;
+				lockY = false;
+			}
+			creatSkin();
 			
+			_uiInfo.width = content.width;
+			_uiInfo.height = content.height;
 		}
-
+		
+		private function creatSkin():void
+		{
+			_uiInfo.x = x;
+			_uiInfo.y = y;
+			super.skin = UIElementCreatorTest.createItem(_uiInfo);
+			x = _uiInfo.x;
+			y = _uiInfo.y;
+		}
+		
+		protected function onInfoChangeHandler(evt:UIEvent):void
+		{
+			var isChangeView:Boolean = Boolean(evt.data);
+			if(isChangeView)
+			{
+				creatSkin();
+			}else
+			{
+				content.width = _uiInfo.width;
+				content.height = _uiInfo.height;
+				this.x = _uiInfo.x;
+				this.y = _uiInfo.y;
+			}
+			updateControls();
+		}
+		
 		/**设置是否可改变大小*/
 		public function set canChange(value:Boolean):void
 		{
@@ -252,6 +289,7 @@ package view
 			rightLineControl.setPosition(new Point(rect.right,rect.y + rect.height/2),true);
 			
 			trace("宽高：",content.width,content.height);
+			updateWD();
 		}
 		
 		private function setContentRect(x:Number = NaN,y:Number = NaN,width:Number = NaN ,height:Number = NaN):void
@@ -391,12 +429,33 @@ package view
 		
 		private function fillMouseDownHandler(event:MouseEvent):void
 		{
-			App.hotRectManager.startDrag(new Rectangle(0,0,2000,2000));
+			App.hotRectManager.startDrag(new Rectangle(0,0,2000,2000),null,stopDargHandler);
 		}
 		
 		private function stopDargHandler(evt:DragEvent):void
 		{
 			trace("当前位置：",this.x,this.y);
+			updatePos();	
+		}
+		
+		public function updateWD():void
+		{
+			if(_uiInfo)
+			{
+				_uiInfo.width = content.width;
+				_uiInfo.height = content.height;
+				_uiInfo.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_STAGE));
+			}
+		}
+		
+		public function updatePos():void
+		{
+			if(_uiInfo)
+			{
+				_uiInfo.x = this.x;
+				_uiInfo.y = this.y;
+				_uiInfo.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_STAGE));
+			}
 		}
 		
 		private function mouseDownHandler(evt:MouseEvent):void
@@ -411,7 +470,7 @@ package view
 			if (!evt.ctrlKey)
 				App.hotRectManager.unSelectAll();
 			selected = true;
-			
+				
 			fillMouseDownHandler(evt);
 		}
 		

@@ -13,6 +13,8 @@ package
 	import mhqy.ui.UIManager;
 	
 	import mhsm.moviewrapper.MovieManager;
+	
+	import uidata.UIData;
 
 	public class App
 	{
@@ -27,6 +29,7 @@ package
 		{
 			stage = appStage;
 			UIManager.setup(stage,movieManager);
+			UIData.setup();
 		}
 		
 		//------------库元件拖动数据--------------------

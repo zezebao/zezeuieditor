@@ -21,6 +21,11 @@ package event
 		 */
 		public static const STAGE_SELECT_UPDATE:String = "layersSelectUpdate";
 		
+		/**info更新,舞台触发[数据：无]*/
+		public static const INFO_UPDATE_STAGE:String = "infoUpdateStage";
+		/**info更新,属性面板触发[数据：Boolean，是否重新获取外形]*/
+		public static const INFO_UPDATE_PROPERTY:String = "infoUpdateProperty";
+		
 		public var data:Object;
 		
 		public function UIEvent(type:String, data:Object=null, bubbles:Boolean=false, cancelable:Boolean=false)

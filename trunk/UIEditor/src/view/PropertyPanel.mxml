@@ -14,12 +14,15 @@
 			import spark.events.IndexChangeEvent;
 			
 			import uidata.UIClassType;
+			import uidata.UIElementBaseInfo;
 			import uidata.UIElementBorderInfo;
 			import uidata.vo.PropertyVo;
 			
 			import view.item.PropertyItemView;
 			
 			private var _itemList:Vector.<PropertyItemView> = new Vector.<PropertyItemView>();
+
+			private var array:ArrayCollection;
 			
 			protected function addToStageHandler(event:Event):void
 			{
@@ -38,26 +41,37 @@
 				group.visible = false;
 				if(App.hotRectManager.selectedRects.length == 0)
 				{
-					//
+					clearItems();
 				}else if(App.hotRectManager.selectedRects.length == 1)
 				{
-					//
-					group.visible = true;
 					var rect:HotRectControl = App.hotRectManager.selectedRects[0];
 					var vec:Vector.<PropertyVo> = rect.uiInfo.getPropertys();
-					createPropertyItems(vec);
+					rect.uiInfo.addEventListener(UIEvent.INFO_UPDATE_STAGE,onInfoUpdateHandler);
+					createPropertyItems(vec,rect.uiInfo);
+					
+					//可编辑状态
+					group.visible = true;
+					for(var i:int=0;i<array.length;i++){
+						var obj:Object = array.getItemAt(i);
+						if(obj.value == rect.uiInfo.type)
+						{
+							combobox.selectedIndex = i;
+							break;
+						}
+					}
 				}else
 				{
-					//
+					clearItems();
 				}
 			}
 			
 			private function initData():void
 			{
-				var array:ArrayCollection = new ArrayCollection();
+				array = new ArrayCollection();
 				array.addItem({label:"UI_BITMAP",value:UIClassType.UIBITMAP});
 				array.addItem({label:"UI_BORDER",value:UIClassType.UIDEFAULTBORDER});
 				array.addItem({label:"UI_BAR",value:UIClassType.UIDEFAULTBAR});
+				array.addItem({label:"UI_BUTTON",value:UIClassType.UIDEFAULTBUTTON});
 				combobox.dataProvider = array;
 				combobox.selectedIndex = 0;
 			}
@@ -68,9 +82,9 @@
 				{
 					case UIClassType.UIDEFAULTBORDER:
 						var rect:HotRectControl = App.hotRectManager.selectedRects[0];
-						rect.uiInfo = new UIElementBorderInfo();
+//						rect.uiInfo = new UIElementBorderInfo();
 						var vec:Vector.<PropertyVo> = rect.uiInfo.getPropertys();
-						createPropertyItems(vec);
+						createPropertyItems(vec,rect.uiInfo);
 						break;
 					case UIClassType.UIDEFAULTBAR:
 						
@@ -79,7 +93,7 @@
 				
 			}
 			
-			private function createPropertyItems(vec:Vector.<PropertyVo>):void
+			private function createPropertyItems(vec:Vector.<PropertyVo>,uiInfo:UIElementBaseInfo):void
 			{
 				var i:int
 				for (i = 0; i < _itemList.length; i++) 
@@ -90,16 +104,33 @@
 				for (i = 0; i < vec.length; i++) 
 				{
 					var item:PropertyItemView = new PropertyItemView();
-					item.setData(vec[i].proterty2);
+					item.setData(vec[i].proterty,vec[i],uiInfo);
 					vGroup.addElement(item);
 					_itemList.push(item);
 					item.addEventListener(Event.CHANGE,onItemChangeHandler);
 				}
 			}
 			
+			private function clearItems():void
+			{
+				for (var i:int = 0; i < _itemList.length; i++) 
+				{
+					_itemList[i].dispose();
+				}
+				_itemList = new Vector.<PropertyItemView>();
+			}
+			
 			protected function onItemChangeHandler(event:Event):void
 			{
 								
+			}
+			
+			protected function onInfoUpdateHandler(event:Event):void
+			{
+				for (var i:int = 0; i < _itemList.length; i++) 
+				{
+					_itemList[i].updateView();
+				}				
 			}
 			
 		]]>

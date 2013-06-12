@@ -12,17 +12,15 @@ package uidata.vo
 	{
 		/**属性名*/
 		public var proterty:String;
-		/**属性说明*/
-		public var proterty2:String;
+		/**属性值类型*/
 		public var proClass:Class;
 		public var value:Object;
 		public var isCanEdit:Boolean;
-		
 		public var dataProvider:ArrayCollection;
-		
+		/**改变此属性是否会刷新视图*/
+		public var isChangeView:Boolean;
 		/**
 		 * @param pname   属性名
-		 * @param pname2  属性别名（说明）
 		 * @param type    值类型
 		 * @param value   值
 		 * @param data   
@@ -34,13 +32,13 @@ package uidata.vo
 		 * 3.如类型为Number，则手动赋值
 		 * 4.如类型为String 
 		 */				
-		public function PropertyVo(pname:String,pname2:String,type:Class,pvalue:Object,datas:Array=null,labels:Array=null,canEdit:Boolean=true)
+		public function PropertyVo(pname:String,type:Class,pvalue:Object,datas:Array=null,labels:Array=null,canEdit:Boolean=true,isChangeView:Boolean=false)
 		{
 			proterty = pname;		
-			proterty2 = pname2;
 			proClass = type;
 			value = pvalue;
 			isCanEdit = canEdit;
+			this.isChangeView = isChangeView;
 			if(datas != null)
 			{
 				dataProvider = new ArrayCollection();
