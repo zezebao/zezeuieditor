@@ -6,15 +6,20 @@ package uidata
 	public class UIClassInfo extends EventDispatcher
 	{
 		public var className:String;
+		public var folder:String;
 		public var childrenInfo:Vector.<UIElementBaseInfo> = new Vector.<UIElementBaseInfo>();
 		
-		public function UIClassInfo(className:String)
+		public function UIClassInfo(className:String,folder:String)
 		{
 			this.className = className;
+			this.folder = folder;
 			super();
 		}
 		
-		
+		public function parseXML(data:XML):void
+		{
+			
+		}
 		
 		public function get xml():XML
 		{
@@ -24,6 +29,7 @@ package uidata
 				content += "<item " + childrenInfo[i].toString() + " />\n";
 			}
 			content += "</className>\n";
+			return XML(content);
 		}
 	}
 }

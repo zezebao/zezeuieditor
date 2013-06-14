@@ -1,6 +1,7 @@
 package
 {
 	import data.ShareObjManger;
+	import uidata.UIClassInfoList;
 	import data.vo.LibraryDragVo;
 	
 	import flash.display.Stage;
@@ -23,6 +24,8 @@ package
 	public class App
 	{
 		public static var stage:Stage;
+		
+		public static var classInfoList:UIClassInfoList = new UIClassInfoList();
 		
 		public static var soManger:ShareObjManger = new ShareObjManger();;
 		public static var hotRectManager:HotRectManager = new HotRectManager();
