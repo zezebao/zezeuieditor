@@ -4,6 +4,7 @@ package manager
 	
 	import view.HotRectControl;
 	import view.LayerPanel;
+	import view.StagePanel;
 
 	public class LayerManager
 	{
@@ -14,6 +15,7 @@ package manager
 		public static const DEL:uint = 5;
 		
 		public var layerPanel:LayerPanel;
+		public var stagePanel:StagePanel;
 		
 		public function LayerManager()
 		{

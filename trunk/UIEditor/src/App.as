@@ -7,11 +7,15 @@ package
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
+	import help.ResourceTxtLoader;
+	
 	import manager.HotRectManager;
 	import manager.LayerManager;
+	import manager.XMLParser;
 	
 	import mhqy.ui.UIManager;
 	
+	import mhsm.core.manager.LanguageManager;
 	import mhsm.moviewrapper.MovieManager;
 	
 	import uidata.UIData;
@@ -24,12 +28,15 @@ package
 		public static var hotRectManager:HotRectManager = new HotRectManager();
 		public static var layerManager:LayerManager = new LayerManager();
 		public static var movieManager:MovieManager = new MovieManager();
+		public static var xmlParser:XMLParser = new XMLParser();
+		
+		public static var uiData:UIData = new UIData();
 		
 		public static function setup(appStage:Stage,app:ZeZeUIEditor):void
 		{
 			stage = appStage;
-			UIManager.setup(stage,movieManager);
-			UIData.setup();
+			UIManager.setup(stage,movieManager,null,null);
+			new ResourceTxtLoader();
 		}
 		
 		//------------库元件拖动数据--------------------

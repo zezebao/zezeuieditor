@@ -2,6 +2,10 @@ package interfaces
 {
 	public interface ICloneAble
 	{
-		function clone():*;
+		/**
+		 * @param source copy souce
+		 * @return 
+		 */		
+		function clone(source:*):*;
 	}
 }

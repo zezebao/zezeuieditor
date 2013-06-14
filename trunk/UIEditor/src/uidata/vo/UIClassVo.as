@@ -5,7 +5,8 @@ package uidata.vo
 	
 	import flash.display.DisplayObject;
 	
-	import uidata.UIClassType;
+	import mhqy.ui.UIType;
+	
 	import uidata.UIElementBaseInfo;
 
 	/**
@@ -14,6 +15,7 @@ package uidata.vo
 	 */
 	public class UIClassVo
 	{
+		public var describe:String;
 		public var className:String;
 		public var info:UIElementBaseInfo;
 		public var parms:Array;
@@ -22,30 +24,11 @@ package uidata.vo
 		 * @param info
 		 * @param parms  构造函数需要的默认参数
 		 */		
-		public function UIClassVo(className:*,info:UIElementBaseInfo,...parms)
+		public function UIClassVo(describe:String,info:UIElementBaseInfo,...parms)
 		{
+			this.describe = describe;
 			this.parms = parms;
-			if(className is String)
-			{
-				this.className = className;
-			}else if(className is Class || className is DisplayObject)
-			{
-				this.className = getQualifiedClassName(className);
-			}
 			this.info = info;
 		}
-		
-		public function get describe():String
-		{
-			switch(info.type)
-			{
-				case UIClassType.UIBITMAP:return "UI_BITMAP";
-				case UIClassType.UIDEFAULTBAR:return "UI_BAR";
-				case UIClassType.UIDEFAULTBORDER:return "UI_BORDER";
-				case UIClassType.UIDEFAULTBUTTON:return "UI_BTN";
-			}
-			return "";
-		}
-		
 	}
 }

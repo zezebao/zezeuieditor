@@ -1,26 +1,65 @@
 package uidata
 {
+	import data.PropertyType;
+	
+	import flash.utils.ByteArray;
+	import flash.utils.IDataOutput;
+	
+	import mhqy.ui.UIType;
+	
 	import uidata.vo.PropertyVo;
 
 	public class UIElementBarInfo extends UIElementBaseInfo
 	{
-		public var barType:int = 1;
+		public var barType:int;
 		
-		public function UIElementBarInfo()
+		public function UIElementBarInfo(barType:int=1)
 		{
-			type = UIClassType.UIDEFAULTBAR;
+			this.barType = barType;
+			
+			type = UIType.BAR;
 			canScale = true;
 			width = 100;
 			height = 20;
 		}
 		
+		override public function clone(source:*):*
+		{
+			if(!(source is UIElementBarInfo))
+			{
+				throw new Error("clone error");
+			}
+			var info:UIElementBarInfo = source as UIElementBarInfo;
+			info.barType = barType;
+			super.clone(source);
+			return info;
+		}
+		
+		override public function readXML(xml:XML):void
+		{
+			super.readXML(xml);
+			barType = xml.@barType;
+		}
+		
+		override public function writeData(source:IDataOutput):void
+		{
+			super.writeData(source);
+			source.writeByte(barType);
+		}
+		
 		override public function getPropertys():Vector.<PropertyVo>
 		{
 			var vec:Vector.<PropertyVo> = new Vector.<PropertyVo>();
-			vec.push(new PropertyVo("barType",Number,this.barType,[1,3,6,7,8],null,true,true));
+			vec.push(new PropertyVo("barType","bar类型",PropertyType.DATAPROVIDER,this.barType,[1,2,3,4,5],true,true));
 			return vec.concat(super.getPropertys());
 		}
 		
-		
+		override public function toString():String
+		{
+			var arr:Array = [
+				["barType",barType]
+			];
+			return creatContent(arr) + super.toString();
+		}
 	}
 }

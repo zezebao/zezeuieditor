@@ -40,13 +40,11 @@
 	<ns1:ToolBar id="toolBar" width="100%" x="0" y="22" />
 	<view:UIMenuBar id="uiMenuBar" x="0" y="0" width="100%" symbolColor="#FFFFFF"/>
 	<!-- Panel添加伸缩 -->
-	<s:Group id="group" left="0" top="58" width="100%" height="634" y="65">
+	<s:Group id="group" left="0" top="58" width="100%" height="634" y="45">
 		<mx:DividedBox id="dbox" direction="horizontal" width="100%" height="100%">
 				<mx:VDividedBox direction="vertical" width="25%" height="100%">
-					<s:Panel width="100%" height="30%" chromeColor="#CFCFCF" title="元件预览">
-						<view:LibraryItemPreView width="100%" height="100%">
-						</view:LibraryItemPreView>
-					</s:Panel>
+					<view:ClassListPanel width="100%" height="30%" chromeColor="#CFCFCF" title="类列表">
+					</view:ClassListPanel>
 					<view:LibraryPanel id="libraryPanel" width="100%" height="70%"
 									   chromeColor="#CFCFCF" title="资源">
 					</view:LibraryPanel>

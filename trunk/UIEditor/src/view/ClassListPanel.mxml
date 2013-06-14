@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+		 addedToStage="panel1_addedToStageHandler(event)"
+		 >
+	<fx:Script>
+		<![CDATA[
+			import data.Config;
+			
+			import ghostcat.events.OperationEvent;
+			import ghostcat.operation.load.LoadOper;
+			
+			import mx.events.ListEvent;
+			
+			import utils.UIDataUtil;
+			
+			protected function panel1_addedToStageHandler(event:Event):void
+			{
+				init();
+				initEvent();
+			}
+			
+			private function init():void
+			{
+				open();
+			}
+			
+			private function initEvent():void
+			{
+				
+			}
+			
+			protected function classList_itemDoubleClickHandler(event:ListEvent):void
+			{
+				trace(event);			
+			}
+			
+			public function open():void
+			{
+				var loader:LoadOper = new LoadOper(Config.outputXMLPath,null,rhandler);
+				loader.type = LoadOper.URLLOADER;
+				loader.dataFormat = URLLoaderDataFormat.TEXT;
+				loader.commit();
+			}
+			
+			private function rhandler(evt:OperationEvent):void
+			{
+				trace((evt.target as LoadOper).data);
+				App.xmlParser.parseData((evt.target as LoadOper).data); 
+				
+				classList.dataProvider = App.xmlParser.getChildList();
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	
+	<mx:List id="classList" width="100%" height="100%" color="#000000" contentBackgroundColor="#FFFFFF"
+			 iconField="icon" labelField="label"
+			 itemDoubleClick="classList_itemDoubleClickHandler(event)"
+			 >
+	</mx:List>
+</s:Panel>

@@ -1,6 +1,7 @@
 package data
 {
-	public class AlignType
+	/**UI布局对齐方式*/
+	public class LayoutAlignType
 	{
 		public static const LEFT:uint = 1;
 		public static const RIGHT:uint = 2;
@@ -8,6 +9,5 @@ package data
 		public static const DOWN:uint = 4;
 		public static const CENTER_V:uint = 5;
 		public static const CENTER_H:uint = 6;
-		
 	}
 }

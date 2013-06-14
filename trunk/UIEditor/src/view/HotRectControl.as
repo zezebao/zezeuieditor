@@ -9,6 +9,7 @@ package view
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.text.TextField;
 	
 	import flashx.textLayout.events.UpdateCompleteEvent;
 	
@@ -26,9 +27,10 @@ package view
 	import ghostcat.ui.CursorSprite;
 	import ghostcat.util.display.DisplayUtil;
 	
-	import test111111111111111.UIElementCreatorTest;
-	
 	import uidata.UIElementBaseInfo;
+	import uidata.vo.PropertyVo;
+	
+	import utils.UIElementCreator;
 	
 	/**
 	 * 图像变形控制器，点击自动选中，并调整大小
@@ -42,7 +44,7 @@ package view
 		/*** 线型*/
 		protected var lineStyle:GraphicsLineStyle = new GraphicsLineStyle(0,0);
 		/*** 填充*/
-		protected var fill:GraphicsFill = new GraphicsFill(0xFFFFFF,0.5);
+		protected var fill:GraphicsFill = new GraphicsFill(0xFFFFFF,0.1);
 		
 		protected var fillControl:GBase;
 		protected var topLeftControl:DragPoint;
@@ -86,8 +88,8 @@ package view
 			_uiInfo.addEventListener(UIEvent.INFO_UPDATE_PROPERTY,onInfoChangeHandler);
 			if(!_uiInfo.canScale)
 			{
-				lockX = false;
-				lockY = false;
+				lockX = true;
+				lockY = true;
 			}
 			creatSkin();
 			
@@ -99,7 +101,7 @@ package view
 		{
 			_uiInfo.x = x;
 			_uiInfo.y = y;
-			super.skin = UIElementCreatorTest.createItem(_uiInfo);
+			super.skin = UIElementCreator.createItem(_uiInfo);
 			x = _uiInfo.x;
 			y = _uiInfo.y;
 		}
@@ -112,10 +114,10 @@ package view
 				creatSkin();
 			}else
 			{
-				content.width = _uiInfo.width;
-				content.height = _uiInfo.height;
+				trace("update propertys");
 				this.x = _uiInfo.x;
 				this.y = _uiInfo.y;
+				UIElementCreator.update(content,_uiInfo);
 			}
 			updateControls();
 		}
@@ -170,7 +172,6 @@ package view
 		public override function set selected(value:Boolean):void
 		{
 			super.selected = value;
-			
 			var index:int;
 			index = App.hotRectManager.selectedRects.indexOf(this);
 			if (value)
@@ -179,6 +180,7 @@ package view
 				{
 					App.hotRectManager.selectedRects.push(this);
 					if(_selctedHander != null)_selctedHander();
+					stage.focus = App.layerManager.stagePanel;
 				}
 			}
 			else
@@ -263,7 +265,6 @@ package view
 			super.skin = value;
 		}
 		
-		
 		/**
 		 * 更新控制点
 		 * 
@@ -275,8 +276,14 @@ package view
 			{
 				return;
 			}
-			var rect:Rectangle = content.getBounds(this);
-			
+			var rect:Rectangle;
+			if(content is TextField)
+			{
+				rect = new Rectangle(0,0,content.width,content.height);
+			}else
+			{
+				rect = content.getBounds(this);
+			}
 			new RectParse(new GraphicsRect(rect.x,rect.y,rect.width,rect.height),lineStyle,fill,null,true).parse(fillControl);
 			
 			topLeftControl.setPosition(new Point(rect.x,rect.y),true);
@@ -465,12 +472,12 @@ package view
 			{
 				if(evt.ctrlKey)
 					selected = false;
+				stage.focus = App.layerManager.stagePanel;
 				return;
 			}
 			if (!evt.ctrlKey)
 				App.hotRectManager.unSelectAll();
 			selected = true;
-				
 			fillMouseDownHandler(evt);
 		}
 		

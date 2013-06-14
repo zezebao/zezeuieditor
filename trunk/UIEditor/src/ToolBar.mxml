@@ -9,7 +9,7 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import data.AlignType;
+			import data.LayoutAlignType;
 
 
 
@@ -22,27 +22,37 @@
 			//align
 			protected function leftAlignClick(event:MouseEvent):void
 			{
-				App.hotRectManager.autoAlign(AlignType.LEFT);
+				App.hotRectManager.autoAlign(LayoutAlignType.LEFT);
 			}
 			protected function rightAlinClick(event:MouseEvent):void
 			{
-				App.hotRectManager.autoAlign(AlignType.RIGHT);
+				App.hotRectManager.autoAlign(LayoutAlignType.RIGHT);
 			}
 			protected function centerAlinClick(event:MouseEvent):void
 			{
-				App.hotRectManager.autoAlign(AlignType.CENTER_H);
+				App.hotRectManager.autoAlign(LayoutAlignType.CENTER_H);
 			}
 			protected function upAlinClick(event:MouseEvent):void
 			{
-				App.hotRectManager.autoAlign(AlignType.UP);
+				App.hotRectManager.autoAlign(LayoutAlignType.UP);
 			}
 			protected function vCenterAlinClick(event:MouseEvent):void
 			{
-				App.hotRectManager.autoAlign(AlignType.CENTER_V);
+				App.hotRectManager.autoAlign(LayoutAlignType.CENTER_V);
 			}
 			protected function downAlinClick(event:MouseEvent):void
 			{
-				App.hotRectManager.autoAlign(AlignType.DOWN);
+				App.hotRectManager.autoAlign(LayoutAlignType.DOWN);
+			}
+			
+			protected function image2_clickHandler(event:MouseEvent):void
+			{
+				App.xmlParser.publish();				
+			}
+			
+			protected function image3_clickHandler(event:MouseEvent):void
+			{
+				App.xmlParser.save();
 			}
 			
 		]]>
@@ -52,8 +62,8 @@
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
 	<s:Image source="@Embed('assets/systemIcons/folder.gif')" toolTip="新建" buttonMode="true"/>
-	<s:Image source="@Embed('assets/systemIcons/save.gif')" toolTip="保存" buttonMode="true"/>
-	<s:Image source="@Embed('assets/systemIcons/P_MainRunnableAs_Sm_N.png')" toolTip="发布" buttonMode="true"/>
+	<s:Image source="@Embed('assets/systemIcons/save.gif')" toolTip="保存" buttonMode="true" click="image3_clickHandler(event)"/>
+	<s:Image source="@Embed('assets/systemIcons/P_MainRunnableAs_Sm_N.png')" toolTip="发布" buttonMode="true" click="image2_clickHandler(event)"/>
 	<s:Image width="20" height="17" buttonMode="true" source="@Embed('assets/settings_32.png')"
 			 toolTip="设置"/>
 	<s:Image buttonMode="true" source="@Embed('assets/systemIcons/zoomin_nav.gif')" toolTip="放大"/>
