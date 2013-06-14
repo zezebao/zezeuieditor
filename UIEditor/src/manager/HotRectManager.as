@@ -1,6 +1,6 @@
 package manager
 {
-	import data.AlignType;
+	import data.LayoutAlignType;
 	import data.Direction;
 	
 	import event.UIEvent;
@@ -93,7 +93,7 @@ package manager
 			var i:int;
 			switch(type)
 			{
-				case AlignType.LEFT:
+				case LayoutAlignType.LEFT:
 					for (i = 0; i < selectedRects.length; i++) 
 					{
 						if(tx > selectedRects[i].x)
@@ -103,7 +103,7 @@ package manager
 						}
 					}
 					break;
-				case AlignType.RIGHT:
+				case LayoutAlignType.RIGHT:
 					for (i = 0; i < selectedRects.length; i++) 
 					{
 						if(tx < selectedRects[i].x)
@@ -113,7 +113,7 @@ package manager
 						}
 					}
 					break;
-				case AlignType.UP:
+				case LayoutAlignType.UP:
 					for (i = 0; i < selectedRects.length; i++) 
 					{
 						if(ty > selectedRects[i].y)
@@ -123,7 +123,7 @@ package manager
 						}
 					}
 					break;
-				case AlignType.DOWN:
+				case LayoutAlignType.DOWN:
 					for (i = 0; i < selectedRects.length; i++) 
 					{
 						if(ty < selectedRects[i].y)
@@ -137,37 +137,37 @@ package manager
 			
 			switch(type)
 			{
-				case AlignType.LEFT:
+				case LayoutAlignType.LEFT:
 					for (i = 0; i < selectedRects.length; i++) 
 					{
 						selectedRects[i].x = tx;
 					}
 					break;
-				case AlignType.RIGHT:
+				case LayoutAlignType.RIGHT:
 					for (i = 0; i < selectedRects.length; i++) 
 					{
 						selectedRects[i].x = selectedRects[targetIndex].x + selectedRects[targetIndex].width - selectedRects[i].width;
 					}
 					break;
-				case AlignType.UP:
+				case LayoutAlignType.UP:
 					for (i = 0; i < selectedRects.length; i++) 
 					{
 						selectedRects[i].y = ty;
 					}
 					break;
-				case AlignType.DOWN:
+				case LayoutAlignType.DOWN:
 					for (i = 0; i < selectedRects.length; i++) 
 					{
 						selectedRects[i].y = selectedRects[targetIndex].y + selectedRects[targetIndex].height - selectedRects[i].height;
 					}
 					break;
-				case AlignType.CENTER_H:
+				case LayoutAlignType.CENTER_H:
 					for (i = 0; i < selectedRects.length; i++) 
 					{
 						selectedRects[i].x = selectedRects[targetIndex].x + selectedRects[targetIndex].width / 2 - selectedRects[i].width / 2;
 					}
 					break;
-				case AlignType.CENTER_V:
+				case LayoutAlignType.CENTER_V:
 					for (i = 0; i < selectedRects.length; i++) 
 					{
 						selectedRects[i].y = selectedRects[targetIndex].y + selectedRects[targetIndex].height / 2 - selectedRects[i].height / 2;

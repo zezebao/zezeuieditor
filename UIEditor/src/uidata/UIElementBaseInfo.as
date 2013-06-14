@@ -1,13 +1,18 @@
 package uidata
 {
+	import data.PropertyType;
+	
 	import event.UIEvent;
 	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
+	import flash.utils.IDataOutput;
 	
 	import interfaces.ICloneAble;
+	
+	import mhqy.ui.UIType;
 	
 	import uidata.vo.PropertyVo;
 
@@ -20,37 +25,39 @@ package uidata
 		public var name:String="";
 		public var variable:String="";
 		//类型标识
-		public var type:int;
-		//具体类映射
-		public var className:String="";
-		
+		protected var _type:int;
 		
 		/**可否拉伸*/
 		public var canScale:Boolean = false;
 		
 		public function UIElementBaseInfo()
 		{
-			type = UIClassType.UIBITMAP;
-		}
-
-		public function parseData(d:ByteArray):void
-		{
-			x = d.readShort();
-			y = d.readShort();
-			width = d.readShort();
-			height = d.readShort();
-			name = d.readUTF();
-			variable = d.readUTF();
+			type = UIType.BITMAP;
 		}
 		
-		public function writeData(source:ByteArray):void
+		public function update():void
 		{
+			dispatchEvent(new Event(Event.CHANGE));
+		}
+		
+		public function readXML(xml:XML):void
+		{
+			x = xml.@x;
+			y = xml.@y;
+			width = xml.@width;
+			height = xml.@height;
+			name = xml.@name;
+			variable = xml.@variable;
+		}
+		
+		public function writeData(source:IDataOutput):void
+		{
+			source.writeUTF(variable);
+			source.writeByte(type);
 			source.writeShort(x);
 			source.writeShort(y);
 			source.writeShort(width);
 			source.writeShort(height);
-			source.writeUTF(name);
-			source.writeUTF(variable);
 		}
 		/**
 		 * 获取UIElement一系列可操作属性 
@@ -59,32 +66,67 @@ package uidata
 		public function getPropertys():Vector.<PropertyVo>
 		{
 			var vec:Vector.<PropertyVo> = new Vector.<PropertyVo>();
-			vec.push(new PropertyVo("variable",String,this.variable));
-			vec.push(new PropertyVo("x",Number,this.x));
-			vec.push(new PropertyVo("y",Number,this.y));
-			vec.push(new PropertyVo("width",Number,this.width));
-			vec.push(new PropertyVo("height",Number,this.height));
-			vec.push(new PropertyVo("name",String,this.name));
+			vec.push(new PropertyVo("variable","变量名",PropertyType.STRING,this.variable));
+			vec.push(new PropertyVo("x","x坐标",PropertyType.NUMBER,this.x));
+			vec.push(new PropertyVo("y","y坐标",PropertyType.NUMBER,this.y));
+			vec.push(new PropertyVo("width","宽度",PropertyType.NUMBER,this.width));
+			vec.push(new PropertyVo("height","高度",PropertyType.NUMBER,this.height));
 			return vec;
 		}
 		
-		public function update():void
+		public function clone(source:*):*
 		{
-			dispatchEvent(new Event(Event.CHANGE));
-		}
-		
-		public function clone():*
-		{
-			var info:UIElementBaseInfo = new UIElementBaseInfo();
+			if(!(source is UIElementBaseInfo))
+			{
+				throw new Error("clone error");
+			}
+			var info:UIElementBaseInfo = source as UIElementBaseInfo;
 			info.x = x;
 			info.y = y;
 			info.width = width;
 			info.height = height;
 			info.name = name;
 			info.variable = variable;
-			info.className = className;
 			return info;
 		}
 		
+		public function get type():int
+		{
+			return _type;
+		}
+		
+		public function set type(value:int):void
+		{
+			_type = value;
+		}
+		
+		/**
+		 * 返回类型如 "x='1' y='22'..."  注：<item></item>标签外部添加(方便子类重写)
+		 * @return 
+		 */		
+		override public function toString():String
+		{
+			var arr:Array = [
+				["type",type],
+				["x",x],
+				["y",y],
+				["width",width],
+				["height",height],
+				["name",name],
+				["variable",variable]
+			];
+			return creatContent(arr);
+		}
+		
+		/**arr为二维数组[type,value]*/
+		protected function creatContent(arr:Array):String
+		{
+			var content:String = "";
+			for (var i:int = 0; i < arr.length; i++) 
+			{
+				content += arr[i][0] + "='" + arr[i][1] + "' ";
+			}
+			return content;
+		}
 	}
 }

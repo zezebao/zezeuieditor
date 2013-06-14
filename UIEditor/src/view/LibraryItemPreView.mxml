@@ -11,13 +11,14 @@
 			import event.UIEvent;
 			
 			import flash.utils.getDefinitionByName;
+			import flash.utils.getQualifiedSuperclassName;
 			
 			import mx.core.UIComponent;
 			import mx.events.ResizeEvent;
 			
-			import uidata.vo.UIClassVo;
+			import utils.UIElementCreator;
 			
-			import utils.UICreater;
+			import uidata.vo.UIClassVo;
 			
 			private var _itemCon:UIComponent;
 			
@@ -42,7 +43,8 @@
 			{
 				while(_itemCon.numChildren){_itemCon.removeChildAt(0);}
 				var classVo:UIClassVo = evt.data as UIClassVo;
-				var child:DisplayObject = UICreater.create(classVo);
+				var child:DisplayObject = UIElementCreator.createItem(classVo.info);
+				
 				typeLabel.text = "";
 				if(child)
 				{
@@ -54,6 +56,9 @@
 					}else if(child is Bitmap)
 					{
 						typeLabel.text = "BitmapData";
+					}else
+					{
+						typeLabel.text = getQualifiedClassName(child);
 					}
 				}
 			}

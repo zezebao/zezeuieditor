@@ -7,6 +7,8 @@
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
+			import data.PropertyType;
+			
 			import event.UIEvent;
 			
 			import fl.data.DataProvider;
@@ -23,6 +25,9 @@
 			private var _property:String;
 			private var _propertyVo:PropertyVo;
 			
+			[Bindable]
+			public var toolTips:String="";
+			
 			private function update():void
 			{
 				_info[_property] = getValue();
@@ -31,31 +36,44 @@
 			
 			public function setData(property:String,propertyVo:PropertyVo,info:UIElementBaseInfo):void
 			{
+				toolTips = propertyVo.toolTip;
+				
 				_property = property;
 				_propertyVo = propertyVo;
 				_info = info;
 				
-				valueLabel.visible = true;
+				valueLabel.visible = false;
 				combobox.visible = false;
+				colorPicker.visible = false;
 				
-				if(_propertyVo.dataProvider)
+				switch(_propertyVo.propertyType)
 				{
-					valueLabel.visible = false;
-					combobox.visible = true;
-					combobox.dataProvider = _propertyVo.dataProvider;
-					for(var i:int=0;i<combobox.dataProvider.length;i++){
-						var obj:Object = combobox.dataProvider.getItemAt(i);
-						if(obj.data == info[property])
-						{
-							combobox.selectedIndex = i;
-							break;
+					case PropertyType.DATAPROVIDER:
+						combobox.visible = true;
+						combobox.dataProvider = _propertyVo.dataProvider;
+						for(var i:int=0;i<combobox.dataProvider.length;i++){
+							var obj:Object = combobox.dataProvider.getItemAt(i);
+							if(obj.data == info[property])
+							{
+								combobox.selectedIndex = i;
+								break;
+							}
 						}
-					}
-					combobox.closeDropDown(false);
-				}
-				else if(_propertyVo.proClass == Number || _propertyVo.proClass == int)
-				{
-					valueLabel.restrict = "0-9";					
+						combobox.closeDropDown(false);
+						break;
+					case PropertyType.NUMBER:
+						valueLabel.visible = true;
+						valueLabel.restrict = "0-9";		
+						break;
+					case PropertyType.STRING:
+						valueLabel.visible = true;
+						break;
+					case PropertyType.COLOR:
+						valueLabel.width = 151;
+						valueLabel.visible = true;
+						colorPicker.visible = true;
+						valueLabel.restrict = "0xX0-9";
+						break;
 				}
 				
 				nameLabel.text = property;
@@ -99,10 +117,10 @@
 				{
 					return combobox.selectedItem.data;
 				}
-				else if(_propertyVo.proClass == Number || _propertyVo.proClass == int)
+				else if(_propertyVo.propertyType == PropertyType.NUMBER || _propertyVo.propertyType == PropertyType.COLOR)
 				{
 					return parseInt(valueLabel.text);			
-				}else if(_propertyVo.proClass == String)
+				}else if(_propertyVo.propertyType == PropertyType.STRING)
 				{
 					return valueLabel.text;
 				}
@@ -112,9 +130,10 @@
 		]]>
 	</fx:Script>
 		
-	<s:Label id="nameLabel" x="10" y="10" width="60%" text="标签"/>
+	<s:Label id="nameLabel" x="10" y="10" width="60%" text="标签" toolTip="{toolTips}"/>
 	<s:TextInput id="valueLabel" x="84" y="3" width="218" borderColor="#FFFFFF" chromeColor="#FFFFFF"
 				 contentBackgroundColor="#F2F2F2" focusOut="valueLabel_focusOutHandler(event)" keyDown="valueLabel_keyDownHandler(event)"
 				 prompt="value input"/>
 	<s:ComboBox id="combobox" x="84" y="3" width="111" change="combobox_changeHandler(event)"/>
+	<mx:ColorPicker id="colorPicker" x="243" y="3"/>
 </s:Group>
