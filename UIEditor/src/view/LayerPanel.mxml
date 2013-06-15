@@ -11,6 +11,7 @@
 			import event.UIEvent;
 			
 			import flash.utils.getQualifiedClassName;
+			import flash.utils.getTimer;
 			
 			import mx.collections.ArrayCollection;
 			import mx.collections.ArrayList;
@@ -161,15 +162,17 @@
 			
 			private function selectionChangingHandler():void 
 			{
-				trace(itemList.selectedItems);	
-				trace(itemList.selectedIndices);
 				App.dispathEvent(new UIEvent(UIEvent.LAYERS_SELECT_UPDATE,itemList.selectedIndices));
 			}
 			
 			private function selectsUpdateHandler(evt:UIEvent):void
 			{
+				var time:Number = getTimer();
+				
 				var arr:Array = evt.data as Array;
 				itemList.selectedIndices = arr;
+				
+				trace("层级面板耗时：",getTimer() - time);
 			}
 			
 		]]>

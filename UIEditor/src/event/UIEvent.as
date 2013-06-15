@@ -26,6 +26,12 @@ package event
 		/**info更新,属性面板触发[数据：Boolean，是否重新获取外形]*/
 		public static const INFO_UPDATE_PROPERTY:String = "infoUpdateProperty";
 		
+		/**添加一个新类 [数据：类名]*/
+		public static const CLASS_UPDATE:String = "classUpdate";		
+		
+		/**选中一个类 [数据：全限定类名]*/
+		public static const SELECT_A_CLASS:String = "selectAClass";
+		
 		public var data:Object;
 		
 		public function UIEvent(type:String, data:Object=null, bubbles:Boolean=false, cancelable:Boolean=false)

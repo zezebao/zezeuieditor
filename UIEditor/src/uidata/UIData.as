@@ -2,6 +2,7 @@ package uidata
 {
 	import flash.text.TextFormatAlign;
 	
+	import mhqy.ui.label.MAssetLabelII;
 	import mhqy.ui.mcache.btns.MCacheAsset1Btn;
 	import mhqy.ui.mcache.btns.MCacheAsset3Btn;
 	import mhqy.ui.mcache.btns.MCacheAsset4Btn;
@@ -76,7 +77,7 @@ package uidata
 		/**temp  label datas*/
 		public static function get labelColorData():Array
 		{
-			var temp:Array = [0xffffff,0xfff100,0xff0000,0x00ff00];
+			var temp:Array = MAssetLabelII.colorList;
 			var arr:Array = new Array(temp.length);
 			for (var i:int = 0; i < temp.length; i++) 
 			{
@@ -86,7 +87,7 @@ package uidata
 		}
 		public function getColorIndex(color:uint):int
 		{
-			var temp:Array = [0xffffff,0xfff100,0xff0000,0x00ff00];
+			var temp:Array = MAssetLabelII.colorList;
 			for (var i:int = 0; i < temp.length; i++) 
 			{
 				if(color == temp[i])
@@ -96,12 +97,12 @@ package uidata
 		}
 		public static function get labelFontData():Array
 		{
-			var temp:Array = ["微软雅黑","宋体"];
+			var temp:Array = MAssetLabelII.fontList;
 			return temp;
 		}
 		public function getFontIndex(font:String):int
 		{
-			var temp:Array = ["微软雅黑","宋体"];
+			var temp:Array = MAssetLabelII.fontList;
 			for (var i:int = 0; i < temp.length; i++) 
 			{
 				if(font == temp[i])

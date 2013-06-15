@@ -8,12 +8,9 @@
 		<![CDATA[
 			import data.Config;
 			
-			import ghostcat.events.OperationEvent;
-			import ghostcat.operation.load.LoadOper;
+			import event.UIEvent;
 			
 			import mx.events.ListEvent;
-			
-			import utils.UIDataUtil;
 			
 			protected function panel1_addedToStageHandler(event:Event):void
 			{
@@ -28,29 +25,33 @@
 			
 			private function initEvent():void
 			{
-				
+				App.addEventListener(UIEvent.CLASS_UPDATE,onClassUpdateHandler);
 			}
 			
-			protected function classList_itemDoubleClickHandler(event:ListEvent):void
+			protected function classList_itemDoubleClickHandler(evt:ListEvent):void
 			{
-				trace(event);			
+				var className:String = evt.itemRenderer.data.value;
+				App.dispathEvent(new UIEvent(UIEvent.SELECT_A_CLASS,className));
 			}
 			
 			public function open():void
 			{
-				var loader:LoadOper = new LoadOper(Config.outputXMLPath,null,rhandler);
-				loader.type = LoadOper.URLLOADER;
-				loader.dataFormat = URLLoaderDataFormat.TEXT;
-				loader.commit();
+				var file:File = new File(Config.outputXMLPath);
+				if(file.exists)
+				{
+					var fileSteam:FileStream = new FileStream();
+					fileSteam.open(file,FileMode.READ);
+					var str:String = fileSteam.readUTFBytes(fileSteam.bytesAvailable);
+					App.xmlParser.parseData(str); 
+					classList.dataProvider = App.classInfoList.getChildList();
+				}
 			}
 			
-			private function rhandler(evt:OperationEvent):void
+			private function onClassUpdateHandler(evt:UIEvent):void
 			{
-				trace((evt.target as LoadOper).data);
-				App.xmlParser.parseData((evt.target as LoadOper).data); 
-				
-				classList.dataProvider = App.xmlParser.getChildList();
+				classList.dataProvider = App.classInfoList.getChildList();			
 			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -60,6 +61,7 @@
 	<mx:List id="classList" width="100%" height="100%" color="#000000" contentBackgroundColor="#FFFFFF"
 			 iconField="icon" labelField="label"
 			 itemDoubleClick="classList_itemDoubleClickHandler(event)"
+			 doubleClickEnabled="true"
 			 >
 	</mx:List>
 </s:Panel>

@@ -33,7 +33,7 @@
 			{
 				var arr:Array = file.getDirectoryListing();		
 				swcsPathLabel.text = file.nativePath;
-				Config.swcsPath = file.nativePath;
+				Config.swfsPath = file.nativePath;
 			}
 			
 			protected function onCloseHandler(event:CloseEvent):void

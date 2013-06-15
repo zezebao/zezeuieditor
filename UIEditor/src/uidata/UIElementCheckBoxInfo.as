@@ -33,7 +33,7 @@ package uidata
 		override public function getPropertys():Vector.<PropertyVo>
 		{
 			var vec:Vector.<PropertyVo> = new Vector.<PropertyVo>();
-			vec.push(new PropertyVo("label","文本",PropertyType.STRING,this.label));
+			vec.push(new PropertyVo("label","文本",PropertyType.STRING,this.label,null,true,true));
 			return vec.concat(super.getPropertys());
 		}
 		

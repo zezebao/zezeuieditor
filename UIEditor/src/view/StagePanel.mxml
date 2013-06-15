@@ -4,7 +4,7 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 width="400" height="300" addedToStage="panel1_addedToStageHandler(event)"
 		 backgroundColor="0xcccccc" chromeColor="#CFCFCF" dragEnter="group1_dragEnterHandler(event)"
-		 dragExit="panel1_dragExitHandler(event)" resize="panel1_resizeHandler(event)">
+		 dragExit="onDragExitHandler(event)" resize="panel1_resizeHandler(event)">
 	<fx:Script>
 		<![CDATA[
 			import avmplus.getQualifiedClassName;
@@ -21,15 +21,19 @@
 			
 			import mhqy.ui.label.MAssetLabel;
 			
+			import mx.controls.Alert;
 			import mx.core.UIComponent;
 			import mx.events.DragEvent;
 			import mx.events.ResizeEvent;
 			
 			import spark.core.IEditableText;
 			
+			import uidata.UIClassInfo;
+			import uidata.UIElementBaseInfo;
+			
 			import utils.UIElementCreator;
 			
-			import uidata.UIElementBaseInfo;
+			private var _currentClass:String;
 			
 			//容器
 			private var _uiContainer:UIComponent;
@@ -42,12 +46,16 @@
 			private var _oldX:Number;
 			private var _oldY:Number;
 			
-			//////////////////////////
-			// temp method
-			//////////////////////////
-			public function getContainer():UIComponent
+			public function set currentClass(value:String):void
 			{
-				return _uiContainer;
+				_currentClass = value;
+				_uiContainer.graphics.clear();
+				if(value)
+				{
+					_uiContainer.graphics.beginFill(0xffffff,1);
+					_uiContainer.graphics.drawRect(0,0,3000,3000);
+					_uiContainer.graphics.endFill();
+				}
 			}
 			
 			protected function panel1_addedToStageHandler(event:Event):void
@@ -61,9 +69,6 @@
 				_uiMask.graphics.endFill();
 					
 				_uiContainer = new UIComponent();
-				_uiContainer.graphics.beginFill(0xffffff,1);
-				_uiContainer.graphics.drawRect(0,0,3000,3000);
-				_uiContainer.graphics.endFill();
 				addElement(_uiContainer);
 				_uiContainer.mask = _uiMask;
 				_hitContainer = new UIComponent();
@@ -82,6 +87,7 @@
 				this.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN,onRightDownHandler);
 				stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP,onRightUpHandler);
 				App.addEventListener(UIEvent.LAYERS_SELECT_UPDATE,onSelectUpdateHandler);
+				App.addEventListener(UIEvent.SELECT_A_CLASS,selectAClassHandler);
 			}
 			
 			protected function onKeyDownHandler(evt:KeyboardEvent):void
@@ -115,7 +121,8 @@
 							App.layerManager.layerHandler(LayerManager.BOTTOM);
 						}else if(evt.ctrlKey)
 						{
-							App.layerManager.layerHandler(LayerManager.DOWN);
+//							App.layerManager.layerHandler(LayerManager.DOWN);
+							App.xmlParser.save();
 						}else{
 							_direction = _direction | Direction.DOWN;
 						}
@@ -123,7 +130,6 @@
 					case Keyboard.DELETE:
 						App.layerManager.layerHandler(LayerManager.DEL);
 						break;
-					
 				}
 				if(_direction != 0)
 				{
@@ -184,16 +190,22 @@
 				trace(event);
 			}
 			
-			protected function panel1_dragExitHandler(evt:DragEvent):void
+			protected function onDragExitHandler(evt:DragEvent):void
 			{
+				if(!_currentClass)
+				{
+					Alert.show("请先选择或新建一个类");
+					return;
+				}
 				var hotRect:HotRectControl = new HotRectControl();
-				hotRect.x = _uiContainer.mouseX;
-				hotRect.y = _uiContainer.mouseY;
 				hotRect.selctedHander = updateLayerSelects;
 				_uiContainer.addChild(hotRect);
 				
 				var info:UIElementBaseInfo = App.dragVo.classVo.info;
-				hotRect.uiInfo = info.clone(UIElementCreator.creatInfo(info));
+				var uiInfo:UIElementBaseInfo = info.clone(UIElementCreator.creatInfo(info.type));
+				uiInfo.x = _uiContainer.mouseX;
+				uiInfo.y = _uiContainer.mouseY;
+				hotRect.uiInfo = uiInfo;
 				
 				App.layerManager.layerPanel.setChild(_uiContainer);
 				stage.focus = this;
@@ -285,6 +297,53 @@
 					_uiMask.graphics.beginFill(0,0);
 					_uiMask.graphics.drawRect(0,0,this.width,this.height);
 					_uiMask.graphics.endFill();
+				}
+			}
+			
+			private function selectAClassHandler(evt:UIEvent):void
+			{
+				if(_currentClass == evt.data.toString())return;
+				save();
+				clear();
+				currentClass = evt.data.toString();
+				title = "舞台" + "    class:   [" + evt.data + "]";
+				//实例化
+				var classInfo:UIClassInfo = App.classInfoList.getClassInfo(_currentClass);
+				if(!classInfo)return;
+				for (var i:int = 0; i < classInfo.childrenInfo.length; i++) 
+				{
+					var hotRect:HotRectControl = new HotRectControl();
+					hotRect.selctedHander = updateLayerSelects;
+					_uiContainer.addChild(hotRect);
+					
+					hotRect.uiInfo = classInfo.childrenInfo[i];
+				}
+				App.layerManager.layerPanel.setChild(_uiContainer);
+				stage.focus = this;
+			}
+			
+			private function clear():void
+			{
+				while(_uiContainer.numChildren)
+				{
+					_uiContainer.removeChildAt(0);
+				}
+			}
+			
+			public function save():void
+			{
+				if(!_currentClass)return;
+				var info:UIClassInfo = App.classInfoList.getClassInfo(_currentClass);
+				if(!info)return;
+				info.childrenInfo = new Vector.<UIElementBaseInfo>();
+				var len:int = _uiContainer.numChildren;
+				for (var j:int = 0; j < len; j++) 
+				{
+					var hotRect:HotRectControl = _uiContainer.getChildAt(j) as HotRectControl;
+					if(hotRect && hotRect.uiInfo)
+					{
+						info.childrenInfo.push(hotRect.uiInfo);
+					}
 				}
 			}
 			

@@ -26,13 +26,13 @@
 				trace("iconClicked");
 				var parent:LayerItemRender = this.parent as LayerItemRender;
 				parent.locked = !parent.locked;
-				source = parent.locked ? "assets/security_closed_16.png" : "assets/security_open_16.png";
+//				source = parent.locked ? "assets/security_closed_16.png" : "assets/security_open_16.png";
 			}
 			
 			protected function image1_addedToStageHandler(event:Event):void
 			{
 				var parent:LayerItemRender = this.parent as LayerItemRender;
-				source = parent.locked ? "assets/security_closed_16.png" : "assets/security_open_16.png";
+//				source = parent.locked ? "assets/security_closed_16.png" : "assets/security_open_16.png";
 			}
 			
 		]]>

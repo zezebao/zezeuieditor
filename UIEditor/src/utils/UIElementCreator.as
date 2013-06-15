@@ -85,23 +85,28 @@ package utils
 				case UIType.BUTTON:
 				case UIType.TAB_BTN:
 					item = getBtnByInfo(info as UIElementButtonInfo);
-//					UIElementButtonInfo(info).btnType,UIElementButtonInfo(info).scaleType,UIElementButtonInfo(info).label);
 					break;
 				case UIType.LABEL:
-					item = new MAssetLabel(UIElementLabelInfo(info).label,UIElementLabelInfo(info).typeArr,UIElementLabelInfo(info).align,UIElementLabelInfo(info).wrap);
+					content = LanguageManager.getWord(UIElementLabelInfo(info).label);
+					if(content == "")content = UIElementLabelInfo(info).label;
+					item = new MAssetLabel(content,UIElementLabelInfo(info).typeArr,UIElementLabelInfo(info).align,UIElementLabelInfo(info).wrap);
 					break;
 				case UIType.BITMAP_BTN:
 					cla = getDefinitionByName(UIElementBitmapInfo(info).className) as Class;
+					content = LanguageManager.getWord(UIElementBitmapInfo(info).label);
+					if(content == "")content = UIElementBitmapInfo(info).label;
 					if(cla)
 					{
-						item = new MBitmapButton(new cla(),UIElementBitmapInfo(info).label);	
+						item = new MBitmapButton(new cla(),content);	
 					}else
 					{
-						item = new MBitmapButton(new BitmapData(100,100),UIElementBitmapInfo(info).label);
+						item = new MBitmapButton(new BitmapData(100,100),content);
 					}
 					break;
 				case UIType.CHECKBOX:
-					item = new MCheckBox(UIElementCheckBoxInfo(info).label);
+					content = LanguageManager.getWord(UIElementCheckBoxInfo(info).label);
+					if(content == "")content = UIElementCheckBoxInfo(info).label;
+					item = new MCheckBox(content);
 					break;
 				case UIType.LINE:
 					item = getLineByInfo(info as UIElementLineInfo);
@@ -109,7 +114,7 @@ package utils
 					item.height = info.height;
 					break;
 				case UIType.PAGE_VIEW:
-					item = new PageView();
+					item = new PageView(1,UIElementPageViewInfo(info).argShowOtherBtn);
 					break;
 				case UIType.COMBO_BOX:
 					item = new ComboBox();
@@ -153,20 +158,22 @@ package utils
 		
 		private static function getBtnByInfo(info:UIElementButtonInfo):DisplayObject
 		{
+			var content:String = LanguageManager.getWord(info.label);
+			if(content == "")content = info.label;
 			switch(info.btnType)
 			{
-				case 1:return new MCacheAsset1Btn(info.scaleType,info.label);
-				case 2:return new MCacheAsset3Btn(info.scaleType,info.label);
-				case 3:return new MCacheAsset4Btn(info.scaleType,info.label);
-				case 4:return new MCacheAsset5Btn(info.scaleType,info.label);
-				case 5:return new MCacheAsset6Btn(info.scaleType,info.label);
-				case 6:return new MCacheAsset7Btn(info.scaleType,info.label);
-				case 7:return new MCacheAsset8Btn(info.scaleType,info.label);
+				case 1:return new MCacheAsset1Btn(info.scaleType,content);
+				case 2:return new MCacheAsset3Btn(info.scaleType,content);
+				case 3:return new MCacheAsset4Btn(info.scaleType,content);
+				case 4:return new MCacheAsset5Btn(info.scaleType,content);
+				case 5:return new MCacheAsset6Btn(info.scaleType,content);
+				case 6:return new MCacheAsset7Btn(info.scaleType,content);
+				case 7:return new MCacheAsset8Btn(info.scaleType,content);
 				//tab button   100代表0,101代表1
-				case 100:return new MCacheTab1Btn(0,info.scaleType,info.label);
-				case 101:return new MCacheTab1Btn(1,info.scaleType,info.label);
+				case 100:return new MCacheTab1Btn(0,info.scaleType,content);
+				case 101:return new MCacheTab1Btn(1,info.scaleType,content);
 			}
-			return new MCacheAsset1Btn(info.scaleType,info.label);
+			return new MCacheAsset1Btn(info.scaleType,content);
 		}
 		
 		public static function getLineByInfo(info:UIElementLineInfo):DisplayObject
@@ -183,20 +190,30 @@ package utils
 		}
 		
 		//new uiinfo 拿来克隆数据用（克隆源需要类型，因此有此方法）
-		public static function creatInfo(info:UIElementBaseInfo):UIElementBaseInfo
+		public static function creatInfo(type:int):UIElementBaseInfo
 		{
-			switch(info.type)
+			switch(type)
 			{
-				case UIType.BITMAP:return new UIElementBitmapInfo();
-				case UIType.BAR:return new UIElementBarInfo();
-				case UIType.BORDOR:return new UIElementBorderInfo();
-				case UIType.BUTTON:return new UIElementButtonInfo(1,0,"");
-				case UIType.TAB_BTN:return new UIElementButtonInfo(1,0,"");
-				case UIType.LABEL:return new UIElementLabelInfo();
-				case UIType.CHECKBOX:return new UIElementCheckBoxInfo("");
-				case UIType.LINE:return new UIElementLineInfo(0,100,2);
-				case UIType.PAGE_VIEW:return new UIElementPageViewInfo();
-				case UIType.COMBO_BOX:return new UIElementComboboxInfo(info.width,info.height);
+				case UIType.BITMAP:
+				case UIType.BITMAP_BTN:
+					return new UIElementBitmapInfo();
+				case UIType.BAR:
+					return new UIElementBarInfo();
+				case UIType.BORDOR:
+					return new UIElementBorderInfo();
+				case UIType.BUTTON:
+				case UIType.TAB_BTN:
+					return new UIElementButtonInfo(1,0,"");
+				case UIType.LABEL:
+					return new UIElementLabelInfo();
+				case UIType.CHECKBOX:
+					return new UIElementCheckBoxInfo("");
+				case UIType.LINE:
+					return new UIElementLineInfo(0,100,2);
+				case UIType.PAGE_VIEW:
+					return new UIElementPageViewInfo();
+				case UIType.COMBO_BOX:
+					return new UIElementComboboxInfo(170,22);
 			}
 			return null;
 		}

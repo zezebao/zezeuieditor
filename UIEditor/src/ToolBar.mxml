@@ -10,6 +10,10 @@
 	<fx:Script>
 		<![CDATA[
 			import data.LayoutAlignType;
+			
+			import mx.managers.PopUpManager;
+			
+			import view.NewClassPopWindow;
 
 
 
@@ -55,13 +59,21 @@
 				App.xmlParser.save();
 			}
 			
+			protected function image4_clickHandler(event:MouseEvent):void
+			{
+				var title:NewClassPopWindow = new NewClassPopWindow();
+				title.x = stage.mouseX;
+				title.y = stage.mouseY;
+				PopUpManager.addPopUp(title,this,true);				
+			}
+			
 		]]>
 	</fx:Script>
 	
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
-	<s:Image source="@Embed('assets/systemIcons/folder.gif')" toolTip="新建" buttonMode="true"/>
+	<s:Image source="@Embed('assets/systemIcons/folder.gif')" toolTip="新建" buttonMode="true" click="image4_clickHandler(event)"/>
 	<s:Image source="@Embed('assets/systemIcons/save.gif')" toolTip="保存" buttonMode="true" click="image3_clickHandler(event)"/>
 	<s:Image source="@Embed('assets/systemIcons/P_MainRunnableAs_Sm_N.png')" toolTip="发布" buttonMode="true" click="image2_clickHandler(event)"/>
 	<s:Image width="20" height="17" buttonMode="true" source="@Embed('assets/settings_32.png')"
