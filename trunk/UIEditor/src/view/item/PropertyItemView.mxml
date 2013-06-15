@@ -14,6 +14,7 @@
 			import fl.data.DataProvider;
 			
 			import mx.core.UIComponent;
+			import mx.events.ItemClickEvent;
 			
 			import spark.events.IndexChangeEvent;
 			import spark.events.TextOperationEvent;
@@ -36,6 +37,7 @@
 			
 			public function setData(property:String,propertyVo:PropertyVo,info:UIElementBaseInfo):void
 			{
+				if(!property)return;
 				toolTips = propertyVo.toolTip;
 				
 				_property = property;
@@ -45,21 +47,40 @@
 				valueLabel.visible = false;
 				combobox.visible = false;
 				colorPicker.visible = false;
+				radioGroup.visible = false;
 				
 				switch(_propertyVo.propertyType)
 				{
 					case PropertyType.DATAPROVIDER:
-						combobox.visible = true;
-						combobox.dataProvider = _propertyVo.dataProvider;
-						for(var i:int=0;i<combobox.dataProvider.length;i++){
-							var obj:Object = combobox.dataProvider.getItemAt(i);
-							if(obj.data == info[property])
+						if(_propertyVo.dataProvider.length > 2)
+						{
+							combobox.visible = true;
+							combobox.dataProvider = _propertyVo.dataProvider;
+							for(var i:int=0;i<combobox.dataProvider.length;i++){
+								var obj:Object = combobox.dataProvider.getItemAt(i);
+								if(obj.data == info[property])
+								{
+									combobox.selectedIndex = i;
+									break;
+								}
+							}
+						}else if(_propertyVo.dataProvider.length == 2)
+						{
+							radioGroup.visible = true;
+							radio1.label = _propertyVo.dataProvider[0].label;
+							radio2.label = _propertyVo.dataProvider[1].label;
+							
+							radio1.value = _propertyVo.dataProvider[0].data;
+							radio2.value = _propertyVo.dataProvider[1].data;
+								
+							if(info[property] == _propertyVo.dataProvider[0].data)
 							{
-								combobox.selectedIndex = i;
-								break;
+								radio1.selected = true;	
+							}else if(info[property] == _propertyVo.dataProvider[1].data)
+							{
+								radio2.selected = true;
 							}
 						}
-						combobox.closeDropDown(false);
 						break;
 					case PropertyType.NUMBER:
 						valueLabel.visible = true;
@@ -115,6 +136,17 @@
 			{
 				if(_propertyVo.dataProvider)
 				{
+					if(radioGroup.visible)
+					{
+						if(radio1.selected)
+						{
+							return radio1.value; 
+						}
+						if(radio2.selected)
+						{
+							return radio2.value;
+						}
+					}
 					return combobox.selectedItem.data;
 				}
 				else if(_propertyVo.propertyType == PropertyType.NUMBER || _propertyVo.propertyType == PropertyType.COLOR)
@@ -127,6 +159,11 @@
 				return 0;
 			}
 			
+			protected function ridio_itemClickHandler(event:MouseEvent):void
+			{
+				update();				
+			}
+			
 		]]>
 	</fx:Script>
 		
@@ -136,4 +173,11 @@
 				 prompt="value input"/>
 	<s:ComboBox id="combobox" x="84" y="3" width="111" change="combobox_changeHandler(event)"/>
 	<mx:ColorPicker id="colorPicker" x="243" y="3"/>
+	<fx:Declarations>
+		<mx:RadioButtonGroup id="radio" />	
+	</fx:Declarations>
+	<s:Group id="radioGroup">
+		<s:RadioButton id="radio1" x="110" y="5" label="true" groupName="radio" click="ridio_itemClickHandler(event);"/>
+		<s:RadioButton id="radio2" x="172" y="5" label="false" groupName="radio" click="ridio_itemClickHandler(event);"/>
+	</s:Group>
 </s:Group>

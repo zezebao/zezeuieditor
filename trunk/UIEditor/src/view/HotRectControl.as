@@ -10,6 +10,7 @@ package view
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
+	import flash.utils.getTimer;
 	
 	import flashx.textLayout.events.UpdateCompleteEvent;
 	
@@ -26,6 +27,8 @@ package view
 	import ghostcat.parse.graphics.GraphicsRect;
 	import ghostcat.ui.CursorSprite;
 	import ghostcat.util.display.DisplayUtil;
+	
+	import mhqy.ui.UIType;
 	
 	import uidata.UIElementBaseInfo;
 	import uidata.vo.PropertyVo;
@@ -79,6 +82,12 @@ package view
 
 		public function get uiInfo():UIElementBaseInfo
 		{
+			if(_uiInfo.type == UIType.CHECKBOX || _uiInfo.type == UIType.PAGE_VIEW)
+			{
+				var rect:Rectangle = getBounds(content);
+				_uiInfo.width = rect.width;
+				_uiInfo.height = rect.height;
+			}
 			return _uiInfo;
 		}
 
@@ -95,15 +104,13 @@ package view
 			
 			_uiInfo.width = content.width;
 			_uiInfo.height = content.height;
+			x = _uiInfo.x;
+			y = _uiInfo.y;
 		}
 		
 		private function creatSkin():void
 		{
-			_uiInfo.x = x;
-			_uiInfo.y = y;
 			super.skin = UIElementCreator.createItem(_uiInfo);
-			x = _uiInfo.x;
-			y = _uiInfo.y;
 		}
 		
 		protected function onInfoChangeHandler(evt:UIEvent):void
@@ -442,7 +449,7 @@ package view
 		private function stopDargHandler(evt:DragEvent):void
 		{
 			trace("当前位置：",this.x,this.y);
-			updatePos();	
+			updatePos();
 		}
 		
 		public function updateWD():void

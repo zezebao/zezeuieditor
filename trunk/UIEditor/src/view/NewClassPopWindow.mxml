@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="282" height="146"
+			   addedToStage="titlewindow1_addedToStageHandler(event)"
+			   >
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			protected function okBtn_clickHandler(event:MouseEvent):void
+			{
+				if(input.text == "")
+				{
+					Alert.show("请输入类名");
+				}else if(App.classInfoList.hasClass(input.text))
+				{
+					Alert.show("类名已存在");
+				}else
+				{
+					App.classInfoList.addClass(input.text);
+					PopUpManager.removePopUp(this);
+				}
+			}
+			
+			protected function titlewindow1_addedToStageHandler(event:Event):void
+			{
+				this.addEventListener(CloseEvent.CLOSE,onCloseHandler);
+			}
+			
+			protected function onCloseHandler(event:CloseEvent):void
+			{
+				PopUpManager.removePopUp(this);			
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<s:TextInput id="input" x="94" y="36" contentBackgroundColor="#DDDDDD" prompt="请输入一个类名"
+				 restrict="^ "/>
+	<s:Label x="19" y="42" width="69" text="输入类名"/>
+	<s:Button id="okBtn" x="100" y="81" label="确定" click="okBtn_clickHandler(event)"/>
+</s:TitleWindow>

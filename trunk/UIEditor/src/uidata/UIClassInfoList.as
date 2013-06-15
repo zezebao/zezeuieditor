@@ -1,14 +1,35 @@
 package uidata
 {
+	import event.UIEvent;
+	
+	import flash.utils.Dictionary;
+	
+	import mx.collections.ArrayCollection;
+
 	public class UIClassInfoList
 	{
-		public var classList:Vector.<UIClassInfo> = new Vector.<UIClassInfo>();
+		private var _classList:Dictionary = new Dictionary();
 		
 		public function UIClassInfoList()
 		{
 		}
 		
-		public function parseXML(data:XML):void
+		public function get classList():Dictionary
+		{
+			return _classList;
+		}
+	
+		public function get classLen():int
+		{
+			var count:int;
+			for each (var i:UIClassInfo in _classList) 
+			{
+				count ++;
+			}
+			return count;
+		}
+		
+		public function parseXML(xmlData:XML):void
 		{
 //			var temp:XMLList = data.classes.className.(@className=='Test1');
 //			trace(temp.children().length());
@@ -17,19 +38,56 @@ package uidata
 //	</className>;
 //			trace(data);
 //			data.className.length();
+//			trace(xmlData.classes.className.length());
+			var len:int = xmlData.classes.className.length();
+			for (var i:int = 0; i < len; i++) 
+			{
+				xmlData.classes.className[i];
+				var info:UIClassInfo = new UIClassInfo(xmlData.classes.className[i].@className);
+				info.parseXML(XML(xmlData.classes.className[i]));
+				_classList[info.className] = info;
+			}
 		}
 		
-		public function get xml():XML
+		public function hasClass(className:String):Boolean
+		{
+			if(_classList[className] == null)
+				return false;
+			return true;
+		}
+		
+		public function addClass(className:String):void
+		{
+			_classList[className] = new UIClassInfo(className);
+			App.dispathEvent(new UIEvent(UIEvent.CLASS_UPDATE,className));
+		}
+		
+		public function getClassInfo(className:String):UIClassInfo
+		{
+			return _classList[className];
+		}
+		
+		public function getChildList():ArrayCollection
+		{
+			var array:ArrayCollection = new ArrayCollection();
+			for each (var info:UIClassInfo in _classList) 
+			{
+				array.addItem({"label":info.className,"value":info.className,"icon":"assets/systemIcons/fb_as_16x16.png"});
+			}
+			return array;
+		}
+		
+		public function get xmlStr():String
 		{
 			var content:String = "<rss>\n";
 			content += "<classes>\n";
-			for (var i:int = 0; i < classList.length; i++) 
+			for each (var info:UIClassInfo in _classList) 
 			{
-				content += classList[i].xml.toString() + "\n";
+				content += info.xmlStr + "\n";
 			}
 			content += "</classes>\n";
 			content += "</rss>";
-			return XML(content);
+			return content;
 		}
 	}
 }

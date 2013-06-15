@@ -42,7 +42,7 @@
 			
 			private function loadAllSwf():void
 			{
-				browserFile = new File(Config.swcsPath);
+				browserFile = new File(Config.swfsPath);
 				var fileAry:Array = browserFile.getDirectoryListing();
 				if(fileAry!=null && fileAry.length>0)
 				{

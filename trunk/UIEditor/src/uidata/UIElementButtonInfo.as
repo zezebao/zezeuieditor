@@ -36,7 +36,7 @@ package uidata
 		override public function writeData(source:IDataOutput):void
 		{
 			super.writeData(source);
-			if(btnType > 100)
+			if(btnType >= 100)
 			{
 				source.writeByte(btnType - 100);
 			}else

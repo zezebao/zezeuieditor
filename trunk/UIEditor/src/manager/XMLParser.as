@@ -6,13 +6,18 @@ package manager
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
 	import flash.utils.ByteArray;
+	import flash.utils.Dictionary;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
 	import mx.core.UIComponent;
 	
+	import uidata.UIClassInfo;
+	
 	import view.HotRectControl;
 
+	
+	/**存取、发布数据*/
 	public class XMLParser
 	{
 		private var _xml:XML;
@@ -23,40 +28,15 @@ package manager
 		
 		public function parseData(data:*):void
 		{
-			_xml = XML(data);
-			var temp:XMLList = _xml.classes.className.(@className=='Test1');
-			trace(temp.children().length());
-			_xml.classes.className[0] = <className name='Test999'>
-		<BAR var='' x='1' y='1'></BAR>
-	</className>;
-			trace(_xml);
-		}
-		
-		public function canCreate(className:String):Boolean
-		{
-			if(!_xml)return false;
-			var temp:XMLList = _xml.classes.className.(@className==className);
-			if(temp.children().length() >= 1)
-			{
-				Alert.show("类名已经存在");
-				return false;
-			}
-			return true;
-		}
-		
-		public function getChildList():ArrayCollection
-		{
-			var array:ArrayCollection = new ArrayCollection();
-			var len:int = _xml.classes.className.length();
-			for (var i:int = 0; i < len; i++) 
-			{
-				array.addItem({"label":_xml.classes.className[i].@name,"icon":"assets/systemIcons/fb_as_16x16.png"});
-			}
-			return array;
+//			var temp:XMLList = _xml.classes.className.(@className=='Test1');
+//			trace(temp.children().length());
+			App.classInfoList.parseXML(XML(data));
 		}
 		
 		public function publish():void
 		{
+			save(false);
+			
 			var file:File = new File(Config.outputPath);
 			var fileSteam:FileStream = new FileStream();
 			fileSteam.open(file,FileMode.WRITE);
@@ -65,11 +45,12 @@ package manager
 			fileSteam.writeBytes(byte);
 			fileSteam.close();
 			
-			save();
+			Alert.show("发布成功");
 		}
 		
-		public function save():void
+		public function save(showAlert:Boolean=true):void
 		{
+			App.layerManager.stagePanel.save();
 			var file:File = new File(Config.outputXMLPath);
 			var fileSteam:FileStream = new FileStream();
 			fileSteam.open(file,FileMode.WRITE);
@@ -77,39 +58,32 @@ package manager
 			saveWrite(byte);
 			fileSteam.writeBytes(byte);
 			fileSteam.close();
+			
+			if(showAlert)Alert.show("保存xml文件成功");
 		}
 		
 		private function tempWrite(byte:ByteArray):void
 		{
-			var container:UIComponent = App.layerManager.stagePanel.getContainer();
-			var len:int = 1;
-			byte.writeInt(len);
-			for (var i:int = 0; i < len; i++) 
+			byte.writeInt(App.classInfoList.classLen);
+			var classList:Dictionary = App.classInfoList.classList;
+			for each (var info:UIClassInfo in classList) 
 			{
-				byte.writeUTF("testClassName");
-				var len2:int = container.numChildren;
-				byte.writeInt(len2);
-				for (var j:int = 0; j < len2; j++) 
+				var len:int = info.childrenInfo.length;
+				byte.writeUTF(info.className);
+				byte.writeInt(len);
+				for (var i:int = 0; i < len; i++) 
 				{
-					var hotRect:HotRectControl = container.getChildAt(j) as HotRectControl;
-					if(hotRect && hotRect.uiInfo)
-					{
-						hotRect.uiInfo.writeData(byte);
-						trace(hotRect.uiInfo.toString());
-					}
+					info.childrenInfo[i].writeData(byte);
+					trace(info.childrenInfo[i]);
 				}
 			}
-			Alert.show("publish succ");
 		}
 		
 		private function saveWrite(byte:ByteArray):void
 		{
-			var str:String = "";
-			for (var i:int = 0; i < 200000; i++) 
-			{
-				str += "<item src='xxxx' x='123' y='123'/>\n";
-			}
-			byte.writeUTFBytes(str);
+			trace("save:",App.classInfoList.xmlStr);
+			var content:String = App.classInfoList.xmlStr;
+			byte.writeUTFBytes(content);
 		}
 	}
 }
