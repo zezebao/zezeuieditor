@@ -88,6 +88,11 @@
 				stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP,onRightUpHandler);
 				App.addEventListener(UIEvent.LAYERS_SELECT_UPDATE,onSelectUpdateHandler);
 				App.addEventListener(UIEvent.SELECT_A_CLASS,selectAClassHandler);
+				
+				//scales
+				App.addEventListener(UIEvent.STAGE_ENLARGE,enlargeHandler);
+				App.addEventListener(UIEvent.STAGE_LESSON,lessonHandler);
+				App.addEventListener(UIEvent.STAGE_NO_SCALE,noScaleHandler);
 			}
 			
 			protected function onKeyDownHandler(evt:KeyboardEvent):void
@@ -121,14 +126,23 @@
 							App.layerManager.layerHandler(LayerManager.BOTTOM);
 						}else if(evt.ctrlKey)
 						{
-//							App.layerManager.layerHandler(LayerManager.DOWN);
-							App.xmlParser.save();
+							if(evt.keyCode == Keyboard.S)App.xmlParser.save();
+							else if(evt.keyCode == Keyboard.DOWN)App.layerManager.layerHandler(LayerManager.DOWN);
 						}else{
 							_direction = _direction | Direction.DOWN;
 						}
 						break;
 					case Keyboard.DELETE:
 						App.layerManager.layerHandler(LayerManager.DEL);
+						break;
+					case Keyboard.NUMBER_1:
+						if(evt.ctrlKey)App.dispathEvent(new UIEvent(UIEvent.STAGE_NO_SCALE));
+						break;
+					case Keyboard.EQUAL:
+						if(evt.ctrlKey)App.dispathEvent(new UIEvent(UIEvent.STAGE_ENLARGE));
+						break;
+					case Keyboard.MINUS:
+						if(evt.ctrlKey)App.dispathEvent(new UIEvent(UIEvent.STAGE_LESSON));
 						break;
 				}
 				if(_direction != 0)
@@ -178,8 +192,8 @@
 					App.dispathEvent(new UIEvent(UIEvent.STAGE_SELECT_UPDATE,[]));
 				}
 				
-				_oldX = _uiContainer.mouseX;
-				_oldY = _uiContainer.mouseY;
+				_oldX = _uiContainer.mouseX * _uiContainer.scaleX;
+				_oldY = _uiContainer.mouseY * _uiContainer.scaleY;
 				
 				stage.addEventListener(MouseEvent.MOUSE_MOVE,onMouseMoveHandler);
 				stage.addEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
@@ -198,7 +212,7 @@
 					return;
 				}
 				var hotRect:HotRectControl = new HotRectControl();
-				hotRect.selctedHander = updateLayerSelects;
+				hotRect.selctedHander = updateLate;
 				_uiContainer.addChild(hotRect);
 				
 				var info:UIElementBaseInfo = App.dragVo.classVo.info;
@@ -230,8 +244,18 @@
 				}
 			}
 			
+			private var _updateLayerFlag:Boolean = false;
+			
+			private function updateLate():void
+			{
+				if(_updateLayerFlag == true)return;
+				_updateLayerFlag = true;
+				callLater(updateLayerSelects);
+			}
+			
 			private function updateLayerSelects():void
 			{
+				_updateLayerFlag = false;
 				var arr:Array = [];
 				for (var i:int = 0; i < _uiContainer.numChildren; i++) 
 				{
@@ -267,11 +291,13 @@
 			
 			private function get rect():Rectangle
 			{
+				var nx:Number = _uiContainer.mouseX * _uiContainer.scaleX;
+				var ny:Number = _uiContainer.mouseY * _uiContainer.scaleY;
 				return new Rectangle(
-					(_oldX < _uiContainer.mouseX) ? _oldX : _uiContainer.mouseX,
-					(_oldY < _uiContainer.mouseY) ? _oldY : _uiContainer.mouseY,
-					Math.abs(_uiContainer.mouseX - _oldX),
-					Math.abs(_uiContainer.mouseY - _oldY)
+					(_oldX < nx) ? _oldX : nx,
+					(_oldY < ny) ? _oldY : ny,
+					Math.abs(nx - _oldX),
+					Math.abs(ny - _oldY)
 					);
 			}
 			
@@ -313,7 +339,7 @@
 				for (var i:int = 0; i < classInfo.childrenInfo.length; i++) 
 				{
 					var hotRect:HotRectControl = new HotRectControl();
-					hotRect.selctedHander = updateLayerSelects;
+					hotRect.selctedHander = updateLate;
 					_uiContainer.addChild(hotRect);
 					
 					hotRect.uiInfo = classInfo.childrenInfo[i];
@@ -347,6 +373,21 @@
 				}
 			}
 			
+			private function enlargeHandler(evt:UIEvent):void
+			{
+				_uiContainer.scaleX += 0.2;
+				_uiContainer.scaleY += 0.2;
+			}
+			private function lessonHandler(evt:UIEvent):void
+			{
+				_uiContainer.scaleX -= 0.2;
+				_uiContainer.scaleY -= 0.2;
+			}
+			private function noScaleHandler(evt:UIEvent):void
+			{
+				_uiContainer.scaleX = _uiContainer.scaleY = 1;
+//				_uiContainer.x = _uiContainer.y = 0;
+			}
 		]]>
 	</fx:Script>
 	<fx:Declarations>
