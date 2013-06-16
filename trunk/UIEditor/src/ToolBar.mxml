@@ -11,6 +11,8 @@
 		<![CDATA[
 			import data.LayoutAlignType;
 			
+			import event.UIEvent;
+			
 			import mx.managers.PopUpManager;
 			
 			import view.NewClassPopWindow;
@@ -49,17 +51,17 @@
 				App.hotRectManager.autoAlign(LayoutAlignType.DOWN);
 			}
 			
-			protected function image2_clickHandler(event:MouseEvent):void
+			protected function publishClickHandler(event:MouseEvent):void
 			{
 				App.xmlParser.publish();				
 			}
 			
-			protected function image3_clickHandler(event:MouseEvent):void
+			protected function saveClickHandler(event:MouseEvent):void
 			{
 				App.xmlParser.save();
 			}
 			
-			protected function image4_clickHandler(event:MouseEvent):void
+			protected function newClassClickHandler(event:MouseEvent):void
 			{
 				var title:NewClassPopWindow = new NewClassPopWindow();
 				title.x = stage.mouseX;
@@ -67,19 +69,35 @@
 				PopUpManager.addPopUp(title,this,true);				
 			}
 			
+			protected function enlargeClickHandler(event:MouseEvent):void
+			{
+				App.dispathEvent(new UIEvent(UIEvent.STAGE_ENLARGE));
+			}
+			protected function lessonClickHandler(event:MouseEvent):void
+			{
+				App.dispathEvent(new UIEvent(UIEvent.STAGE_LESSON));				
+			}
+			protected function noScaleClickHandler(event:MouseEvent):void
+			{
+				App.dispathEvent(new UIEvent(UIEvent.STAGE_NO_SCALE));
+			}
+			protected function seetingClickHandler(event:MouseEvent):void
+			{
+				
+			}
 		]]>
 	</fx:Script>
 	
 	<fx:Declarations>
 		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
 	</fx:Declarations>
-	<s:Image source="@Embed('assets/systemIcons/folder.gif')" toolTip="新建" buttonMode="true" click="image4_clickHandler(event)"/>
-	<s:Image source="@Embed('assets/systemIcons/save.gif')" toolTip="保存" buttonMode="true" click="image3_clickHandler(event)"/>
-	<s:Image source="@Embed('assets/systemIcons/P_MainRunnableAs_Sm_N.png')" toolTip="发布" buttonMode="true" click="image2_clickHandler(event)"/>
-	<s:Image width="20" height="17" buttonMode="true" source="@Embed('assets/settings_32.png')"
-			 toolTip="设置"/>
-	<s:Image buttonMode="true" source="@Embed('assets/systemIcons/zoomin_nav.gif')" toolTip="放大"/>
-	<s:Image source="@Embed('assets/systemIcons/zoomout_nav.gif')" toolTip="缩小" buttonMode="true"/>
+	<s:Image source="@Embed('assets/systemIcons/folder.gif')" toolTip="新建(ctrl+N)" buttonMode="true" click="newClassClickHandler(event)"/>
+	<s:Image source="@Embed('assets/systemIcons/save.gif')" toolTip="保存(ctrl+S)" buttonMode="true" click="saveClickHandler(event)"/>
+	<s:Image source="@Embed('assets/systemIcons/P_MainRunnableAs_Sm_N.png')" toolTip="发布" buttonMode="true" click="publishClickHandler(event)"/>
+	<s:Image width="20" height="17" buttonMode="true" source="@Embed('assets/settings_32.png')" toolTip="设置" click="seetingClickHandler(event)"/>
+	<s:Image buttonMode="true" source="@Embed('assets/systemIcons/zoomin_nav.gif')" toolTip="放大(ctrl++)" click="enlargeClickHandler(event)"/>
+	<s:Image source="@Embed('assets/systemIcons/zoomout_nav.gif')" toolTip="缩小(ctrl+-)" buttonMode="true" click="lessonClickHandler(event)"/>
+	<s:Image source="@Embed('assets/systemIcons/no_scale.png')" toolTip="无缩放(ctrl+1)" buttonMode="true" click="noScaleClickHandler(event)"/>
 	<s:Image source="@Embed('assets/systemIcons/left_alin.png')" toolTip="左对齐" buttonMode="true" click="leftAlignClick(event)"/>
 	<s:Image source="@Embed('assets/systemIcons/center_alin.png')" toolTip="中对齐（竖）" buttonMode="true" click="centerAlinClick(event)"/>
 	<s:Image source="@Embed('assets/systemIcons/right_alin.png')" toolTip="右对齐" buttonMode="true" click="rightAlinClick(event)"/>

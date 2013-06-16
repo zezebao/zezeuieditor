@@ -32,6 +32,11 @@ package event
 		/**选中一个类 [数据：全限定类名]*/
 		public static const SELECT_A_CLASS:String = "selectAClass";
 		
+		/**放大缩小*/
+		public static const STAGE_ENLARGE:String = "stageEnlarge";
+		public static const STAGE_LESSON:String = "stageLesson";
+		public static const STAGE_NO_SCALE:String = "stageNoScale";
+		
 		public var data:Object;
 		
 		public function UIEvent(type:String, data:Object=null, bubbles:Boolean=false, cancelable:Boolean=false)

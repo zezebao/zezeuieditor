@@ -207,7 +207,6 @@ package view
 		/**
 		 * 创建控制点
 		 * @param pointSkin
-		 * 
 		 */
 		protected function createControl(pointSkin:*):void
 		{
