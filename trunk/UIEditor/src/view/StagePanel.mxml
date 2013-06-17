@@ -144,6 +144,13 @@
 					case Keyboard.MINUS:
 						if(evt.ctrlKey)App.dispathEvent(new UIEvent(UIEvent.STAGE_LESSON));
 						break;
+					case Keyboard.C:
+						if(evt.ctrlKey)copyInfos();
+						break;
+					case Keyboard.V:
+						if(evt.ctrlKey)pasteInfos();
+						break;
+					
 				}
 				if(_direction != 0)
 				{
@@ -211,15 +218,13 @@
 					Alert.show("请先选择或新建一个类");
 					return;
 				}
-				var hotRect:HotRectControl = new HotRectControl();
-				hotRect.selctedHander = updateLate;
-				_uiContainer.addChild(hotRect);
 				
 				var info:UIElementBaseInfo = App.dragVo.classVo.info;
 				var uiInfo:UIElementBaseInfo = info.clone(UIElementCreator.creatInfo(info.type));
 				uiInfo.x = _uiContainer.mouseX;
 				uiInfo.y = _uiContainer.mouseY;
-				hotRect.uiInfo = uiInfo;
+				
+				addHotRect(uiInfo);
 				
 				App.layerManager.layerPanel.setChild(_uiContainer);
 				stage.focus = this;
@@ -338,14 +343,19 @@
 				if(!classInfo)return;
 				for (var i:int = 0; i < classInfo.childrenInfo.length; i++) 
 				{
-					var hotRect:HotRectControl = new HotRectControl();
-					hotRect.selctedHander = updateLate;
-					_uiContainer.addChild(hotRect);
-					
-					hotRect.uiInfo = classInfo.childrenInfo[i];
+					addHotRect(classInfo.childrenInfo[i]);
 				}
 				App.layerManager.layerPanel.setChild(_uiContainer);
 				stage.focus = this;
+			}
+			
+			private function addHotRect(uiInfo:UIElementBaseInfo):void
+			{
+				var hotRect:HotRectControl = new HotRectControl();
+				hotRect.selctedHander = updateLate;
+				_uiContainer.addChild(hotRect);
+				
+				hotRect.uiInfo = uiInfo;
 			}
 			
 			private function clear():void
@@ -388,6 +398,37 @@
 				_uiContainer.scaleX = _uiContainer.scaleY = 1;
 //				_uiContainer.x = _uiContainer.y = 0;
 			}
+			
+			private function copyInfos():void
+			{
+				App.copyInfos = new Vector.<UIElementBaseInfo>();
+				var len:int = _uiContainer.numChildren;
+				for (var i:int = 0; i < len; i++) 
+				{
+					var hotRect:HotRectControl = _uiContainer.getChildAt(i) as HotRectControl;
+					if(hotRect && hotRect.uiInfo && hotRect.selected)
+					{
+						var info:UIElementBaseInfo = hotRect.uiInfo.clone(UIElementCreator.creatInfo(hotRect.uiInfo.type));
+						info.x += 10;
+						info.y += 10;
+						App.copyInfos.push(info);
+					}
+				}
+			}
+			
+			private function pasteInfos():void
+			{
+				if(App.copyInfos)
+				{
+					for (var i:int = 0; i < App.copyInfos.length; i++) 
+					{
+						var info:UIElementBaseInfo = App.copyInfos[i].clone(UIElementCreator.creatInfo(App.copyInfos[i].type));
+						addHotRect(info);
+					}
+					App.layerManager.layerPanel.setChild(_uiContainer);
+				}
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>

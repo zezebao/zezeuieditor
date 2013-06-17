@@ -4,6 +4,8 @@ package view
 	
 	import event.UIEvent;
 	
+	import fl.controls.RadioButton;
+	
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -183,6 +185,7 @@ package view
 			index = App.hotRectManager.selectedRects.indexOf(this);
 			if (value)
 			{
+				updateControls();
 				if (index == -1)
 				{
 					App.hotRectManager.selectedRects.push(this);
@@ -201,7 +204,7 @@ package view
 		override public function setContent(skin:*, replace:Boolean=true) : void
 		{
 			super.setContent(skin,replace);
-			updateControls();
+//			updateControls();
 		}
 		
 		/**
@@ -273,7 +276,6 @@ package view
 		
 		/**
 		 * 更新控制点
-		 * 
 		 */
 		public function updateControls():void
 		{
@@ -286,6 +288,11 @@ package view
 			if(content is TextField)
 			{
 				rect = new Rectangle(0,0,content.width,content.height);
+			}else if(content is RadioButton)
+			{
+				uiInfo.width = RadioButton(content).textField.textWidth + 20;
+				uiInfo.height = 30;
+				rect = new Rectangle(0,0,uiInfo.width,uiInfo.height);
 			}else
 			{
 				rect = content.getBounds(this);
@@ -447,8 +454,15 @@ package view
 		
 		private function stopDargHandler(evt:DragEvent):void
 		{
-			trace("当前位置：",this.x,this.y);
-			updatePos();
+			try
+			{
+				HotRectControl(evt.dragObj).updatePos();	
+			} 
+			catch(error:Error) 
+			{
+				
+			}
+//			updatePos(evt.dragObj.x,evt.dragObj.y);
 		}
 		
 		public function updateWD():void
@@ -465,10 +479,11 @@ package view
 		{
 			if(_uiInfo)
 			{
-				_uiInfo.x = this.x;
-				_uiInfo.y = this.y;
+				_uiInfo.x = x;
+				_uiInfo.y = y;
 				_uiInfo.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_STAGE));
 			}
+//			trace("当前位置：",_uiInfo.x,_uiInfo.y);
 		}
 		
 		private function mouseDownHandler(evt:MouseEvent):void

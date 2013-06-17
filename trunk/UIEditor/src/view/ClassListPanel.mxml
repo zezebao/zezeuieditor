@@ -14,6 +14,11 @@
 			
 			protected function panel1_addedToStageHandler(event:Event):void
 			{
+				App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
+			}
+			
+			private function initData(evt:Event):void
+			{
 				init();
 				initEvent();
 			}
@@ -62,6 +67,7 @@
 			 iconField="icon" labelField="label"
 			 itemDoubleClick="classList_itemDoubleClickHandler(event)"
 			 doubleClickEnabled="true"
+			 toolTip="双击切换或者选中一个类来编辑"
 			 >
 	</mx:List>
 </s:Panel>

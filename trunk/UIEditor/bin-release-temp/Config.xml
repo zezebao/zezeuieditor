@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<rss>
+	<!-- isRelative：是否相对路径  -->
+	<SWFS_PATH isRelative='true'>asset_swfs</SWFS_PATH>
+	<OUTPUT_PATH isRelative='true'>output/ys_ui.txt</OUTPUT_PATH>
+	<OUTPUT_XML_PATH isRelative='true'>output/ys_ui.xml</OUTPUT_XML_PATH>
+	<LANGUAGE_PATH isRelative='false'>http://192.168.6.201:3620/languageC.txt</LANGUAGE_PATH>
+</rss>

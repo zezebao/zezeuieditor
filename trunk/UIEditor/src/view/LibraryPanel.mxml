@@ -37,6 +37,11 @@
 			
 			protected function addToStage(event:Event):void
 			{
+				App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
+			}
+			
+			private function initData(evt:Event):void
+			{
 				loadAllSwf();
 			}
 			

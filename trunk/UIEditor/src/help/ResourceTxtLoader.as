@@ -2,25 +2,42 @@ package help
 {
 	import data.Config;
 	
+	import event.UIEvent;
+	
+	import flash.display.Loader;
+	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
 	import flash.net.URLLoaderDataFormat;
+	import flash.system.ApplicationDomain;
+	import flash.system.LoaderContext;
 	import flash.utils.ByteArray;
+	import flash.utils.IDataInput;
+	import flash.utils.getDefinitionByName;
 	
 	import ghostcat.events.OperationEvent;
 	import ghostcat.operation.load.LoadOper;
 	
 	import mhsm.core.manager.LanguageManager;
+	import mhsm.interfaces.layer.IPanel;
+	
+	import nochump.util.zip.*;
+	
+	import spark.components.Application;
 
 	public class ResourceTxtLoader
 	{
+		private var _loadCount:int;
+		
 		/**语言包资源加载*/
 		public function ResourceTxtLoader()
 		{
 			loadConfig();
 			loadLanguaue();
 			loadXml();
+			loadRSLLibs();
 		}
 		
 		private function loadConfig():void
@@ -79,6 +96,87 @@ package help
 			byte.uncompress();
 			var str:String = byte.readUTF();
 			LanguageManager.setup(str);
+		}
+		
+		private function loadRSLLibs():void
+		{
+			var file:File = new File(Config.swcsLibsPath);
+			var loaderContext:LoaderContext = new LoaderContext(false,ApplicationDomain.currentDomain);
+			loaderContext.allowCodeImport = true;
+			if(file.exists)
+			{
+				var arr:Array = file.getDirectoryListing();
+				for (var i:int = 0; i < arr.length; i++) 
+				{
+					var loadFile:File = arr[i];
+					var stream:FileStream = new FileStream();
+					stream.open(loadFile,FileMode.READ);
+					
+					var byte:ByteArray = new ByteArray();
+					stream.readBytes(byte,0,stream.bytesAvailable);
+					
+					var loader:Loader = new Loader();
+					loader.contentLoaderInfo.addEventListener(Event.COMPLETE,onCompleteHandler);
+					loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);
+					var dataByte:ByteArray;
+					
+					trace(loadFile.nativePath);
+					
+					if(loadFile.extension == "swf")
+					{
+						dataByte = byte;
+					}else if(loadFile.extension == "swc")
+					{
+						var zipFile:ZipFile = new ZipFile(byte);
+						for(var j:int = 0; j < zipFile.entries.length; j++) {
+							var entry:ZipEntry = zipFile.entries[j];
+//							trace(entry.name);
+							if(entry.name.indexOf("swf") != -1)
+							{
+								dataByte = zipFile.getInput(entry);
+							}
+						}
+					}
+					loader.loadBytes(dataByte,loaderContext);
+					_loadCount ++;
+				}
+			}
+		}
+		
+		protected function onError(evt:IOErrorEvent):void
+		{
+			App.log.error(evt.text);
+			_loadCount --;
+			if(_loadCount <= 0)
+			{
+				allComplete();
+			}
+		}
+		
+		protected function onCompleteHandler(event:Event):void
+		{
+			_loadCount --;
+			if(_loadCount <= 0)
+			{
+				allComplete();
+			}
+			try
+			{
+				trace(getDefinitionByName("mhsm.interfaces.layer.IPanel"));
+				trace(getDefinitionByName("mhsm.interfaces.moviewrapper.IMovieManager"));
+				trace(getDefinitionByName("mhqy.ui.mcache.btns.MCacheAsset1Btn"));
+			} 
+			catch(error:Error) 
+			{
+				trace(error.message);
+			}
+		}
+		
+		private function allComplete():void
+		{
+			App.dispathEvent(new UIEvent(UIEvent.RSL_LOAD_COMPLETE));
+			trace(getDefinitionByName("mhsm.interfaces.moviewrapper.IMovieManager"));
+			trace(getDefinitionByName("mhqy.ui.mcache.btns.MCacheAsset1Btn"));
 		}
 	}
 }

@@ -88,6 +88,7 @@
 						break;
 					case PropertyType.STRING:
 						valueLabel.visible = true;
+						valueLabel.restrict = "a-z A-Z 0-9.";
 						break;
 					case PropertyType.COLOR:
 						valueLabel.width = 151;

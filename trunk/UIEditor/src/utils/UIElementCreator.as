@@ -3,6 +3,7 @@ package utils
 	import avmplus.getQualifiedClassName;
 	
 	import fl.controls.ComboBox;
+	import fl.controls.RadioButton;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -53,6 +54,7 @@ package utils
 	import uidata.UIElementLabelInfo;
 	import uidata.UIElementLineInfo;
 	import uidata.UIElementPageViewInfo;
+	import uidata.UIElementRadioButtonInfo;
 	import uidata.vo.PropertyVo;
 
 	public class UIElementCreator
@@ -65,7 +67,12 @@ package utils
 		{
 			var item:DisplayObject;
 			var cla:Class;
-			var content:String;
+			var label:String;
+			if(info.hasOwnProperty("label"))
+			{
+				label = LanguageManager.getWord(info["label"]);
+				if(label == "")label = info["label"];
+			}
 			switch(info.type)
 			{
 				case UIType.BITMAP:
@@ -87,26 +94,20 @@ package utils
 					item = getBtnByInfo(info as UIElementButtonInfo);
 					break;
 				case UIType.LABEL:
-					content = LanguageManager.getWord(UIElementLabelInfo(info).label);
-					if(content == "")content = UIElementLabelInfo(info).label;
-					item = new MAssetLabel(content,UIElementLabelInfo(info).typeArr,UIElementLabelInfo(info).align,UIElementLabelInfo(info).wrap);
+					item = new MAssetLabel(label,UIElementLabelInfo(info).typeArr,UIElementLabelInfo(info).align,UIElementLabelInfo(info).wrap);
 					break;
 				case UIType.BITMAP_BTN:
 					cla = getDefinitionByName(UIElementBitmapInfo(info).className) as Class;
-					content = LanguageManager.getWord(UIElementBitmapInfo(info).label);
-					if(content == "")content = UIElementBitmapInfo(info).label;
 					if(cla)
 					{
-						item = new MBitmapButton(new cla(),content);	
+						item = new MBitmapButton(new cla(),label);	
 					}else
 					{
-						item = new MBitmapButton(new BitmapData(100,100),content);
+						item = new MBitmapButton(new BitmapData(100,100),label);
 					}
 					break;
 				case UIType.CHECKBOX:
-					content = LanguageManager.getWord(UIElementCheckBoxInfo(info).label);
-					if(content == "")content = UIElementCheckBoxInfo(info).label;
-					item = new MCheckBox(content);
+					item = new MCheckBox(label);
 					break;
 				case UIType.LINE:
 					item = getLineByInfo(info as UIElementLineInfo);
@@ -119,10 +120,11 @@ package utils
 				case UIType.COMBO_BOX:
 					item = new ComboBox();
 					ComboBox(item).setSize(info.width,info.height);
-//					item.width = info.width;
-//					item.height = info.height;
 					break;
 				case UIType.RADIO_BTN:
+					item = new RadioButton();
+					RadioButton(item).label = label;
+					RadioButton(item).setSize(info.width,info.height);
 					break;
 			}
 			return item;
@@ -207,20 +209,27 @@ package utils
 				case UIType.LABEL:
 					return new UIElementLabelInfo();
 				case UIType.CHECKBOX:
-					return new UIElementCheckBoxInfo("");
+					return new UIElementCheckBoxInfo();
 				case UIType.LINE:
 					return new UIElementLineInfo(0,100,2);
 				case UIType.PAGE_VIEW:
 					return new UIElementPageViewInfo();
 				case UIType.COMBO_BOX:
 					return new UIElementComboboxInfo(170,22);
+				case UIType.RADIO_BTN:
+					return new UIElementRadioButtonInfo();
 			}
-			return null;
+			throw new Error("clone info Error");
 		}
 
 		public static function update(target:DisplayObject,info:UIElementBaseInfo):void
 		{
 			var content:String;
+			if(info.hasOwnProperty("label"))
+			{
+				content = LanguageManager.getWord(info["label"]);
+				if(content == "")content = info["label"];
+			}
 			switch(info.type)
 			{
 				case UIType.LABEL:
@@ -238,8 +247,6 @@ package utils
 					tf.underline = labelInfo.underLine;
 					label.defaultTextFormat = tf;
 					label.wordWrap = labelInfo.wrap;
-					content = LanguageManager.getWord(labelInfo.label);
-					if(content == "")content = labelInfo.label;
 					label.htmlText = content;
 					break;
 				case UIType.BITMAP:
@@ -259,17 +266,17 @@ package utils
 					break;
 				case UIType.BUTTON:
 				case UIType.TAB_BTN:
-					content = LanguageManager.getWord(UIElementButtonInfo(info).label);
-					if(content == "")content = UIElementButtonInfo(info).label;
 					if(target.hasOwnProperty("label"))
 					{
 						target["label"] = content;
 					}
 					break;
 				case UIType.CHECKBOX:
-					content = LanguageManager.getWord(UIElementCheckBoxInfo(info).label);
-					if(content == "")content = UIElementCheckBoxInfo(info).label;
 					MCheckBox(target).label = content;
+					break;
+				case UIType.RADIO_BTN:
+					RadioButton(target).label = content;
+					RadioButton(target).setSize(info.width,info.height);
 					break;
 			}
 		}
