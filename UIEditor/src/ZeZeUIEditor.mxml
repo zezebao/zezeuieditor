@@ -15,9 +15,14 @@
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
+			import event.UIEvent;
+			
+			import help.ResourceTxtLoader;
+			
 			import mx.collections.*;
 			import mx.containers.TitleWindow;
 			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
 			import mx.events.ResizeEvent;
 			import mx.managers.PopUpManager;
 			
@@ -25,9 +30,15 @@
 			
 			public function addToStage(evt:Event):void
 			{
-				App.setup(stage,this);
+				App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
+				new ResourceTxtLoader();
 				stage.addEventListener(Event.RESIZE,onResizeHandler);
 				onResizeHandler();
+			}
+			
+			private function initData(evt:Event):void
+			{
+				App.setup(stage,this);
 			}
 			
 			protected function onResizeHandler(event:Event=null):void
@@ -35,6 +46,7 @@
 				if(!stage)return;
 				group.height = stage.stageHeight - group.y + _offset;
 			}
+			
 		]]>
 	</fx:Script>
 	<ns1:ToolBar id="toolBar" width="100%" x="0" y="22" />

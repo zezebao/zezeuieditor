@@ -60,6 +60,7 @@ package uidata
 				new UIClassVo("Line4",new UIElementLineInfo(3,2,100)),
 				new UIClassVo("Line6",new UIElementLineInfo(4,100,2)),
 				
+				new UIClassVo("RadioButton",new UIElementRadioButtonInfo("groupName","示例")),
 				new UIClassVo("Combobox",new UIElementComboboxInfo(170,22)),
 				new UIClassVo("PageView",new UIElementPageViewInfo()),
 			];

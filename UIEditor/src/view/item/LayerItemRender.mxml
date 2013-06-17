@@ -20,7 +20,7 @@
 
 			protected function itemrenderer1_addedToStageHandler(event:Event):void
 			{
-				trace("xxx");		
+						
 			}
 			
 		]]>

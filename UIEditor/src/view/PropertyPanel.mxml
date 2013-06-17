@@ -28,8 +28,13 @@
 			
 			protected function addToStageHandler(event:Event):void
 			{
+				App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,rslLoadComplete);
+			}
+			
+			private function rslLoadComplete(evt:Event):void
+			{
 				initData();
-				initEvent();		
+				initEvent();	
 			}
 			
 			private function initEvent():void

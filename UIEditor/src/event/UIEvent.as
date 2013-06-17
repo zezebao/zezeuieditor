@@ -4,12 +4,13 @@ package event
 	
 	public class UIEvent extends Event
 	{
+		/**外部库资源加载完成*/
+		public static const RSL_LOAD_COMPLETE:String = "RSLLibsLoadComplete";
 		/**
 		 * 选中库元件</br>
 		 * [数据：全限定类名]
 		 */		
 		public static const LIBRARY_SELECT_ITEM:String = "librarySelectItem";
-		
 		/**
 		 * 是否选中切换（层级面板通知舞台刷新）</br>
 		 * [数据，选中索引数组，根据子级层级索引]

@@ -13,6 +13,7 @@ package manager
 	import mx.core.UIComponent;
 	
 	import uidata.UIClassInfo;
+	import uidata.UIElementBaseInfo;
 	
 	import view.HotRectControl;
 
@@ -41,7 +42,7 @@ package manager
 			var fileSteam:FileStream = new FileStream();
 			fileSteam.open(file,FileMode.WRITE);
 			var byte:ByteArray = new ByteArray(); 
-			tempWrite(byte);
+			publishWrite(byte);
 			fileSteam.writeBytes(byte);
 			fileSteam.close();
 			
@@ -62,19 +63,20 @@ package manager
 			if(showAlert)Alert.show("保存xml文件成功");
 		}
 		
-		private function tempWrite(byte:ByteArray):void
+		private function publishWrite(byte:ByteArray):void
 		{
 			byte.writeInt(App.classInfoList.classLen);
 			var classList:Dictionary = App.classInfoList.classList;
 			for each (var info:UIClassInfo in classList) 
-			{
-				var len:int = info.childrenInfo.length;
+			{ 
+				var vec:Vector.<UIElementBaseInfo> = info.publishInfoList;
+				var len:int = vec.length
 				byte.writeUTF(info.className);
 				byte.writeInt(len);
-				for (var i:int = 0; i < len; i++) 
+				for (var i:int = 0; i < len; i++)
 				{
-					info.childrenInfo[i].writeData(byte);
-					trace(info.childrenInfo[i]);
+					vec[i].writeData(byte);
+					trace(vec[i]);
 				}
 			}
 		}
