@@ -18,6 +18,7 @@
 			import manager.ModelManager;
 			
 			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
 			import mx.events.DragEvent;
 			import mx.events.ListEvent;
 			
@@ -37,10 +38,11 @@
 			
 			protected function addToStage(event:Event):void
 			{
-				App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
+				if(App.rslLoaded)initData();
+				else App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
 			}
 			
-			private function initData(evt:Event):void
+			private function initData(evt:Event=null):void
 			{
 				loadAllSwf();
 			}
@@ -48,6 +50,11 @@
 			private function loadAllSwf():void
 			{
 				browserFile = new File(Config.swfsPath);
+				if(!browserFile.exists)
+				{
+					Alert.show(browserFile.nativePath + "not exist,please check Config.xml");
+					return;
+				}
 				var fileAry:Array = browserFile.getDirectoryListing();
 				if(fileAry!=null && fileAry.length>0)
 				{

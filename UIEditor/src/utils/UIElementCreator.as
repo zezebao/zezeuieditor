@@ -8,8 +8,11 @@ package utils
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.text.TextFormat;
 	import flash.utils.getDefinitionByName;
+	
+	import manager.LanguageManager;
 	
 	import mhqy.ui.UIType;
 	import mhqy.ui.button.MBitmapButton;
@@ -30,7 +33,6 @@ package utils
 	import mhqy.ui.mcache.splits.MCacheSplit6Line;
 	import mhqy.ui.page.PageView;
 	
-	import mhsm.core.manager.LanguageManager;
 	import mhsm.ui.BarAsset1;
 	import mhsm.ui.BarAsset3;
 	import mhsm.ui.BarAsset6;
@@ -66,6 +68,7 @@ package utils
 		public static function createItem(info:UIElementBaseInfo):DisplayObject
 		{
 			var item:DisplayObject;
+			var child:Object;
 			var cla:Class;
 			var label:String;
 			if(info.hasOwnProperty("label"))
@@ -77,7 +80,14 @@ package utils
 			{
 				case UIType.BITMAP:
 					cla = getDefinitionByName(UIElementBitmapInfo(info).className) as Class;
-					item = new Bitmap(new cla());
+					child = new cla();
+					if(child is BitmapData)
+					{
+						item = new Bitmap(child as BitmapData);						
+					}else if(child is DisplayObject)
+					{
+						item = child as DisplayObject;
+					}
 					break;
 				case UIType.BAR:
 					item = getBarByType(UIElementBarInfo(info).barType);
@@ -249,7 +259,6 @@ package utils
 					label.wordWrap = labelInfo.wrap;
 					label.htmlText = content;
 					break;
-				case UIType.BITMAP:
 				case UIType.BORDOR:
 				case UIType.BAR:
 				case UIType.LINE:
@@ -266,6 +275,7 @@ package utils
 					break;
 				case UIType.BUTTON:
 				case UIType.TAB_BTN:
+				case UIType.BITMAP_BTN:
 					if(target.hasOwnProperty("label"))
 					{
 						target["label"] = content;
@@ -277,6 +287,9 @@ package utils
 				case UIType.RADIO_BTN:
 					RadioButton(target).label = content;
 					RadioButton(target).setSize(info.width,info.height);
+					break;
+				case UIType.BITMAP:
+					
 					break;
 			}
 		}

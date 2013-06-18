@@ -64,6 +64,13 @@ package uidata
 				new UIClassVo("Combobox",new UIElementComboboxInfo(170,22)),
 				new UIClassVo("PageView",new UIElementPageViewInfo()),
 			];
+			var len:int = App.configXML.UI_BITMAPS.UI_BITMAP.length();
+			for (var i:int = 0; i < len; i++) 
+			{
+				var describe:String = App.configXML.UI_BITMAPS.UI_BITMAP[i].@describe;
+				var className:String = App.configXML.UI_BITMAPS.UI_BITMAP[i].@className;
+				UIClassArr.push(new UIClassVo(describe,new UIElementBitmapInfo(className)));
+			}
 		}
 		
 		/**

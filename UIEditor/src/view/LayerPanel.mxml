@@ -29,10 +29,11 @@
 			protected function addToStageHandler(event:Event):void
 			{
 				App.layerManager.layerPanel = this;
-				App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
+				if(App.rslLoaded)initData();
+				else App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
 			}
 			
-			private function initData(evt:Event):void
+			private function initData(evt:Event=null):void
 			{
 				initEvent();
 			}

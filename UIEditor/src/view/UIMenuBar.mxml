@@ -24,8 +24,6 @@
 			private function menuHandler(evt:MenuEvent):void  
 			{
 //				PopUpManager.addPopUp(UIConfigurePopWindow.instance,stage,true);
-				
-				
 				switch(int(evt.item.@data))
 				{
 					case MenuType.PROJECT_SEETING:

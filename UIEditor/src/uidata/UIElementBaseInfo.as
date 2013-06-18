@@ -29,6 +29,8 @@ package uidata
 		
 		/**可否拉伸*/
 		public var canScale:Boolean = false;
+
+		private var _proVec:Vector.<PropertyVo>;
 		
 		public function UIElementBaseInfo()
 		{
@@ -65,13 +67,25 @@ package uidata
 		 */		
 		public function getPropertys():Vector.<PropertyVo>
 		{
-			var vec:Vector.<PropertyVo> = new Vector.<PropertyVo>();
-			vec.push(new PropertyVo("variable","变量名",PropertyType.STRING,this.variable));
-			vec.push(new PropertyVo("x","x坐标",PropertyType.NUMBER,this.x));
-			vec.push(new PropertyVo("y","y坐标",PropertyType.NUMBER,this.y));
-			vec.push(new PropertyVo("width","宽度",PropertyType.NUMBER,this.width));
-			vec.push(new PropertyVo("height","高度",PropertyType.NUMBER,this.height));
-			return vec;
+			if(_proVec)return _proVec;
+			_proVec = new Vector.<PropertyVo>();
+			_proVec.push(new PropertyVo("variable","变量名",PropertyType.STRING,this.variable));
+			_proVec.push(new PropertyVo("x","x坐标",PropertyType.NUMBER,this.x));
+			_proVec.push(new PropertyVo("y","y坐标",PropertyType.NUMBER,this.y));
+			_proVec.push(new PropertyVo("width","宽度",PropertyType.NUMBER,this.width));
+			_proVec.push(new PropertyVo("height","高度",PropertyType.NUMBER,this.height));
+			return _proVec;
+		}
+		
+		protected function getProperty(property:String):PropertyVo
+		{
+			var vec:Vector.<PropertyVo> = getPropertys();
+			for (var i:int = 0; i < vec.length; i++) 
+			{
+				if(vec[i].proterty == property)
+					return vec[i];
+			}
+			return new PropertyVo("","",0,null);//for no errors
 		}
 		
 		public function clone(source:*):*

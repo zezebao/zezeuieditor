@@ -16,7 +16,6 @@ package
 	
 	import mhqy.ui.UIManager;
 	
-	import mhsm.core.manager.LanguageManager;
 	import mhsm.moviewrapper.MovieManager;
 	
 	import uidata.UIClassInfoList;
@@ -25,18 +24,10 @@ package
 
 	public class App
 	{
+		public static var rslLoaded:Boolean;
 		public static var stage:Stage;
-		
-		public static var classInfoList:UIClassInfoList = new UIClassInfoList();
-		
-		public static var soManger:ShareObjManger = new ShareObjManger();;
-		public static var hotRectManager:HotRectManager = new HotRectManager();
-		public static var layerManager:LayerManager = new LayerManager();
-		public static var movieManager:MovieManager = new MovieManager();
-		public static var log:LogManager = new LogManager();
-		public static var xmlParser:XMLParser = new XMLParser();
-		
 		public static var uiData:UIData;
+		public static var configXML:XML;
 		
 		/**外部库资源加载完成之后，调用此方法*/
 		public static function setup(appStage:Stage,app:ZeZeUIEditor):void
@@ -45,13 +36,23 @@ package
 			UIManager.setup(stage,movieManager,null,null);
 			
 			//initDatas
-			uiData = new UIData()
+			uiData = new UIData();
 		}
 		
 		//------------库元件拖动数据--------------------
 		public static var dragVo:LibraryDragVo = new LibraryDragVo();
 		//------------库元件复制数据--------------------
 		public static var copyInfos:Vector.<UIElementBaseInfo>;
+		//-----------类数据--------------------------
+		public static var classInfoList:UIClassInfoList = new UIClassInfoList();
+		
+		//-----------managers----------------------------------------
+		public static var soManger:ShareObjManger = new ShareObjManger();;
+		public static var hotRectManager:HotRectManager = new HotRectManager();
+		public static var layerManager:LayerManager = new LayerManager();
+		public static var movieManager:MovieManager = new MovieManager();
+		public static var log:LogManager = new LogManager();
+		public static var xmlParser:XMLParser = new XMLParser();
 		
 		//------------事件收发---------------------------		
 		private static var _dispatcher:EventDispatcher = new EventDispatcher();

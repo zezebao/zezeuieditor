@@ -93,6 +93,9 @@
 				App.addEventListener(UIEvent.STAGE_ENLARGE,enlargeHandler);
 				App.addEventListener(UIEvent.STAGE_LESSON,lessonHandler);
 				App.addEventListener(UIEvent.STAGE_NO_SCALE,noScaleHandler);
+				
+				//alt copy
+				App.addEventListener(UIEvent.ALT_COPY_INFOS,altCopyHandler);
 			}
 			
 			protected function onKeyDownHandler(evt:KeyboardEvent):void
@@ -148,7 +151,7 @@
 						if(evt.ctrlKey)copyInfos();
 						break;
 					case Keyboard.V:
-						if(evt.ctrlKey)pasteInfos();
+						if(evt.ctrlKey)pasteInfos(App.copyInfos);
 						break;
 					
 				}
@@ -224,7 +227,8 @@
 				uiInfo.x = _uiContainer.mouseX;
 				uiInfo.y = _uiContainer.mouseY;
 				
-				addHotRect(uiInfo);
+				App.hotRectManager.unSelectAll();
+				addHotRect(uiInfo,true);
 				
 				App.layerManager.layerPanel.setChild(_uiContainer);
 				stage.focus = this;
@@ -286,12 +290,15 @@
 				_hitContainer.graphics.clear();
 			}
 			
-			protected function onMouseMoveHandler(event:MouseEvent):void
+			protected function onMouseMoveHandler(evt:MouseEvent):void
 			{
 				_hitContainer.graphics.clear();
-				_hitContainer.graphics.lineStyle(1,0x00ff00,1);
-				_hitContainer.graphics.drawRect(rect.x,rect.y,rect.width,rect.height);
-				_hitContainer.graphics.endFill();
+				if(!evt.altKey)
+				{
+					_hitContainer.graphics.lineStyle(1,0x00ff00,1);
+					_hitContainer.graphics.drawRect(rect.x,rect.y,rect.width,rect.height);
+					_hitContainer.graphics.endFill();
+				}
 			}
 			
 			private function get rect():Rectangle
@@ -349,13 +356,15 @@
 				stage.focus = this;
 			}
 			
-			private function addHotRect(uiInfo:UIElementBaseInfo):void
+			private function addHotRect(uiInfo:UIElementBaseInfo,isSelected:Boolean=false,isInDrag:Boolean=false):void
 			{
 				var hotRect:HotRectControl = new HotRectControl();
 				hotRect.selctedHander = updateLate;
 				_uiContainer.addChild(hotRect);
 				
 				hotRect.uiInfo = uiInfo;
+				if(isSelected)hotRect.selected = true;
+				if(isInDrag)hotRect.startDrag();
 			}
 			
 			private function clear():void
@@ -416,17 +425,22 @@
 				}
 			}
 			
-			private function pasteInfos():void
+			private function pasteInfos(vec:Vector.<UIElementBaseInfo>,isSelected:Boolean=true,isInDrag:Boolean=false):void
 			{
-				if(App.copyInfos)
+				if(!vec)return;
+				if(vec.length >= 1)App.hotRectManager.unSelectAll();
+				for (var i:int = 0; i < vec.length; i++) 
 				{
-					for (var i:int = 0; i < App.copyInfos.length; i++) 
-					{
-						var info:UIElementBaseInfo = App.copyInfos[i].clone(UIElementCreator.creatInfo(App.copyInfos[i].type));
-						addHotRect(info);
-					}
-					App.layerManager.layerPanel.setChild(_uiContainer);
+					var info:UIElementBaseInfo = vec[i].clone(UIElementCreator.creatInfo(vec[i].type));
+					addHotRect(info,isSelected,isInDrag);
 				}
+				App.layerManager.layerPanel.setChild(_uiContainer);
+			}
+			
+			private function altCopyHandler(evt:UIEvent):void
+			{
+				var vec:Vector.<UIElementBaseInfo> = evt.data as Vector.<UIElementBaseInfo>;
+				pasteInfos(vec,true,true);
 			}
 			
 		]]>

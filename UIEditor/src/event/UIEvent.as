@@ -38,6 +38,12 @@ package event
 		public static const STAGE_LESSON:String = "stageLesson";
 		public static const STAGE_NO_SCALE:String = "stageNoScale";
 		
+		/**property focus chage [data:PropertyItemView]*/
+		public static const PRPPERTY_FOCUS_CHANGE:String = "propertyFocusChange";
+		
+		/**alt copy [data:Vector.<UIElementBaseInfo>]*/
+		public static const ALT_COPY_INFOS:String = "altCopyInfos";
+		
 		public var data:Object;
 		
 		public function UIEvent(type:String, data:Object=null, bubbles:Boolean=false, cancelable:Boolean=false)
