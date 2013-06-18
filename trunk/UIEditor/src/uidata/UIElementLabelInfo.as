@@ -11,8 +11,6 @@ package uidata
 	import mhqy.ui.UIType;
 	import mhqy.ui.label.MAssetLabel;
 	
-	import mhsm.core.manager.LanguageManager;
-	
 	import uidata.vo.PropertyVo;
 
 	public class UIElementLabelInfo extends UIElementBaseInfo

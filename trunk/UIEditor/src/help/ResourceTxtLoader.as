@@ -14,18 +14,14 @@ package help
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
 	import flash.utils.ByteArray;
-	import flash.utils.IDataInput;
 	import flash.utils.getDefinitionByName;
 	
 	import ghostcat.events.OperationEvent;
 	import ghostcat.operation.load.LoadOper;
 	
-	import mhsm.core.manager.LanguageManager;
-	import mhsm.interfaces.layer.IPanel;
+	import manager.LanguageManager;
 	
 	import nochump.util.zip.*;
-	
-	import spark.components.Application;
 
 	public class ResourceTxtLoader
 	{
@@ -43,11 +39,13 @@ package help
 		private function loadConfig():void
 		{
 			var browserFile:File = new File(File.applicationDirectory.nativePath + "\\Config.xml");
+			if(!browserFile.exists)return;
 			var fileSteam:FileStream = new FileStream();
 			fileSteam.open(browserFile,FileMode.READ);
 			fileSteam.position = 0;
 			var str:String = fileSteam.readUTFBytes(fileSteam.bytesAvailable);
 			var xml:XML = XML(str);
+			App.configXML = xml;
 			
 			var languagePath:String = xml.LANGUAGE_PATH.toString();
 			var swfsPath:String = xml.SWFS_PATH.toString();
@@ -67,7 +65,6 @@ package help
 			Config.swfsPath = swfsPath;
 			Config.outputPath = outputPath;
 			Config.outputXMLPath = outputXMLPath; 
-			
 		}
 		
 		private function loadXml():void
@@ -94,7 +91,7 @@ package help
 		{
 			var byte:ByteArray = (evt.target as LoadOper).data as ByteArray;
 			byte.uncompress();
-			var str:String = byte.readUTF();
+			var str:String = byte.readUTFBytes(byte.bytesAvailable);
 			LanguageManager.setup(str);
 		}
 		
@@ -140,30 +137,15 @@ package help
 					loader.loadBytes(dataByte,loaderContext);
 					_loadCount ++;
 				}
-			}
-		}
-		
-		protected function onError(evt:IOErrorEvent):void
-		{
-			App.log.error(evt.text);
-			_loadCount --;
-			if(_loadCount <= 0)
+				checkAllComplete();
+			}else
 			{
-				allComplete();
-			}
-		}
-		
-		protected function onCompleteHandler(event:Event):void
-		{
-			_loadCount --;
-			if(_loadCount <= 0)
-			{
-				allComplete();
+				checkAllComplete();
 			}
 			try
 			{
-				trace(getDefinitionByName("mhsm.interfaces.layer.IPanel"));
 				trace(getDefinitionByName("mhsm.interfaces.moviewrapper.IMovieManager"));
+				trace(getDefinitionByName("mhsm.interfaces.layer.IPanel"));
 				trace(getDefinitionByName("mhqy.ui.mcache.btns.MCacheAsset1Btn"));
 			} 
 			catch(error:Error) 
@@ -172,9 +154,27 @@ package help
 			}
 		}
 		
-		private function allComplete():void
+		protected function onError(evt:IOErrorEvent):void
 		{
-			App.dispathEvent(new UIEvent(UIEvent.RSL_LOAD_COMPLETE));
+			App.log.error(evt.text);
+			_loadCount --;
+			checkAllComplete();
+		}
+		
+		protected function onCompleteHandler(event:Event):void
+		{
+			_loadCount --;
+			checkAllComplete();
+		}
+		
+		private function checkAllComplete():void
+		{
+			if(App.rslLoaded)return;
+			if(_loadCount <= 0)
+			{
+				App.rslLoaded = true;
+				App.dispathEvent(new UIEvent(UIEvent.RSL_LOAD_COMPLETE));
+			}
 			trace(getDefinitionByName("mhsm.interfaces.moviewrapper.IMovieManager"));
 			trace(getDefinitionByName("mhqy.ui.mcache.btns.MCacheAsset1Btn"));
 		}

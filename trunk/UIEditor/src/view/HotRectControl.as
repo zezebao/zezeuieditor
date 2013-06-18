@@ -47,9 +47,9 @@ package view
 		/*** 容纳控制点的容器*/
 		protected var controlCotainer:Sprite;
 		/*** 线型*/
-		protected var lineStyle:GraphicsLineStyle = new GraphicsLineStyle(0,0);
+		protected var lineStyle:GraphicsLineStyle = new GraphicsLineStyle(0,0x00ff00);
 		/*** 填充*/
-		protected var fill:GraphicsFill = new GraphicsFill(0xFFFFFF,0.1);
+		protected var fill:GraphicsFill = new GraphicsFill(0xFF0000,0);
 		
 		protected var fillControl:GBase;
 		protected var topLeftControl:DragPoint;
@@ -447,7 +447,12 @@ package view
 			updateControls();
 		}
 		
-		private function fillMouseDownHandler(event:MouseEvent):void
+		private function fillMouseDownHandler(evt:MouseEvent):void
+		{
+			if(!evt.altKey)startDrag();
+		}
+		
+		override public function startDrag(lockCenter:Boolean=false, bounds:Rectangle=null):void
 		{
 			App.hotRectManager.startDrag(new Rectangle(0,0,2000,2000),null,stopDargHandler);
 		}
@@ -489,6 +494,24 @@ package view
 		private function mouseDownHandler(evt:MouseEvent):void
 		{
 			evt.stopImmediatePropagation();
+			if(evt.altKey)
+			{
+				var vec:Vector.<UIElementBaseInfo> = new Vector.<UIElementBaseInfo>();
+				if(selected)
+				{
+					var hotVec:Vector.<HotRectControl> = App.hotRectManager.selectedRects;
+					for (var i:int = 0; i < hotVec.length; i++) 
+					{
+						vec.push(hotVec[i].uiInfo.clone(UIElementCreator.creatInfo(hotVec[i].uiInfo.type)));
+					}
+				}else
+				{
+					vec.push(uiInfo.clone(UIElementCreator.creatInfo(uiInfo.type)));
+				}
+				App.hotRectManager.unSelectAll();
+				App.dispathEvent(new UIEvent(UIEvent.ALT_COPY_INFOS,vec));
+				return;
+			}
 			if (selected)
 			{
 				if(evt.ctrlKey)

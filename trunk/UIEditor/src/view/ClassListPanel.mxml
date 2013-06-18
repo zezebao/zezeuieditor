@@ -10,14 +10,16 @@
 			
 			import event.UIEvent;
 			
+			import mx.controls.Alert;
 			import mx.events.ListEvent;
 			
 			protected function panel1_addedToStageHandler(event:Event):void
 			{
-				App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
+				if(App.rslLoaded)initData();
+				else App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
 			}
 			
-			private function initData(evt:Event):void
+			private function initData(evt:Event=null):void
 			{
 				init();
 				initEvent();
@@ -54,7 +56,10 @@
 			
 			private function onClassUpdateHandler(evt:UIEvent):void
 			{
-				classList.dataProvider = App.classInfoList.getChildList();			
+				classList.dataProvider = App.classInfoList.getChildList();
+				
+				var className:String = evt.data.toString();
+				App.dispathEvent(new UIEvent(UIEvent.SELECT_A_CLASS,className));
 			}
 			
 		]]>

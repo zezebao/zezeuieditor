@@ -19,6 +19,9 @@ package uidata
 		{
 			this.className = className;
 			type = UIType.BITMAP;
+			
+			getProperty("width").isCanEdit = false;
+			getProperty("height").isCanEdit = false;
 		}
 		
 		override public function get type():int

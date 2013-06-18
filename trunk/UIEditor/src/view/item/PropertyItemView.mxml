@@ -31,6 +31,7 @@
 			
 			private function update():void
 			{
+				if(_info[_property] == getValue())return;
 				_info[_property] = getValue();
 				_info.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_PROPERTY,_propertyVo.isChangeView));
 			}
@@ -39,6 +40,8 @@
 			{
 				if(!property)return;
 				toolTips = propertyVo.toolTip;
+				
+				enabled = propertyVo.isCanEdit;
 				
 				_property = property;
 				_propertyVo = propertyVo;
@@ -127,10 +130,22 @@
 			
 			protected function valueLabel_keyDownHandler(evt:KeyboardEvent):void
 			{
-				if(evt.keyCode == Keyboard.ENTER)
+				if(evt.keyCode == Keyboard.ENTER || evt.keyCode == Keyboard.TAB)
 				{
 					update();
+					App.dispathEvent(new UIEvent(UIEvent.PRPPERTY_FOCUS_CHANGE,this));
 				}
+			}
+			
+			public function setFocusIn():Boolean
+			{
+				if(!visible)return true;
+				if(valueLabel.visible && _propertyVo && _propertyVo.isCanEdit)
+				{
+					valueLabel.setFocus();
+					return true;
+				}
+				return false;
 			}
 			
 			private function getValue():*
@@ -170,6 +185,7 @@
 		
 	<s:Label id="nameLabel" x="10" y="10" width="60%" text="标签" toolTip="{toolTips}"/>
 	<s:TextInput id="valueLabel" x="84" y="3" width="218" borderColor="#FFFFFF" chromeColor="#FFFFFF"
+				 tabEnabled="true"
 				 contentBackgroundColor="#F2F2F2" focusOut="valueLabel_focusOutHandler(event)" keyDown="valueLabel_keyDownHandler(event)"
 				 prompt="value input"/>
 	<s:ComboBox id="combobox" x="84" y="3" width="111" change="combobox_changeHandler(event)"/>

@@ -6,8 +6,6 @@ package uidata
 	
 	import mhqy.ui.UIType;
 	
-	import mhsm.core.manager.LanguageManager;
-	
 	import uidata.vo.PropertyVo;
 
 	public class UIElementButtonInfo extends UIElementBaseInfo
@@ -23,6 +21,9 @@ package uidata
 			this.btnType = btnType;
 			this.scaleType = scaleType;
 			this.label = label;
+			
+			getProperty("width").isCanEdit = false;
+			getProperty("height").isCanEdit = false;
 		}
 
 		override public function readXML(xml:XML):void
@@ -52,7 +53,7 @@ package uidata
 			var vec:Vector.<PropertyVo> = new Vector.<PropertyVo>();
 			vec.push(new PropertyVo("btnType","按钮类型",PropertyType.DATAPROVIDER,this.btnType,[1,2,3,4,5,6,7,8,100,101],true,true));
 			vec.push(new PropertyVo("scaleType","缩放类型",PropertyType.DATAPROVIDER,this.scaleType,[0,1,2,3,4,5,6,7,8],true,true));
-			vec.push(new PropertyVo("label","按钮标题",PropertyType.STRING,this.label));
+			vec.push(new PropertyVo("label","按钮标题",PropertyType.STRING,this.label,null,true,true));
 			return vec.concat(super.getPropertys());
 		}
 		

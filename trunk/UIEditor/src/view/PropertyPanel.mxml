@@ -28,10 +28,11 @@
 			
 			protected function addToStageHandler(event:Event):void
 			{
-				App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,rslLoadComplete);
+				if(App.rslLoaded)rslLoadComplete();
+				else App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,rslLoadComplete);
 			}
 			
-			private function rslLoadComplete(evt:Event):void
+			private function rslLoadComplete(evt:Event=null):void
 			{
 				initData();
 				initEvent();	
@@ -41,16 +42,17 @@
 			{
 				App.addEventListener(UIEvent.LAYERS_SELECT_UPDATE,itemSelectHandler);
 				App.addEventListener(UIEvent.STAGE_SELECT_UPDATE,itemSelectHandler);
+				App.addEventListener(UIEvent.PRPPERTY_FOCUS_CHANGE,propertyFocusChangeHandler);
 			}
 			
 			private function itemSelectHandler(evt:UIEvent):void
 			{
 				var time:Number = getTimer();
-				
+				clearItems();
 				group.visible = false;
 				if(App.hotRectManager.selectedRects.length == 0)
 				{
-					clearItems();
+					
 				}else if(App.hotRectManager.selectedRects.length == 1)
 				{
 					var rect:HotRectControl = App.hotRectManager.selectedRects[0];
@@ -153,6 +155,17 @@
 				{
 					_itemsPool[i].updateView();
 				}				
+			}
+			
+			private function propertyFocusChangeHandler(evt:UIEvent):void
+			{
+				var item:PropertyItemView = evt.data as PropertyItemView;
+				var index:int = _itemsPool.indexOf(item);
+				for (var i:int = index + 1; i < _itemsPool.length; i++) 
+				{
+					if(_itemsPool[i].setFocusIn())
+						break;
+				}
 			}
 			
 		]]>

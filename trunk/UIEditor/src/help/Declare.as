@@ -1,6 +1,6 @@
 package help
 {
-	import mhqy.ui.container.MPanel3;
+	import mhqy.ui.container.*;
 	
 	import mhsm.interfaces.layer.*;
 	import mhsm.interfaces.socket.*;
@@ -12,6 +12,7 @@ package help
 			IPackageIn;
 			ISubCodeSocketHandler
 			MPanel3;
+			IPanel;
 		}
 	}
 }
