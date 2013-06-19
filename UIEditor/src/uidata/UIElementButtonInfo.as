@@ -57,17 +57,12 @@ package uidata
 			return vec.concat(super.getPropertys());
 		}
 		
-		override public function clone(source:*):*
+		override public function clone():*
 		{
-			if(!(source is UIElementButtonInfo))
-			{
-				throw new Error("clone error");
-			}
-			var info:UIElementButtonInfo = source as UIElementButtonInfo;
+			var info:UIElementButtonInfo = super.clone() as UIElementButtonInfo;
 			info.btnType = btnType;
 			info.scaleType = scaleType;
 			info.label = label;
-			super.clone(source);
 			return info;
 		}
 		

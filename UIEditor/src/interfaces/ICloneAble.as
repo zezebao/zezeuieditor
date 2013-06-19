@@ -6,6 +6,6 @@ package interfaces
 		 * @param source copy souce
 		 * @return 
 		 */		
-		function clone(source:*):*;
+		function clone():*;
 	}
 }

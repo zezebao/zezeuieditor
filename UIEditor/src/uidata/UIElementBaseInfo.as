@@ -15,6 +15,8 @@ package uidata
 	import mhqy.ui.UIType;
 	
 	import uidata.vo.PropertyVo;
+	
+	import utils.UIElementCreator;
 
 	public class UIElementBaseInfo extends EventDispatcher implements ICloneAble
 	{
@@ -88,13 +90,9 @@ package uidata
 			return new PropertyVo("","",0,null);//for no errors
 		}
 		
-		public function clone(source:*):*
+		public function clone():*
 		{
-			if(!(source is UIElementBaseInfo))
-			{
-				throw new Error("clone error");
-			}
-			var info:UIElementBaseInfo = source as UIElementBaseInfo;
+			var info:UIElementBaseInfo = UIElementCreator.creatInfo(type);
 			info.x = x;
 			info.y = y;
 			info.width = width;

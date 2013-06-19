@@ -502,11 +502,11 @@ package view
 					var hotVec:Vector.<HotRectControl> = App.hotRectManager.selectedRects;
 					for (var i:int = 0; i < hotVec.length; i++) 
 					{
-						vec.push(hotVec[i].uiInfo.clone(UIElementCreator.creatInfo(hotVec[i].uiInfo.type)));
+						vec.push(hotVec[i].uiInfo.clone());
 					}
 				}else
 				{
-					vec.push(uiInfo.clone(UIElementCreator.creatInfo(uiInfo.type)));
+					vec.push(uiInfo.clone());
 				}
 				App.hotRectManager.unSelectAll();
 				App.dispathEvent(new UIEvent(UIEvent.ALT_COPY_INFOS,vec));

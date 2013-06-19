@@ -98,13 +98,9 @@ package uidata
 			return vec.concat(super.getPropertys());
 		}
 		
-		override public function clone(source:*):*
+		override public function clone():*
 		{
-			if(!(source is UIElementLabelInfo))
-			{
-				throw new Error("clone error");
-			}
-			var info:UIElementLabelInfo = source as UIElementLabelInfo;
+			var info:UIElementLabelInfo = super.clone() as UIElementLabelInfo;
 			info.label = label;
 			info.color = color;
 			info.bold = bold;
@@ -113,7 +109,6 @@ package uidata
 			info.leading = leading;
 			info.wrap = wrap;
 			info.underLine = underLine;
-			super.clone(source);
 			return info;
 		}
 		

@@ -23,15 +23,10 @@ package uidata
 			height = 20;
 		}
 		
-		override public function clone(source:*):*
+		override public function clone():*
 		{
-			if(!(source is UIElementBarInfo))
-			{
-				throw new Error("clone error");
-			}
-			var info:UIElementBarInfo = source as UIElementBarInfo;
+			var info:UIElementBarInfo = super.clone() as UIElementBarInfo;
 			info.barType = barType;
-			super.clone(source);
 			return info;
 		}
 		

@@ -18,15 +18,10 @@ package uidata
 			type = UIType.CHECKBOX;
 		}
 		
-		override public function clone(source:*):*
+		override public function clone():*
 		{
-			if(!(source is UIElementCheckBoxInfo))
-			{
-				throw new Error("clone error");
-			}
-			var info:UIElementCheckBoxInfo = source as UIElementCheckBoxInfo;
+			var info:UIElementCheckBoxInfo = super.clone() as UIElementCheckBoxInfo;
 			info.label = label;
-			super.clone(source);
 			return info;
 		}
 		

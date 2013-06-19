@@ -223,7 +223,7 @@
 				}
 				
 				var info:UIElementBaseInfo = App.dragVo.classVo.info;
-				var uiInfo:UIElementBaseInfo = info.clone(UIElementCreator.creatInfo(info.type));
+				var uiInfo:UIElementBaseInfo = info.clone();
 				uiInfo.x = _uiContainer.mouseX;
 				uiInfo.y = _uiContainer.mouseY;
 				
@@ -417,7 +417,7 @@
 					var hotRect:HotRectControl = _uiContainer.getChildAt(i) as HotRectControl;
 					if(hotRect && hotRect.uiInfo && hotRect.selected)
 					{
-						var info:UIElementBaseInfo = hotRect.uiInfo.clone(UIElementCreator.creatInfo(hotRect.uiInfo.type));
+						var info:UIElementBaseInfo = hotRect.uiInfo.clone();
 						info.x += 10;
 						info.y += 10;
 						App.copyInfos.push(info);
@@ -425,13 +425,18 @@
 				}
 			}
 			
+			/**
+			 * @param vec
+			 * @param isSelected  是否被选中
+			 * @param isInDrag  是否在拖动状态[如，alt复制元素为拖动状态]
+			 */				
 			private function pasteInfos(vec:Vector.<UIElementBaseInfo>,isSelected:Boolean=true,isInDrag:Boolean=false):void
 			{
 				if(!vec)return;
 				if(vec.length >= 1)App.hotRectManager.unSelectAll();
 				for (var i:int = 0; i < vec.length; i++) 
 				{
-					var info:UIElementBaseInfo = vec[i].clone(UIElementCreator.creatInfo(vec[i].type));
+					var info:UIElementBaseInfo = vec[i].clone();
 					addHotRect(info,isSelected,isInDrag);
 				}
 				App.layerManager.layerPanel.setChild(_uiContainer);

@@ -23,16 +23,11 @@ package uidata
 //			canScale = true;
 		}
 		
-		override public function clone(source:*):*
+		override public function clone():*
 		{
-			if(!(source is UIElementRadioButtonInfo))
-			{
-				throw new Error("clone error");
-			}
-			var info:UIElementRadioButtonInfo = source as UIElementRadioButtonInfo;
+			var info:UIElementRadioButtonInfo = super.clone() as UIElementRadioButtonInfo;
 			info.label = label;
 			info.groupName = groupName;
-			super.clone(source);
 			return info;
 		}
 		
