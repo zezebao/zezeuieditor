@@ -42,15 +42,10 @@ package uidata
 			return vec.concat(super.getPropertys());
 		}
 		
-		override public function clone(source:*):*
+		override public function clone():*
 		{
-			if(!(source is UIElementBorderInfo))
-			{
-				throw new Error("clone error");
-			}
-			var info:UIElementBorderInfo = source as UIElementBorderInfo;
+			var info:UIElementBorderInfo = super.clone() as UIElementBorderInfo;
 			info.borderType = borderType;
-			super.clone(source);
 			return info;
 		}
 		

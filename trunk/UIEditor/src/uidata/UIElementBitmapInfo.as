@@ -58,15 +58,10 @@ package uidata
 			return vec.concat(super.getPropertys());
 		}
 		
-		override public function clone(source:*):*
+		override public function clone():*
 		{
-			if(!(source is UIElementBitmapInfo))
-			{
-				throw new Error("clone error");
-			}
-			var info:UIElementBitmapInfo = source as UIElementBitmapInfo;
+			var info:UIElementBitmapInfo = super.clone() as UIElementBitmapInfo;
 			info.className = className;
-			super.clone(source);
 			return info;
 		}
 		

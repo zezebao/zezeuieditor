@@ -21,15 +21,10 @@ package uidata
 			type = UIType.LINE;
 		}
 		
-		override public function clone(source:*):*
+		override public function clone():*
 		{
-			if(!(source is UIElementLineInfo))
-			{
-				throw new Error("clone error");
-			}
-			var info:UIElementLineInfo = source as UIElementLineInfo;
+			var info:UIElementLineInfo = super.clone() as UIElementLineInfo;
 			info.lineType = lineType;
-			super.clone(source);
 			return info;
 		}
 		

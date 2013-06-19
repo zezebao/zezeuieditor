@@ -25,15 +25,10 @@ package uidata
 			source.writeBoolean(argShowOtherBtn);
 		}
 		
-		override public function clone(source:*):*
+		override public function clone():*
 		{
-			if(!(source is UIElementPageViewInfo))
-			{
-				throw new Error("clone error");
-			}
-			var info:UIElementPageViewInfo = source as UIElementPageViewInfo;
+			var info:UIElementPageViewInfo = super.clone() as UIElementPageViewInfo;
 			info.argShowOtherBtn = argShowOtherBtn;
-			super.clone(source);
 			return info;
 		}
 		
