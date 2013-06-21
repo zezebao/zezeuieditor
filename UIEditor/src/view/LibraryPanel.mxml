@@ -15,12 +15,13 @@
 			
 			import event.UIEvent;
 			
-			import manager.ModelManager;
-			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.events.DragEvent;
 			import mx.events.ListEvent;
+			
+			import nochump.util.zip.ZipEntry;
+			import nochump.util.zip.ZipFile;
 			
 			import uidata.UIData;
 			import uidata.UIElementBitmapInfo;
@@ -30,11 +31,8 @@
 			
 			private const NODE:String = "node_item";
 			
-			protected var browserFile:File;
-			protected var loadIndex:int = 0;
-			protected var loader:Loader;
-			protected var urlLoader:URLLoader;
-			protected var swfAry:Array = [];//swf文件列表
+			protected var loadCount:int = 0;
+			protected var swfVec:Vector.<SwfVo> = new Vector.<SwfVo>();//swf文件列表
 			
 			protected function addToStage(event:Event):void
 			{
@@ -49,88 +47,92 @@
 			
 			private function loadAllSwf():void
 			{
-				browserFile = new File(Config.swfsPath);
+				var browserFile:File = new File(Config.swfsPath);
 				if(!browserFile.exists)
 				{
-					Alert.show(browserFile.nativePath + "not exist,please check Config.xml");
+					Alert.show(browserFile.nativePath + "目录不存在,请检查Config.xml");
 					return;
 				}
 				var fileAry:Array = browserFile.getDirectoryListing();
-				if(fileAry!=null && fileAry.length>0)
+				if(fileAry.length <= 0)
 				{
-					for(var i:int=0;i<fileAry.length;i++)
+					Alert.show("目录无可加载内容");
+					return;
+				}
+				for(var i:int=0;i<fileAry.length;i++)
+				{
+					var file:File = fileAry[i];
+					
+					var stream:FileStream = new FileStream();
+					stream.open(file,FileMode.READ);
+					
+					var byte:ByteArray = new ByteArray();
+					stream.readBytes(byte,0,stream.bytesAvailable);
+					
+					var loader:Loader = new Loader();
+					var loaderContext:LoaderContext = new LoaderContext(false,ApplicationDomain.currentDomain); 
+				　　loaderContext.allowLoadBytesCodeExecution = true; 
+					loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loadCompleteHandler);
+					loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);
+					var dataByte:ByteArray;
+					
+					if(file.extension == "swf")
 					{
-						var file:File = fileAry[i];
-						if(file.exists && file.extension == "swf")
-						{
-							var swfVo:SwfVo = new SwfVo();
-							swfVo.path = file.url;
-							swfVo.name = file.name;
-							swfVo.classAry = [];
-							swfAry.push(swfVo);
+						dataByte = byte;
+					}else if(file.extension == "swc")
+					{
+						var zipFile:ZipFile = new ZipFile(byte);
+						for(var j:int = 0; j < zipFile.entries.length; j++) {
+							var entry:ZipEntry = zipFile.entries[j];
+							if(entry.name.indexOf("swf") != -1)
+							{
+								dataByte = zipFile.getInput(entry);
+							}
 						}
 					}
+//					dataByte.writeUTFBytes(file.name);
+//					dataByte.writeUTF(file.url);
+					loader.loadBytes(dataByte,loaderContext);
+					loadCount ++;
 				}
-				if(swfAry.length>0)
-				{
-					queueLoad(loadIndex);
-				}
-				ModelManager.getInstance().swfAry = swfAry;
 			}
 			
-			private function queueLoad(index:int):void
+			protected function onError(evt:IOErrorEvent):void
 			{
-				var swfVo:SwfVo = swfAry[index];
-				urlLoader = new URLLoader();
-				urlLoader.dataFormat = URLLoaderDataFormat.BINARY;
-				urlLoader.addEventListener(Event.COMPLETE,urlLoadCompleteHandler);			
-				urlLoader.load(new URLRequest(swfVo.path));
-//				loader = new Loader();
-//				loader.load(new URLRequest(swfVo.path),new LoaderContext(false,ApplicationDomain.currentDomain));
-//				loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loadCompleteHandler);
-			}
-			
-			protected function urlLoadCompleteHandler(evt:Event):void
-			{
-				evt.target;
-				loader = new Loader();
-				var loaderContext:LoaderContext = new LoaderContext(false,ApplicationDomain.currentDomain); 
-				　　loaderContext.allowLoadBytesCodeExecution = true; 
-				loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loadCompleteHandler);
-				loader.loadBytes(evt.target.data,loaderContext);
+				App.log.error(evt.text);
 			}
 			
 			private function loadCompleteHandler(evt:Event):void
 			{
-				loader.contentLoaderInfo.removeEventListener(Event.COMPLETE,loadCompleteHandler);
-				var loaderInfo:LoaderInfo = evt.currentTarget as LoaderInfo;
-				var swfVo:SwfVo = swfAry[loadIndex];
+				var loaderInfo:LoaderInfo = evt.target as LoaderInfo;
+				loaderInfo.loader.contentLoaderInfo.removeEventListener(Event.COMPLETE,loadCompleteHandler);
+				var byteArray:ByteArray = loaderInfo.bytes;
+				var swfVo:SwfVo = new SwfVo();
 				swfVo.loaderInfo = loaderInfo;
-				swfVo.classAry = GetSwfAllClass.getSWFClassName(loaderInfo.bytes);
-				loadIndex++;
-				if(loadIndex==swfAry.length)
+				swfVo.classAry = GetSwfAllClass.getSWFClassName(byteArray);
+				swfVo.name = Math.random().toString();
+//				swfVo.name = byteArray.readUTFBytes(byteArray.bytesAvailable);
+//				swfVo.path = byteArray.readUTF();
+				swfVec.push(swfVo);
+				
+				loadCount --;
+				if(loadCount <= 0)
 				{
-					//全部加载完成]
-					loadIndex = 0;
 					showInitInfo();
-	//				preveiw.setData(swfAry);
-					setData(swfAry);
-				}else
-				{
-					queueLoad(loadIndex);
+					setData();
 				}
 			}
 			
 			private function showInitInfo():void
 			{
 				var content:String = "";
-				content += "资源初始化完成："+swfAry.length+"个swf\n";
-				for(var i:int = 0;i<swfAry.length-1;i++)
+				content += "资源初始化完成："+swfVec.length+"个swf\n";
+				for(var i:int = 0;i<swfVec.length-1;i++)
 				{
-					for(var j:int = i+1;j<swfAry.length;j++)
+					for(var j:int = i+1;j<swfVec.length;j++)
 					{
-						var swfVo1:SwfVo = swfAry[i];
-						var swfVo2:SwfVo = swfAry[j];
+						var swfVo1:SwfVo = swfVec[i];
+						var swfVo2:SwfVo = swfVec[j];
 						for(var m:int = 0;m<swfVo1.classAry.length;m++)
 						{
 							for(var n:int = 0;n<swfVo2.classAry.length;n++)
@@ -142,12 +144,12 @@
 							}
 						}
 					}
-					content += "【" + swfAry[i].name + "】  ";
+					content += "【" + swfVec[i].name + "】  ";
 				}
 //				trace(content);
 			}
 			
-			public function setData(ary:Array):void
+			public function setData():void
 			{
 				var i:int;
 				var temp:ArrayCollection;
@@ -165,14 +167,14 @@
 				arrayData.addItem({label:"UI元件库",type:NODE,children:temp});
 				
 				//模板库
-				temp = new ArrayCollection();
-				arrayData.addItem({label:"模板文件库",type:NODE,children:temp});
+//				temp = new ArrayCollection();
+//				arrayData.addItem({label:"模板文件库",type:NODE,children:temp});
 				
 				//资源库
 				temp = new ArrayCollection();
-				for(i = 0;i<ary.length;i++)
+				for(i = 0;i<swfVec.length;i++)
 				{
-					var swfVo:SwfVo = ary[i];
+					var swfVo:SwfVo = swfVec[i];
 					temp = new ArrayCollection();
 					for(var j:int = 0;j<swfVo.classAry.length;j++)
 					{
