@@ -69,7 +69,6 @@ package uidata
 		 */		
 		public function getPropertys():Vector.<PropertyVo>
 		{
-			if(_proVec)return _proVec;
 			_proVec = new Vector.<PropertyVo>();
 			_proVec.push(new PropertyVo("variable","变量名",PropertyType.STRING,this.variable));
 			_proVec.push(new PropertyVo("x","x坐标",PropertyType.NUMBER,this.x));

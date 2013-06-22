@@ -15,6 +15,8 @@
 			
 			import event.UIEvent;
 			
+			import help.HelpLoader;
+			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.events.DragEvent;
@@ -32,7 +34,8 @@
 			private const NODE:String = "node_item";
 			
 			protected var loadCount:int = 0;
-			protected var swfVec:Vector.<SwfVo> = new Vector.<SwfVo>();//swf文件列表
+			/**swf文件列表*/
+			protected var swfVec:Vector.<SwfVo> = new Vector.<SwfVo>();
 			
 			protected function addToStage(event:Event):void
 			{
@@ -43,11 +46,25 @@
 			private function initData(evt:Event=null):void
 			{
 				loadAllSwf();
+				loadOutsideImgs();
 			}
 			
 			private function loadAllSwf():void
 			{
-				var browserFile:File = new File(Config.swfsPath);
+				loadResource(Config.swfsPath,1);
+			}
+			
+			private function loadOutsideImgs():void
+			{
+				loadResource(Config.outsideImgPath,2);
+			}
+			
+			/**
+			 * @param type 1:加载swf，swc   2：加载外部图片
+			 */
+			private function loadResource(path:String,type:int):void
+			{
+				var browserFile:File = new File(path);
 				if(!browserFile.exists)
 				{
 					Alert.show(browserFile.nativePath + "目录不存在,请检查Config.xml");
@@ -56,27 +73,38 @@
 				var fileAry:Array = browserFile.getDirectoryListing();
 				if(fileAry.length <= 0)
 				{
-					Alert.show("目录无可加载内容");
+					Alert.show(browserFile.nativePath + "目录无可加载内容");
 					return;
 				}
+				var inputTypes1:Array = ["swf","swc"];
+				var inputTypes2:Array = ["jpg","png","jpeg","gif"];
+				
 				for(var i:int=0;i<fileAry.length;i++)
 				{
 					var file:File = fileAry[i];
-					
 					var stream:FileStream = new FileStream();
-					stream.open(file,FileMode.READ);
+					if(!file.extension)continue;
+					if(type == 1 && inputTypes1.indexOf(file.extension) == -1)continue;
+					if(type == 2 && inputTypes2.indexOf(file.extension) == -1)continue;
+					try
+					{
+						stream.open(file,FileMode.READ);
+						var byte:ByteArray = new ByteArray();
+						stream.readBytes(byte,0,stream.bytesAvailable);
+					} 
+					catch(error:Error) 
+					{
+						App.log.error(error.message);
+					}
 					
-					var byte:ByteArray = new ByteArray();
-					stream.readBytes(byte,0,stream.bytesAvailable);
-					
-					var loader:Loader = new Loader();
+					var loader:HelpLoader = new HelpLoader();
 					var loaderContext:LoaderContext = new LoaderContext(false,ApplicationDomain.currentDomain); 
 				　　loaderContext.allowLoadBytesCodeExecution = true; 
 					loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loadCompleteHandler);
 					loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);
 					var dataByte:ByteArray;
 					
-					if(file.extension == "swf")
+					if(file.extension == "swf" || file.extension == "jpg" || file.extension == "png")
 					{
 						dataByte = byte;
 					}else if(file.extension == "swc")
@@ -90,8 +118,13 @@
 							}
 						}
 					}
-//					dataByte.writeUTFBytes(file.name);
-//					dataByte.writeUTF(file.url);
+					loader.data = {"url":file.url,"name":file.name,"type":type}
+					if(type == 2)
+					{
+						var index:int = file.url.indexOf("img/");
+						var str:String = file.url.substr(index);
+						loader.data["name"] = str;
+					}
 					loader.loadBytes(dataByte,loaderContext);
 					loadCount ++;
 				}
@@ -107,13 +140,29 @@
 				var loaderInfo:LoaderInfo = evt.target as LoaderInfo;
 				loaderInfo.loader.contentLoaderInfo.removeEventListener(Event.COMPLETE,loadCompleteHandler);
 				var byteArray:ByteArray = loaderInfo.bytes;
-				var swfVo:SwfVo = new SwfVo();
-				swfVo.loaderInfo = loaderInfo;
-				swfVo.classAry = GetSwfAllClass.getSWFClassName(byteArray);
-				swfVo.name = Math.random().toString();
-//				swfVo.name = byteArray.readUTFBytes(byteArray.bytesAvailable);
-//				swfVo.path = byteArray.readUTF();
-				swfVec.push(swfVo);
+				var itemName:String = HelpLoader(loaderInfo.loader).data["name"];
+				switch(HelpLoader(loaderInfo.loader).data["type"])
+				{
+					case 1:
+						var swfVo:SwfVo = new SwfVo();
+						swfVo.loaderInfo = loaderInfo;
+						swfVo.classAry = GetSwfAllClass.getSWFClassName(byteArray);
+						swfVo.path = HelpLoader(loaderInfo.loader).data["url"];
+						swfVo.name = itemName;
+						swfVec.push(swfVo);
+						break;
+					case 2:
+						try
+						{
+							App.outsideImages[itemName] = Bitmap(loaderInfo.content).bitmapData;	
+						} 
+						catch(error:Error) 
+						{
+							App.log.error(error.message);	
+						}
+						break;
+				}
+				
 				
 				loadCount --;
 				if(loadCount <= 0)
@@ -166,9 +215,13 @@
 				}
 				arrayData.addItem({label:"UI元件库",type:NODE,children:temp});
 				
-				//模板库
-//				temp = new ArrayCollection();
-//				arrayData.addItem({label:"模板文件库",type:NODE,children:temp});
+				//外部图片库
+				temp = new ArrayCollection();
+				arrayData.addItem({label:"外部图片库",type:NODE,children:temp});
+				for(var imgName:String in App.outsideImages) 
+				{
+					temp.addItem({label:imgName,data:new UIClassVo(imgName,new UIElementBitmapInfo(imgName,true))});
+				}
 				
 				//资源库
 				temp = new ArrayCollection();

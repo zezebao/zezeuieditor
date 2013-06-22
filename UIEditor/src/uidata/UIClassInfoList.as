@@ -10,6 +10,10 @@ package uidata
 	{
 		private var _classList:Dictionary = new Dictionary();
 		
+		/**回收的类*/
+		private var _recycleList:Dictionary = new Dictionary();
+		
+		
 		public function UIClassInfoList()
 		{
 		}
@@ -59,6 +63,13 @@ package uidata
 		public function addClass(className:String):void
 		{
 			_classList[className] = new UIClassInfo(className);
+			App.dispathEvent(new UIEvent(UIEvent.CLASS_UPDATE,className));
+		}
+		
+		public function delClass(className:String):void
+		{
+			_recycleList[className] = _classList[className];
+			delete _classList[className];
 			App.dispathEvent(new UIEvent(UIEvent.CLASS_UPDATE,className));
 		}
 		

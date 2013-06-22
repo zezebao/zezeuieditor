@@ -6,6 +6,7 @@ package
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.utils.Dictionary;
 	
 	import help.ResourceTxtLoader;
 	
@@ -28,6 +29,9 @@ package
 		public static var stage:Stage;
 		public static var uiData:UIData;
 		public static var configXML:XML;
+		
+		/**外部加载图片缓存[键值：图片名]*/
+		public static var outsideImages:Dictionary = new Dictionary();
 		
 		/**外部库资源加载完成之后，调用此方法*/
 		public static function setup(appStage:Stage,app:ZeZeUIEditor):void

@@ -79,8 +79,14 @@ package utils
 			switch(info.type)
 			{
 				case UIType.BITMAP:
-					cla = getDefinitionByName(UIElementBitmapInfo(info).className) as Class;
-					child = new cla();
+					if(UIElementBitmapInfo(info).isOutside)
+					{
+						item = UIElementBitmapInfo(info).bitmap;
+					}else
+					{
+						cla = getDefinitionByName(UIElementBitmapInfo(info).className) as Class;
+						child = new cla();
+					}
 					if(child is BitmapData)
 					{
 						item = new Bitmap(child as BitmapData);						

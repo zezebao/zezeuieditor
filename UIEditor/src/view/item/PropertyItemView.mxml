@@ -91,7 +91,7 @@
 						break;
 					case PropertyType.STRING:
 						valueLabel.visible = true;
-						valueLabel.restrict = "a-z A-Z 0-9.";
+						valueLabel.restrict = "a-z A-Z 0-9._//\\";
 						break;
 					case PropertyType.COLOR:
 						valueLabel.width = 151;
@@ -123,7 +123,7 @@
 				}
 			}
 			
-			protected function combobox_changeHandler(event:IndexChangeEvent):void
+			protected function combobox_changeHandler(event:Event):void
 			{
 				update();				
 			}
@@ -188,10 +188,10 @@
 				 tabEnabled="true"
 				 contentBackgroundColor="#F2F2F2" focusOut="valueLabel_focusOutHandler(event)" keyDown="valueLabel_keyDownHandler(event)"
 				 prompt="value input"/>
-	<s:ComboBox id="combobox" x="84" y="3" width="111" change="combobox_changeHandler(event)"/>
+	<mx:ComboBox id="combobox" x="84" y="3" width="111" change="combobox_changeHandler(event)"/>
 	<mx:ColorPicker id="colorPicker" x="243" y="3"/>
 	<fx:Declarations>
-		<mx:RadioButtonGroup id="radio" />	
+		<s:RadioButtonGroup id="radio"/>
 	</fx:Declarations>
 	<s:Group id="radioGroup">
 		<s:RadioButton id="radio1" x="110" y="5" label="true" groupName="radio" click="ridio_itemClickHandler(event);"/>

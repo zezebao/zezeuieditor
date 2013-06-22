@@ -50,8 +50,11 @@
 			{
 				_currentClass = value;
 				_uiContainer.graphics.clear();
+				title = "舞台";
 				if(value)
 				{
+					title = "舞台" + "    class:   [" + value + "]";
+					
 					_uiContainer.graphics.beginFill(0xffffff,1);
 					_uiContainer.graphics.drawRect(0,0,3000,3000);
 					_uiContainer.graphics.endFill();
@@ -340,11 +343,19 @@
 			
 			private function selectAClassHandler(evt:UIEvent):void
 			{
+				if(!App.classInfoList.hasClass(String(evt.data)))
+				{
+					if(String(evt.data) == _currentClass)
+					{
+						clear();
+						currentClass = "";
+					}
+					return;
+				}
 				if(_currentClass == evt.data.toString())return;
 				save();
 				clear();
 				currentClass = evt.data.toString();
-				title = "舞台" + "    class:   [" + evt.data + "]";
 				//实例化
 				var classInfo:UIClassInfo = App.classInfoList.getClassInfo(_currentClass);
 				if(!classInfo)return;
