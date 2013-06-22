@@ -51,6 +51,7 @@ package help
 			var swfsPath:String = xml.SWFS_PATH.toString();
 			var outputPath:String = xml.OUTPUT_PATH.toString();
 			var outputXMLPath:String = xml.OUTPUT_XML_PATH.toString();
+			var outsideImgPath:String = xml.OUTSIDE_IMGS.toString();
 			
 			if(xml.LANGUAGE_PATH.@isRelative == "true")
 				languagePath = File.applicationDirectory.nativePath + "\\" + xml.LANGUAGE_PATH.toString();
@@ -60,11 +61,15 @@ package help
 				outputPath = File.applicationDirectory.nativePath + "\\" + xml.OUTPUT_PATH.toString();
 			if(xml.OUTPUT_XML_PATH.@isRelative == "true")
 				outputXMLPath = File.applicationDirectory.nativePath + "\\" + xml.OUTPUT_XML_PATH.toString();
+			if(xml.OUTSIDE_IMGS.@isRelative == "true")
+				outsideImgPath = File.applicationDirectory.nativePath + "\\" + xml.OUTSIDE_IMGS.toString();
 			
 			Config.languagePath = languagePath + "?rnd=" + Math.random();
 			Config.swfsPath = swfsPath;
 			Config.outputPath = outputPath;
 			Config.outputXMLPath = outputXMLPath; 
+			Config.outsideImgPath = outsideImgPath;
+			Config.site = xml.SITE.toString();
 		}
 		
 		private function loadXml():void

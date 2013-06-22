@@ -6,6 +6,7 @@ package view
 	
 	import fl.controls.RadioButton;
 	
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -102,7 +103,11 @@ package view
 				lockX = true;
 				lockY = true;
 			}
+			
+			var oldParent:DisplayObjectContainer = this.parent;
+			var oldIndex:int = oldParent.getChildIndex(this);
 			creatSkin();
+			if(this.parent != oldParent)oldParent.addChildAt(this,oldIndex);
 			
 			_uiInfo.width = content.width;
 			_uiInfo.height = content.height;
