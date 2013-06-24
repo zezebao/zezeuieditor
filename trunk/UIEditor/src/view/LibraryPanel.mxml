@@ -36,7 +36,8 @@
 			protected var loadCount:int = 0;
 			/**swf文件列表*/
 			protected var swfVec:Vector.<SwfVo> = new Vector.<SwfVo>();
-			
+			/**外部图片名列表*/
+			protected var outsidePics:Vector.<String> = new Vector.<String>(); 
 			protected function addToStage(event:Event):void
 			{
 				if(App.rslLoaded)initData();
@@ -85,7 +86,15 @@
 					var stream:FileStream = new FileStream();
 					if(!file.extension)continue;
 					if(type == 1 && inputTypes1.indexOf(file.extension) == -1)continue;
-					if(type == 2 && inputTypes2.indexOf(file.extension) == -1)continue;
+					if(type == 2)
+					{
+						if(inputTypes2.indexOf(file.extension) != -1)
+						{
+							outsidePics.push(file.url.substr(file.url.indexOf("img/")));
+						}
+						continue;
+					}
+					
 					try
 					{
 						stream.open(file,FileMode.READ);
@@ -121,9 +130,7 @@
 					loader.data = {"url":file.url,"name":file.name,"type":type}
 					if(type == 2)
 					{
-						var index:int = file.url.indexOf("img/");
-						var str:String = file.url.substr(index);
-						loader.data["name"] = str;
+						loader.data["name"] = file.url.substr(file.url.indexOf("img/"));
 					}
 					loader.loadBytes(dataByte,loaderContext);
 					loadCount ++;
@@ -218,9 +225,13 @@
 				//外部图片库
 				temp = new ArrayCollection();
 				arrayData.addItem({label:"外部图片库",type:NODE,children:temp});
-				for(var imgName:String in App.outsideImages) 
+//				for(var imgName:String in App.outsideImages) 
+//				{
+//					temp.addItem({label:imgName,data:new UIClassVo(imgName,new UIElementBitmapInfo(imgName,true))});
+//				}
+				for (var k:int = 0; k < outsidePics.length; k++) 
 				{
-					temp.addItem({label:imgName,data:new UIClassVo(imgName,new UIElementBitmapInfo(imgName,true))});
+					temp.addItem({label:outsidePics[k],data:new UIClassVo(outsidePics[k],new UIElementBitmapInfo(outsidePics[k],true))});
 				}
 				
 				//资源库

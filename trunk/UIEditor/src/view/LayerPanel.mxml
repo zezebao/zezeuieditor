@@ -122,7 +122,7 @@
 				if(!canHandle)return;
 				if(App.hotRectManager.selectedRects.length > 1)
 				{
-					trace("顶底只能对一个元素有效");
+					App.log.warn("顶底只能对一个元素有效");
 					return;
 				}
 				for (var i:int = 0; i < App.hotRectManager.selectedRects.length; i++) 
@@ -138,7 +138,7 @@
 				if(!canHandle)return;
 				if(App.hotRectManager.selectedRects.length > 1)
 				{
-					trace("顶底只能对一个元素有效");
+					App.log.warn("顶底只能对一个元素有效");
 					return;
 				}
 				for (var i:int = 0; i < App.hotRectManager.selectedRects.length; i++) 
