@@ -33,7 +33,7 @@ package uidata
 			bitmapData = new BitmapData(100,100);
 
 			this.isOutside = isOutside;
-			this.className = className;
+			_className = className;
 			type = UIType.BITMAP;
 			
 			getProperty("width").isCanEdit = false;
