@@ -13,7 +13,9 @@ package uidata
 		public var className:String;
 		public var folder:String;
 		/**读取*/
-		public var childrenInfo:Vector.<UIElementBaseInfo> = new Vector.<UIElementBaseInfo>();;
+		public var childrenInfo:Vector.<UIElementBaseInfo> = new Vector.<UIElementBaseInfo>();
+		/**UI层级包含的其他类【辅助】*/
+		public var helpClassList:Vector.<String> = new Vector.<String>();
 		
 		public function UIClassInfo(className:String,folder:String="")
 		{
@@ -79,7 +81,7 @@ package uidata
 		
 		public function get xmlStr():String
 		{
-			var content:String = "<className className='" + className + "'>\n";
+			var content:String = "<className className='" + className + "' helpClassList='" + helpClassList.join(",") + "'>\n";
 			for (var i:int = 0; i < childrenInfo.length; i++) 
 			{
 				content += "<item " + childrenInfo[i].toString() + " />\n";
