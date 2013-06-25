@@ -10,15 +10,8 @@
 	<fx:Script>
 		<![CDATA[
 			import data.LayoutAlignType;
-			
 			import event.UIEvent;
-			
 			import mx.managers.PopUpManager;
-			
-			import view.NewClassPopWindow;
-
-
-
 
 			protected function image1_clickHandler(event:MouseEvent):void
 			{

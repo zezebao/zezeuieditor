@@ -11,6 +11,7 @@
 			import event.UIEvent;
 			
 			import mx.controls.Alert;
+			import mx.events.DragEvent;
 			import mx.events.ListEvent;
 			
 			protected function panel1_addedToStageHandler(event:Event):void
@@ -72,6 +73,16 @@
 				}
 			}
 			
+			protected function dragStartHandler(event:DragEvent):void
+			{
+//				trace(event);				
+			}
+			
+			protected function classDragCompleteHandler(event:DragEvent):void
+			{
+//				trace(event);
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -82,6 +93,9 @@
 				 iconField="icon" labelField="label"
 				 itemDoubleClick="classList_itemDoubleClickHandler(event)"
 				 doubleClickEnabled="true"
+				 dragEnabled="true"
+				 dragComplete="classDragCompleteHandler(event)" 
+				 dragStart="dragStartHandler(event)"
 				 toolTip="双击切换或者选中一个类来编辑"
 				 >
 		</mx:List>

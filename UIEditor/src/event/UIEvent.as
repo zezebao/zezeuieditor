@@ -44,6 +44,12 @@ package event
 		/**alt copy [data:Vector.<UIElementBaseInfo>]*/
 		public static const ALT_COPY_INFOS:String = "altCopyInfos";
 		
+		/**层级辅助类更新[数据：无]*/
+		public static const HELP_CLASS_UPDATE:String = "helpClassUpdate";
+		/**辅助层级选中[数据：索引Index]*/
+		public static const HELP_CLASS_SELECTED:String = "helpClassSelected";
+		
+		
 		public var data:Object;
 		
 		public function UIEvent(type:String, data:Object=null, bubbles:Boolean=false, cancelable:Boolean=false)

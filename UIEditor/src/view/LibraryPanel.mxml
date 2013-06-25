@@ -19,11 +19,15 @@
 			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
+			import mx.core.DragSource;
 			import mx.events.DragEvent;
 			import mx.events.ListEvent;
+			import mx.managers.DragManager;
 			
 			import nochump.util.zip.ZipEntry;
 			import nochump.util.zip.ZipFile;
+			
+			import spark.components.Image;
 			
 			import uidata.UIData;
 			import uidata.UIElementBitmapInfo;
@@ -259,33 +263,14 @@
 				}
 			}
 			
-			private var _isDrag:Boolean;
-			private var _currentOverItem:UIClassVo;
-			
 			protected function dragStartHandler(evt:DragEvent):void
 			{
 				var tree:Tree = evt.currentTarget as Tree;
-				_isDrag = true;
-				App.dragVo.classVo = _currentOverItem;
-				if(evt.relatedObject)
-				{
-					trace("拖动：" + App.dragVo.classVo.className);
-				}
-			}
-			
-			protected function libraryTree_itemRollOverHandler(evt:ListEvent):void
-			{
-				if(!_isDrag && evt.itemRenderer.data.type != NODE)
-				{
-					_currentOverItem = evt.itemRenderer.data.data as UIClassVo;
-				}
 			}
 			
 			protected function libraryTree_dragCompleteHandler(event:DragEvent):void
 			{
-				_isDrag = false;
-				App.dragVo.classVo = null;
-				trace(event);
+//				trace(event);
 			}
 			
 		]]>
@@ -297,9 +282,11 @@
 	<s:Group id="group2" x="0" y="85" width="100%" height="100%">
 		<mx:Tree id="libraryTree" width="100%" height="100%"
 				 change="libraryTree_changeHandler(event)" contentBackgroundColor="#FFFFFF"
-				 dragComplete="libraryTree_dragCompleteHandler(event)" dragEnabled="true"
+				 allowDragSelection="false"
+				 dragEnabled="true"
+				 dragComplete="libraryTree_dragCompleteHandler(event)" 
 				 dragStart="dragStartHandler(event)"
-				 itemRollOver="libraryTree_itemRollOverHandler(event)" labelField="label">
+				 labelField="label">
 		</mx:Tree>
 	</s:Group>
 	

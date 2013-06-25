@@ -1,0 +1,13 @@
+20130625:
+需要优化
+1.增加辅助层级
+2.辅助层级刷新
+3.属性刷新
+4.选中元素
+
+需要优化的类
+StagePanel
+ClassLayerPanel  : 层级操作逻辑
+
+
+通过 App.currentClass 获取Info的逻辑需要优化
