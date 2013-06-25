@@ -1,7 +1,6 @@
 package
 {
 	import data.ShareObjManger;
-	import data.vo.LibraryDragVo;
 	
 	import flash.display.Stage;
 	import flash.events.Event;
@@ -25,6 +24,8 @@ package
 
 	public class App
 	{
+		/**当前操作类的类名*/
+		public static var currentClass:String;
 		public static var rslLoaded:Boolean;
 		public static var stage:Stage;
 		public static var uiData:UIData;
@@ -43,8 +44,6 @@ package
 			uiData = new UIData();
 		}
 		
-		//------------库元件拖动数据--------------------
-		public static var dragVo:LibraryDragVo = new LibraryDragVo();
 		//------------库元件复制数据--------------------
 		public static var copyInfos:Vector.<UIElementBaseInfo>;
 		//-----------类数据--------------------------

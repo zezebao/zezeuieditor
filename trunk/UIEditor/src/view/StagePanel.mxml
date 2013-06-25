@@ -2,9 +2,11 @@
 <s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009"
 		 xmlns:s="library://ns.adobe.com/flex/spark"
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
-		 width="400" height="300" addedToStage="panel1_addedToStageHandler(event)"
-		 backgroundColor="0xcccccc" chromeColor="#CFCFCF" dragEnter="group1_dragEnterHandler(event)"
-		 dragExit="onDragExitHandler(event)" resize="panel1_resizeHandler(event)">
+		 width="400" height="300"
+		 backgroundColor="0xcccccc" chromeColor="#CFCFCF" 
+		 addedToStage="panel1_addedToStageHandler(event)"
+		 dragExit="onDragExitHandler(event)" 
+		 resize="panel1_resizeHandler(event)">
 	<fx:Script>
 		<![CDATA[
 			import avmplus.getQualifiedClassName;
@@ -22,6 +24,7 @@
 			import mhqy.ui.label.MAssetLabel;
 			
 			import mx.controls.Alert;
+			import mx.controls.Tree;
 			import mx.core.UIComponent;
 			import mx.events.DragEvent;
 			import mx.events.ResizeEvent;
@@ -30,15 +33,19 @@
 			
 			import uidata.UIClassInfo;
 			import uidata.UIElementBaseInfo;
+			import uidata.vo.UIClassVo;
 			
 			import utils.UIElementCreator;
 			
 			private var _currentClass:String;
 			
 			//容器
+			private var _uiContainerList:Vector.<ClassComponent> = new Vector.<ClassComponent>(10);
 			private var _uiContainer:UIComponent;
 			private var _hitContainer:UIComponent;//选择热区辅助
 			private var _uiMask:UIComponent;
+			
+			private var _currentClassComponent:ClassComponent;
 			
 			private var _direction:int = 0;
 			
@@ -48,6 +55,7 @@
 			
 			public function set currentClass(value:String):void
 			{
+				App.currentClass = value;
 				_currentClass = value;
 				_uiContainer.graphics.clear();
 				title = "舞台";
@@ -74,17 +82,24 @@
 				_uiContainer = new UIComponent();
 				addElement(_uiContainer);
 				_uiContainer.mask = _uiMask;
+//				_uiContainer.addChild(new CursorSprite());
 				_hitContainer = new UIComponent();
 				addElement(_hitContainer);
 				
-//				_uiContainer.addChild(new CursorSprite());
+				for (var i:int = 0; i < _uiContainerList.length; i++) 
+				{
+					var con:ClassComponent = new ClassComponent();
+					_uiContainer.addChild(con);
+					_uiContainerList[i] = con;
+				}
+				_currentClassComponent = _uiContainerList[0];
 				
 				initEvent();
 			}
 			
 			private function initEvent():void
 			{
-				this.addEventListener(MouseEvent.MOUSE_DOWN, unSelectedHotRectHandler);
+				this.addEventListener(MouseEvent.MOUSE_DOWN, onSelectedHotRectHandler);
 				this.addEventListener(KeyboardEvent.KEY_DOWN,onKeyDownHandler);
 				stage.addEventListener(KeyboardEvent.KEY_UP,onKeyUpHandler);	
 				this.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN,onRightDownHandler);
@@ -99,6 +114,10 @@
 				
 				//alt copy
 				App.addEventListener(UIEvent.ALT_COPY_INFOS,altCopyHandler);
+				
+				//helpClass update
+				App.addEventListener(UIEvent.HELP_CLASS_UPDATE,helpClassUpdateHandler);
+				App.addEventListener(UIEvent.HELP_CLASS_SELECTED,helpClassSelectHandler);
 			}
 			
 			protected function onKeyDownHandler(evt:KeyboardEvent):void
@@ -196,7 +215,7 @@
 				App.hotRectManager.moveDir(_direction);	
 			}
 			
-			private function unSelectedHotRectHandler(evt:MouseEvent):void 
+			private function onSelectedHotRectHandler(evt:MouseEvent):void 
 			{
 				stage.focus = this;
 				if(App.hotRectManager.selectedRects.length > 0)
@@ -212,11 +231,6 @@
 				stage.addEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
 			}
 			
-			protected function group1_dragEnterHandler(event:DragEvent):void
-			{
-				trace(event);
-			}
-			
 			protected function onDragExitHandler(evt:DragEvent):void
 			{
 				if(!_currentClass)
@@ -225,24 +239,40 @@
 					return;
 				}
 				
-				var info:UIElementBaseInfo = App.dragVo.classVo.info;
-				var uiInfo:UIElementBaseInfo = info.clone();
-				uiInfo.x = _uiContainer.mouseX;
-				uiInfo.y = _uiContainer.mouseY;
+				var value:Object = Object(evt.dragInitiator).value;
+				trace("接受=======",value);
 				
-				App.hotRectManager.unSelectAll();
-				addHotRect(uiInfo,true);
-				
-				App.layerManager.layerPanel.setChild(_uiContainer);
-				stage.focus = this;
+				//库面板
+				if(value is UIClassVo)
+				{
+					var vlassVO:UIClassVo = value as UIClassVo;
+					
+					var info:UIElementBaseInfo = vlassVO.info;
+					var uiInfo:UIElementBaseInfo = info.clone();
+					uiInfo.x = _uiContainer.mouseX;
+					uiInfo.y = _uiContainer.mouseY;
+					
+					App.hotRectManager.unSelectAll();
+					addHotRect(_currentClassComponent,uiInfo,true);
+					
+					App.layerManager.layerPanel.setChild(_currentClassComponent);
+					stage.focus = this;
+				}//类面板
+				else if(value is String)
+				{
+					if(_currentClass == value)return;
+					var classInfo:UIClassInfo = App.classInfoList.getClassInfo(_currentClass);
+					if(!classInfo)return;
+					classInfo.addHelpClass(value.toString());
+				}
 			}
 			
 			private function onSelectUpdateHandler(evt:UIEvent):void
 			{
 				var arr:Array = evt.data as Array;
-				for (var i:int = 0; i < _uiContainer.numChildren; i++) 
+				for (var i:int = 0; i < _currentClassComponent.numChildren; i++) 
 				{
-					var item:HotRectControl = _uiContainer.getChildAt(i) as HotRectControl;
+					var item:HotRectControl = _currentClassComponent.getChildAt(i) as HotRectControl;
 					var bool:Boolean = false;
 					for (var j:int = 0; j < arr.length; j++) 
 					{
@@ -269,9 +299,9 @@
 			{
 				_updateLayerFlag = false;
 				var arr:Array = [];
-				for (var i:int = 0; i < _uiContainer.numChildren; i++) 
+				for (var i:int = 0; i < _currentClassComponent.numChildren; i++) 
 				{
-					var item:HotRectControl = _uiContainer.getChildAt(i) as HotRectControl;
+					var item:HotRectControl = _currentClassComponent.getChildAt(i) as HotRectControl;
 					if(item.selected)arr.push(i);
 				}
 				App.dispathEvent(new UIEvent(UIEvent.STAGE_SELECT_UPDATE,arr));
@@ -282,9 +312,9 @@
 				stage.removeEventListener(MouseEvent.MOUSE_MOVE,onMouseMoveHandler);
 				stage.removeEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
 				
-				for (var i:int = 0; i < _uiContainer.numChildren; i++) 
+				for (var i:int = 0; i < _currentClassComponent.numChildren; i++) 
 				{
-					var hotRect:HotRectControl = _uiContainer.getChildAt(i) as HotRectControl;
+					var hotRect:HotRectControl = _currentClassComponent.getChildAt(i) as HotRectControl;
 					if(hotRect)
 					{
 						if(hotRect.hitTestObject(_hitContainer))hotRect.selected = true;
@@ -352,26 +382,45 @@
 					}
 					return;
 				}
-				if(_currentClass == evt.data.toString())return;
+				//temp-------------------------
+//				if(_currentClass == evt.data.toString())
+//				{
+//					return;
+//				}
 				save();
 				clear();
 				currentClass = evt.data.toString();
 				//实例化
 				var classInfo:UIClassInfo = App.classInfoList.getClassInfo(_currentClass);
 				if(!classInfo)return;
-				for (var i:int = 0; i < classInfo.childrenInfo.length; i++) 
+				for (var j:int = 0; j < classInfo.helpClassList.length; j++) 
 				{
-					addHotRect(classInfo.childrenInfo[i]);
+					var temp:UIClassInfo = App.classInfoList.getClassInfo(classInfo.helpClassList[j]);
+					if(!temp)
+					{
+						App.log.error("找不到类：",classInfo.helpClassList[j]);
+						continue;
+					}
+					_uiContainerList[j].className = classInfo.helpClassList[j];
+					for (var i:int = 0; i < temp.childrenInfo.length; i++) 
+					{
+						addHotRect(_uiContainerList[j],temp.childrenInfo[i]);
+					}
+					if(classInfo.helpClassList[j] == _currentClass)
+					{
+						_currentClassComponent = _uiContainerList[j];
+					}
 				}
-				App.layerManager.layerPanel.setChild(_uiContainer);
+				
+				App.layerManager.layerPanel.setChild(_currentClassComponent);
 				stage.focus = this;
 			}
-			
-			private function addHotRect(uiInfo:UIElementBaseInfo,isSelected:Boolean=false,isInDrag:Boolean=false):void
+						
+			private function addHotRect(container:ClassComponent,uiInfo:UIElementBaseInfo,isSelected:Boolean=false,isInDrag:Boolean=false):void
 			{
 				var hotRect:HotRectControl = new HotRectControl();
 				hotRect.selctedHander = updateLate;
-				_uiContainer.addChild(hotRect);
+				container.addChild(hotRect);
 				
 				hotRect.uiInfo = uiInfo;
 				if(isSelected)hotRect.selected = true;
@@ -380,25 +429,29 @@
 			
 			private function clear():void
 			{
-				while(_uiContainer.numChildren)
+				for (var i:int = 0; i < _uiContainerList.length; i++) 
 				{
-					_uiContainer.removeChildAt(0);
+					_uiContainerList[i].clear();
 				}
 			}
 			
 			public function save():void
 			{
 				if(!_currentClass)return;
-				var info:UIClassInfo = App.classInfoList.getClassInfo(_currentClass);
-				if(!info)return;
-				info.childrenInfo = new Vector.<UIElementBaseInfo>();
-				var len:int = _uiContainer.numChildren;
-				for (var j:int = 0; j < len; j++) 
+				for (var i:int = 0; i < _uiContainerList.length; i++) 
 				{
-					var hotRect:HotRectControl = _uiContainer.getChildAt(j) as HotRectControl;
-					if(hotRect && hotRect.uiInfo)
+					var className:String = _uiContainerList[i].className;
+					var info:UIClassInfo = App.classInfoList.getClassInfo(className);
+					if(!info)continue;
+					info.childrenInfo = new Vector.<UIElementBaseInfo>();
+					var len:int = _uiContainerList[i].numChildren;
+					for (var j:int = 0; j < len; j++) 
 					{
-						info.childrenInfo.push(hotRect.uiInfo);
+						var hotRect:HotRectControl = _uiContainerList[i].getChildAt(j) as HotRectControl;
+						if(hotRect && hotRect.uiInfo)
+						{
+							info.childrenInfo.push(hotRect.uiInfo);
+						}
 					}
 				}
 			}
@@ -448,7 +501,7 @@
 				for (var i:int = 0; i < vec.length; i++) 
 				{
 					var info:UIElementBaseInfo = vec[i].clone();
-					addHotRect(info,isSelected,isInDrag);
+					addHotRect(_currentClassComponent,info,isSelected,isInDrag);
 				}
 				App.layerManager.layerPanel.setChild(_uiContainer);
 			}
@@ -457,6 +510,51 @@
 			{
 				var vec:Vector.<UIElementBaseInfo> = evt.data as Vector.<UIElementBaseInfo>;
 				pasteInfos(vec,true,true);
+			}
+			
+			private function helpClassUpdateHandler(evt:UIEvent):void
+			{
+				//temp---------------
+				App.dispathEvent(new UIEvent(UIEvent.SELECT_A_CLASS,App.currentClass));
+			}
+			
+			private function helpClassSelectHandler(evt:UIEvent):void
+			{
+				App.hotRectManager.unSelectAll();
+				var className:String  = evt.data.toString();
+				
+				var info:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
+				
+				for (var i:int = 0; i < _uiContainerList.length; i++) 
+				{
+					if(className == _uiContainerList[i].className)
+					{
+						_uiContainerList[i].acitive = true;
+						_currentClassComponent = _uiContainerList[i]; 
+						App.layerManager.layerPanel.setChild(_currentClassComponent);
+					}else
+					{
+						_uiContainerList[i].acitive = false;
+					}
+					
+					if(info.helpClassList.indexOf(_uiContainerList[i].className) == -1)
+					{
+						_uiContainerList[i].clear();
+					}
+				}
+				
+				//层级关系
+				for (var j:int = 0; j < info.helpClassList.length; j++) 
+				{
+					for (var k:int = 0; k < _uiContainerList.length; k++) 
+					{
+						if(_uiContainerList[k].className == info.helpClassList[j])
+						{
+							_uiContainer.setChildIndex(_uiContainerList[k],j);
+						}
+					}
+				}
+				
 			}
 			
 		]]>

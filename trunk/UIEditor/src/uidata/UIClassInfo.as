@@ -1,5 +1,7 @@
 package uidata
 {
+	import event.UIEvent;
+	
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
@@ -14,8 +16,7 @@ package uidata
 		public var folder:String;
 		/**读取*/
 		public var childrenInfo:Vector.<UIElementBaseInfo> = new Vector.<UIElementBaseInfo>();
-		/**UI层级包含的其他类【辅助】*/
-		public var helpClassList:Vector.<String> = new Vector.<String>();
+		private var _helpClassList:Array = [];
 		
 		public function UIClassInfo(className:String,folder:String="")
 		{
@@ -24,8 +25,49 @@ package uidata
 			super();
 		}
 		
+		public function set helpClassList(value:Array):void
+		{
+			_helpClassList = value;
+		}
+
+		/**UI层级包含的其他类名【辅助】*/
+		public function get helpClassList():Array
+		{
+			if(_helpClassList.indexOf(className) == -1)
+			{
+				_helpClassList.push(className);
+			}
+			return _helpClassList;
+		}
+		
+		public function addHelpClass(value:String):void
+		{
+			if(_helpClassList.indexOf(value) == -1)
+			{
+				_helpClassList.push(value);
+				helpClassUpdate();
+			}
+		}
+		
+		public function delHelpClass(value:String):void
+		{
+			var index:int = _helpClassList.indexOf(value); 
+			if(index != -1)
+			{
+				_helpClassList.splice(index,1);
+				helpClassUpdate();
+			}
+		}
+		
+		private function helpClassUpdate():void
+		{
+			App.dispathEvent(new UIEvent(UIEvent.HELP_CLASS_UPDATE));
+		}
+		
 		public function parseXML(xmlData:XML):void
 		{
+			var helpClassStr:String = String(xmlData.@helpClassList);
+			if(helpClassStr != "")_helpClassList = helpClassStr.split(",");
 			var len:int = xmlData.item.length();
 			for (var i:int = 0; i < len; i++) 
 			{
