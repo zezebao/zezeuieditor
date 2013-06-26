@@ -46,7 +46,7 @@ package event
 		
 		/**层级辅助类更新[数据：无]*/
 		public static const HELP_CLASS_UPDATE:String = "helpClassUpdate";
-		/**辅助层级选中[数据：索引Index]*/
+		/**辅助层级选中[数据：选中类名]*/
 		public static const HELP_CLASS_SELECTED:String = "helpClassSelected";
 		
 		

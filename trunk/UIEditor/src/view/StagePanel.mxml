@@ -5,7 +5,7 @@
 		 width="400" height="300"
 		 backgroundColor="0xcccccc" chromeColor="#CFCFCF" 
 		 addedToStage="panel1_addedToStageHandler(event)"
-		 dragExit="onDragExitHandler(event)" 
+		 dragExit="onDragDropHandler(event)" 
 		 resize="panel1_resizeHandler(event)">
 	<fx:Script>
 		<![CDATA[
@@ -105,7 +105,7 @@
 				this.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN,onRightDownHandler);
 				stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP,onRightUpHandler);
 				App.addEventListener(UIEvent.LAYERS_SELECT_UPDATE,onSelectUpdateHandler);
-				App.addEventListener(UIEvent.SELECT_A_CLASS,selectAClassHandler);
+				App.addEventListener(UIEvent.SELECT_A_CLASS,selectAClassHandler,false,99);
 				
 				//scales
 				App.addEventListener(UIEvent.STAGE_ENLARGE,enlargeHandler);
@@ -116,7 +116,7 @@
 				App.addEventListener(UIEvent.ALT_COPY_INFOS,altCopyHandler);
 				
 				//helpClass update
-				App.addEventListener(UIEvent.HELP_CLASS_UPDATE,helpClassUpdateHandler);
+				App.addEventListener(UIEvent.HELP_CLASS_UPDATE,helpClassUpdateHandler,false,99);
 				App.addEventListener(UIEvent.HELP_CLASS_SELECTED,helpClassSelectHandler);
 			}
 			
@@ -231,7 +231,7 @@
 				stage.addEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
 			}
 			
-			protected function onDragExitHandler(evt:DragEvent):void
+			protected function onDragDropHandler(evt:DragEvent):void
 			{
 				if(!_currentClass)
 				{
@@ -395,18 +395,18 @@
 				if(!classInfo)return;
 				for (var j:int = 0; j < classInfo.helpClassList.length; j++) 
 				{
-					var temp:UIClassInfo = App.classInfoList.getClassInfo(classInfo.helpClassList[j]);
+					var temp:UIClassInfo = App.classInfoList.getClassInfo(classInfo.helpClassList[j].className);
 					if(!temp)
 					{
-						App.log.error("找不到类：",classInfo.helpClassList[j]);
+						App.log.error("找不到类：",classInfo.helpClassList[j].className);
 						continue;
 					}
-					_uiContainerList[j].className = classInfo.helpClassList[j];
+					_uiContainerList[j].className = classInfo.helpClassList[j].className;
 					for (var i:int = 0; i < temp.childrenInfo.length; i++) 
 					{
 						addHotRect(_uiContainerList[j],temp.childrenInfo[i]);
 					}
-					if(classInfo.helpClassList[j] == _currentClass)
+					if(classInfo.helpClassList[j].className == _currentClass)
 					{
 						_currentClassComponent = _uiContainerList[j];
 					}
@@ -515,13 +515,23 @@
 			private function helpClassUpdateHandler(evt:UIEvent):void
 			{
 				//temp---------------
-				App.dispathEvent(new UIEvent(UIEvent.SELECT_A_CLASS,App.currentClass));
+//				App.dispathEvent(new UIEvent(UIEvent.SELECT_A_CLASS,App.currentClass));
+				evt.data = App.currentClass;
+				selectAClassHandler(evt);
 			}
 			
 			private function helpClassSelectHandler(evt:UIEvent):void
 			{
 				App.hotRectManager.unSelectAll();
 				var className:String  = evt.data.toString();
+				
+				if(_currentClass == className)
+				{
+					title = "舞台" + "    class:   [" + _currentClass + "]";
+				}else
+				{
+					title = "舞台" + "    class:   [" + _currentClass + "]---类内编辑：" + className;
+				}
 				
 				var info:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
 				
@@ -537,7 +547,9 @@
 						_uiContainerList[i].acitive = false;
 					}
 					
-					if(info.helpClassList.indexOf(_uiContainerList[i].className) == -1)
+					if(i < info.helpClassList.length)_uiContainerList[i].visible = info.helpClassList[i].visible;
+					
+					if(info.getHelpClassIndex(_uiContainerList[i].className) == -1)
 					{
 						_uiContainerList[i].clear();
 					}
@@ -548,15 +560,13 @@
 				{
 					for (var k:int = 0; k < _uiContainerList.length; k++) 
 					{
-						if(_uiContainerList[k].className == info.helpClassList[j])
+						if(_uiContainerList[k].className == info.helpClassList[j].className)
 						{
 							_uiContainer.setChildIndex(_uiContainerList[k],j);
 						}
 					}
 				}
-				
 			}
-			
 		]]>
 	</fx:Script>
 	<fx:Declarations>

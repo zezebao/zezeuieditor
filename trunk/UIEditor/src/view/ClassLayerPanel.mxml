@@ -15,33 +15,27 @@
 			import mx.controls.Alert;
 			
 			import uidata.UIClassInfo;
+			import uidata.vo.HelpClassVo;
 			protected function upClickHandler(event:MouseEvent):void
 			{
 				var classInfo:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
 				if(classInfo)
 				{
-					var arr:Array = classInfo.helpClassList.slice(0);
-					var nowClass:String = itemList.selectedItem.value;
-					var index:int = arr.indexOf(nowClass); 
-					if(index >= arr.length - 1)
+					var vec:Vector.<HelpClassVo> = classInfo.helpClassList.slice(0); 
+					var nowClass:String = itemList.selectedItem.value.className;
+					var index:int = classInfo.getHelpClassIndex(nowClass); 
+					if(index >= vec.length - 1)
 					{
 						return;
 					}else
 					{
-						var temp:String = arr[index];
-						arr[index] = arr[index + 1];
-						arr[index + 1] = temp;
+						var temp:HelpClassVo = vec[index];
+						vec[index] = vec[index + 1];
+						vec[index + 1] = temp;
 					}
-					classInfo.helpClassList = arr;
+					classInfo.helpClassList = vec;
 					
-					var arrCon:ArrayCollection = new ArrayCollection();
-					for (var i:int = 0; i < classInfo.helpClassList.length; i++) 
-					{
-						arrCon.addItem({"label":i + ":" + classInfo.helpClassList[i],"value":classInfo.helpClassList[i]});
-					}
-					itemList.dataProvider = arrCon;
-					itemList.selectedIndex = index + 1;
-					selectionChangingHandler();
+					setDataProvider(classInfo,index + 1);
 				}
 			}
 			
@@ -50,28 +44,21 @@
 				var classInfo:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
 				if(classInfo)
 				{
-					var arr:Array = classInfo.helpClassList.slice(0);
-					var nowClass:String = itemList.selectedItem.value;
-					var index:int = arr.indexOf(nowClass); 
+					var vec:Vector.<HelpClassVo> = classInfo.helpClassList.slice(0); 
+					var nowClass:String = itemList.selectedItem.value.className;
+					var index:int = classInfo.getHelpClassIndex(nowClass); 
 					if(index <= 0)
 					{
 						return;
 					}else
 					{
-						var temp:String = arr[index];
-						arr[index] = arr[index - 1];
-						arr[index - 1] = temp;
+						var temp:HelpClassVo = vec[index];
+						vec[index] = vec[index - 1];
+						vec[index - 1] = temp;
 					}
-					classInfo.helpClassList = arr;
+					classInfo.helpClassList = vec;
 					
-					var arrCon:ArrayCollection = new ArrayCollection();
-					for (var i:int = 0; i < classInfo.helpClassList.length; i++) 
-					{
-						arrCon.addItem({"label":i + ":" + classInfo.helpClassList[i],"value":classInfo.helpClassList[i]});
-					}
-					itemList.dataProvider = arrCon;
-					itemList.selectedIndex = index - 1;
-					selectionChangingHandler();
+					setDataProvider(classInfo,index - 1);
 				}
 			}
 			
@@ -85,27 +72,33 @@
 						Alert.show("类层级中不能删除自己");
 						return;
 					}
-					var arr:Array = classInfo.helpClassList.slice(0);
-					var nowClass:String = itemList.selectedItem.value;
-					var index:int = arr.indexOf(nowClass); 
-					if(index <= 0)
+					
+					var vec:Vector.<HelpClassVo> = classInfo.helpClassList.slice(0); 
+					var nowClass:String = itemList.selectedItem.value.className;
+					var index:int = classInfo.getHelpClassIndex(nowClass); 
+					if(index < 0)
 					{
 						return;
 					}else
 					{
-						arr.splice(index,1);
+						vec.splice(index,1);
 					}
-					classInfo.helpClassList = arr;
+					classInfo.helpClassList = vec;
 					
-					var arrCon:ArrayCollection = new ArrayCollection();
-					for (var i:int = 0; i < classInfo.helpClassList.length; i++) 
-					{
-						arrCon.addItem({"label":i + ":" + classInfo.helpClassList[i],"value":classInfo.helpClassList[i]});
-					}
-					itemList.dataProvider = arrCon;
-					itemList.selectedIndex = arrCon.length - 1;
-					selectionChangingHandler();
+					setDataProvider(classInfo);
 				}
+			}
+			
+			private function visibelChangeHandler(evt:MouseEvent):void
+			{
+				if(!itemList.selectedItem || !itemList.selectedItem.value)return;
+				var helpVo:HelpClassVo = itemList.selectedItem.value as HelpClassVo;
+				if(!helpVo)return;
+				helpVo.visible = !helpVo.visible;
+				
+				updateDataProvier();
+				
+				App.dispathEvent(new UIEvent(UIEvent.HELP_CLASS_SELECTED,helpVo.className));
 			}
 			
 			protected function addToStageHandler(event:Event):void
@@ -115,7 +108,7 @@
 			
 			private function initEvent():void
 			{
-				App.addEventListener(UIEvent.SELECT_A_CLASS,onSelectAClassHandler);	
+				App.addEventListener(UIEvent.SELECT_A_CLASS,onSelectAClassHandler,false,1);	
 				App.addEventListener(UIEvent.HELP_CLASS_UPDATE,onHelpClassUpdateHandler);
 			}
 			
@@ -131,24 +124,63 @@
 					var classInfo:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
 					if(classInfo)
 					{
-						var arrCon:ArrayCollection = new ArrayCollection();
-						for (var i:int = 0; i < classInfo.helpClassList.length; i++) 
-						{
-							arrCon.addItem({"label":i + ":" + classInfo.helpClassList[i],"value":classInfo.helpClassList[i]});
-						}
-						itemList.dataProvider = arrCon;
-						
-						itemList.selectedIndex = arrCon.length - 1;
-						selectionChangingHandler();
+						var index:int = (evt == null) ? classInfo.getHelpClassIndex(App.currentClass) : (classInfo.helpClassList.length - 1);
+						setDataProvider(classInfo,index);
 					}
 				}
 			}
 			
-			private function selectionChangingHandler():void 
+			private function setDataProvider(classInfo:UIClassInfo,index:int = -1):void
 			{
-				App.dispathEvent(new UIEvent(UIEvent.HELP_CLASS_SELECTED,itemList.selectedItem.value));
+				var arrCon:ArrayCollection = new ArrayCollection();
+				for (var i:int = 0; i < classInfo.helpClassList.length; i++) 
+				{
+					arrCon.addItem({"label":i + ":" + getItemLabel(classInfo.helpClassList[i]),"value":classInfo.helpClassList[i]});
+				}
+				itemList.dataProvider = arrCon;
+				if(index != -1)itemList.selectedIndex = index;
+				else itemList.selectedIndex = arrCon.length - 1;
+				
+				selectionChangingHandler();
 			}
 			
+			private function updateDataProvier():void
+			{
+				var arrCon:ArrayCollection = itemList.dataProvider as ArrayCollection;
+				for (var i:int = 0; i < arrCon.length; i++) 
+				{
+					var obj:Object = arrCon.getItemAt(i); 
+					obj.label = i + ":" + getItemLabel(obj.value);
+				}
+				var index:int = itemList.selectedIndex;
+				itemList.dataProvider = arrCon;
+				itemList.selectedIndex = index;
+			}
+			
+			private function getItemLabel(helpVo:HelpClassVo):String
+			{
+				var result:String = helpVo.className;
+				if(!helpVo.visible)result += "【已隐藏】";
+				if(helpVo.locked)result += "【已锁定】";
+				return result;
+			}
+			
+			private function selectionChangingHandler():void 
+			{
+				if(!itemList.selectedItem)
+				{
+					Alert.show("请选择一个层级,按下ctrl键会取消选择");
+					return;
+				}
+				var helpVo:HelpClassVo = itemList.selectedItem.value as HelpClassVo;
+				if(helpVo)
+				{
+					App.dispathEvent(new UIEvent(UIEvent.HELP_CLASS_SELECTED,helpVo.className));
+				}else
+				{
+					App.log.error("辅助类",helpVo.className,"为null");
+				}
+			}
 		]]>
 	</fx:Script>
 	
@@ -172,6 +204,7 @@
 		<s:Image x="10" y="241" buttonMode="true" source="@Embed('assets/systemIcons/up.png')" click="upClickHandler(event)" toolTip="上移"/>
 		<s:Image x="31" y="241" buttonMode="true" source="@Embed('assets/systemIcons/down.png')" click="downClickHandler(event)" toolTip="上移"/>
 		<s:Image x="53" y="241" buttonMode="true" source="@Embed('assets/systemIcons/rungc_co.gif')" click="delClickHandler(event)" toolTip="删除"/>
+		<s:Image x="53" y="241" buttonMode="true" source="@Embed('assets/view_16.png')" click="visibelChangeHandler(event)" toolTip="隐藏"/>
 	</s:Group>
 	
 </s:Panel>
