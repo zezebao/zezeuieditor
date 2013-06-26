@@ -33,6 +33,7 @@
 			
 			import uidata.UIClassInfo;
 			import uidata.UIElementBaseInfo;
+			import uidata.vo.HelpClassVo;
 			import uidata.vo.UIClassVo;
 			
 			import utils.UIElementCreator;
@@ -503,7 +504,7 @@
 					var info:UIElementBaseInfo = vec[i].clone();
 					addHotRect(_currentClassComponent,info,isSelected,isInDrag);
 				}
-				App.layerManager.layerPanel.setChild(_uiContainer);
+				App.layerManager.layerPanel.setChild(_currentClassComponent);
 			}
 			
 			private function altCopyHandler(evt:UIEvent):void
@@ -533,7 +534,7 @@
 					title = "舞台" + "    class:   [" + _currentClass + "]---类内编辑：" + className;
 				}
 				
-				var info:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
+				var classInfo:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
 				
 				for (var i:int = 0; i < _uiContainerList.length; i++) 
 				{
@@ -547,20 +548,24 @@
 						_uiContainerList[i].acitive = false;
 					}
 					
-					if(i < info.helpClassList.length)_uiContainerList[i].visible = info.helpClassList[i].visible;
+					var helpVo:HelpClassVo = classInfo.getHelpVo(_uiContainerList[i].className);
+					if(helpVo)
+					{
+						_uiContainerList[i].visible = helpVo.visible;
+					}
 					
-					if(info.getHelpClassIndex(_uiContainerList[i].className) == -1)
+					if(classInfo.getHelpClassIndex(_uiContainerList[i].className) == -1)
 					{
 						_uiContainerList[i].clear();
 					}
 				}
 				
 				//层级关系
-				for (var j:int = 0; j < info.helpClassList.length; j++) 
+				for (var j:int = 0; j < classInfo.helpClassList.length; j++) 
 				{
 					for (var k:int = 0; k < _uiContainerList.length; k++) 
 					{
-						if(_uiContainerList[k].className == info.helpClassList[j].className)
+						if(_uiContainerList[k].className == classInfo.helpClassList[j].className)
 						{
 							_uiContainer.setChildIndex(_uiContainerList[k],j);
 						}
