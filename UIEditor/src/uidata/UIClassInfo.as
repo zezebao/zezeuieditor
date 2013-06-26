@@ -8,6 +8,8 @@ package uidata
 	
 	import mhqy.ui.UIType;
 	
+	import uidata.vo.HelpClassVo;
+	
 	import utils.UIElementCreator;
 	
 	public class UIClassInfo extends EventDispatcher
@@ -16,7 +18,7 @@ package uidata
 		public var folder:String;
 		/**读取*/
 		public var childrenInfo:Vector.<UIElementBaseInfo> = new Vector.<UIElementBaseInfo>();
-		private var _helpClassList:Array = [];
+		private var _helpClassList:Vector.<HelpClassVo> = new Vector.<HelpClassVo>();
 		
 		public function UIClassInfo(className:String,folder:String="")
 		{
@@ -25,28 +27,49 @@ package uidata
 			super();
 		}
 		
-		public function set helpClassList(value:Array):void
+		public function set helpClassList(value:Vector.<HelpClassVo>):void
 		{
 			_helpClassList = value;
 		}
 
 		/**UI层级包含的其他类名【辅助】*/
-		public function get helpClassList():Array
+		public function get helpClassList():Vector.<HelpClassVo>
 		{
-			if(_helpClassList.indexOf(className) == -1)
+			if(!hasHelpClass(className))
 			{
-				_helpClassList.push(className);
+				_helpClassList.push(new HelpClassVo(className));
 			}
 			return _helpClassList;
 		}
 		
 		public function addHelpClass(value:String):void
 		{
-			if(_helpClassList.indexOf(value) == -1)
+			if(!hasHelpClass(value))
 			{
-				_helpClassList.push(value);
+				_helpClassList.push(new HelpClassVo(value));
 				helpClassUpdate();
 			}
+			trace(helpClassList.join(","));			
+		}
+		
+		public function getHelpClassIndex(value:String):int
+		{
+			for (var i:int = 0; i < _helpClassList.length; i++) 
+			{
+				if(_helpClassList[i].className == value)
+					return i;
+			}
+			return -1;		
+		}
+		
+		public function hasHelpClass(value:String):Boolean
+		{
+			for (var i:int = 0; i < _helpClassList.length; i++) 
+			{
+				if(_helpClassList[i].className == value)
+					return true;
+			}
+			return false;		
 		}
 		
 		public function delHelpClass(value:String):void
@@ -67,7 +90,18 @@ package uidata
 		public function parseXML(xmlData:XML):void
 		{
 			var helpClassStr:String = String(xmlData.@helpClassList);
-			if(helpClassStr != "")_helpClassList = helpClassStr.split(",");
+			if(helpClassStr != "")
+			{
+				var arr:Array = helpClassStr.split(",");
+				var vec:Vector.<HelpClassVo> = new Vector.<HelpClassVo>();
+				for (var j:int = 0; j < arr.length; j++) 
+				{
+					var vo:HelpClassVo = new HelpClassVo();
+					vo.parseData(arr[j]);
+					vec.push(vo);
+				}
+				_helpClassList = vec;
+			}
 			var len:int = xmlData.item.length();
 			for (var i:int = 0; i < len; i++) 
 			{

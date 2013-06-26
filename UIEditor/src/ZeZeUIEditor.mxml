@@ -67,15 +67,17 @@
 									   chromeColor="#CFCFCF" title="资源">
 					</view:LibraryPanel>
 				</mx:VDividedBox>
-				<view:StagePanel width="50%" height="100%" chromeColor="#CFCFCF" title="舞台">
-				</view:StagePanel>
-				<mx:VDividedBox direction="vertical" width="305" height="100%">
-					<view:PropertyPanel width="100%" height="100%" chromeColor="#CFCFCF" title="属性">
-					</view:PropertyPanel>
-					<view:LayerPanel width="100%" height="100%" chromeColor="#CFCFCF" title="层级">
-					</view:LayerPanel>
-					<view:ClassLayerPanel width="100%" height="100%" chromeColor="#CFCFCF" title="辅助类层级">
+				<mx:VDividedBox direction="vertical" width="50%" height="100%">
+					<view:ClassLayerPanel width="100%" height="180" chromeColor="#CFCFCF" title="辅助类层级">
 					</view:ClassLayerPanel>
+					<view:StagePanel width="100%" height="100%" chromeColor="#CFCFCF" title="舞台">
+					</view:StagePanel>
+				</mx:VDividedBox>
+				<mx:VDividedBox direction="vertical" width="305" height="100%">
+					<view:PropertyPanel width="100%" height="65%" chromeColor="#CFCFCF" title="属性">
+					</view:PropertyPanel>
+					<view:LayerPanel width="100%" height="35%" chromeColor="#CFCFCF" title="层级">
+					</view:LayerPanel>
 				</mx:VDividedBox>
 			</mx:DividedBox>
 	</s:Group>

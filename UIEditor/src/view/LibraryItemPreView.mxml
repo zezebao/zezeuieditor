@@ -13,14 +13,21 @@
 			import flash.utils.getDefinitionByName;
 			import flash.utils.getQualifiedSuperclassName;
 			
+			import mx.controls.Image;
+			import mx.core.DragSource;
+			import mx.core.IUIComponent;
 			import mx.core.UIComponent;
 			import mx.events.ResizeEvent;
-			
-			import utils.UIElementCreator;
+			import mx.managers.DragManager;
 			
 			import uidata.vo.UIClassVo;
 			
+			import utils.UIElementCreator;
+			
 			private var _itemCon:UIComponent;
+			
+			public var value:Object;
+			private var _classVO:UIClassVo;
 			
 			protected function group1_addedToStageHandler(event:Event):void
 			{
@@ -36,14 +43,16 @@
 			
 			private function initEvent():void
 			{
-				App.addEventListener(UIEvent.LIBRARY_SELECT_ITEM,selectItemHandler);				
+				App.addEventListener(UIEvent.LIBRARY_SELECT_ITEM,selectItemHandler);
+				this.addEventListener(MouseEvent.MOUSE_DOWN,onMouseDownHandler);
+				stage.addEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
 			}
 			
 			private function selectItemHandler(evt:UIEvent):void
 			{
 				while(_itemCon.numChildren){_itemCon.removeChildAt(0);}
-				var classVo:UIClassVo = evt.data as UIClassVo;
-				var child:DisplayObject = UIElementCreator.createItem(classVo.info);
+				_classVO = evt.data as UIClassVo;
+				var child:DisplayObject = UIElementCreator.createItem(_classVO.info);
 				
 				typeLabel.text = "";
 				if(child)
@@ -82,6 +91,32 @@
 			{
 				//改变库元件显示大小
 				
+			}
+			
+			protected function onMouseDownHandler(evt:MouseEvent):void
+			{
+				if(!_classVO)return;
+				var dragInitiator:IUIComponent = evt.currentTarget as IUIComponent;
+				var dragSource:DragSource = new DragSource();
+				dragSource.addData('value','value');
+				
+				value = _classVO;
+				
+				var image:Image = new Image();
+				DragManager.doDrag(dragInitiator,dragSource,evt,image);
+				
+				while(_itemCon.numChildren){_itemCon.removeChildAt(0);}
+				var child:DisplayObject = UIElementCreator.createItem(_classVO.info);
+				if(child)
+				{
+					_itemCon.addChild(child);
+					setChildPos(child);
+				}
+					
+			}
+			
+			protected function onMouseUpHandler(event:MouseEvent):void
+			{
 			}
 			
 		]]>
