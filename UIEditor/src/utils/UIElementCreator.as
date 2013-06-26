@@ -113,13 +113,19 @@ package utils
 					item = new MAssetLabel(label,UIElementLabelInfo(info).typeArr,UIElementLabelInfo(info).align,UIElementLabelInfo(info).wrap);
 					break;
 				case UIType.BITMAP_BTN:
-					cla = getDefinitionByName(UIElementBitmapInfo(info).className) as Class;
-					if(cla)
+					if(UIElementBitmapInfo(info).isOutside)
 					{
-						item = new MBitmapButton(new cla(),label);	
+						item = UIElementBitmapInfo(info).bitmap;
 					}else
 					{
-						item = new MBitmapButton(new BitmapData(100,100),label);
+						cla = getDefinitionByName(UIElementBitmapInfo(info).className) as Class;
+						if(cla)
+						{
+							item = new MBitmapButton(new cla(),label);
+						}else
+						{
+							item = new MBitmapButton(new BitmapData(100,100),label);
+						}
 					}
 					break;
 				case UIType.CHECKBOX:

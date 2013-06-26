@@ -52,6 +52,16 @@ package uidata
 			trace(helpClassList.join(","));			
 		}
 		
+		public function getHelpVo(value:String):HelpClassVo
+		{
+			for (var i:int = 0; i < _helpClassList.length; i++) 
+			{
+				if(_helpClassList[i].className == value)
+					return _helpClassList[i];
+			}
+			return null;	
+		}
+		
 		public function getHelpClassIndex(value:String):int
 		{
 			for (var i:int = 0; i < _helpClassList.length; i++) 
