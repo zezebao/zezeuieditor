@@ -476,10 +476,10 @@
 			private function copyInfos():void
 			{
 				App.copyInfos = new Vector.<UIElementBaseInfo>();
-				var len:int = _uiContainer.numChildren;
+				var len:int = _currentClassComponent.numChildren;
 				for (var i:int = 0; i < len; i++) 
 				{
-					var hotRect:HotRectControl = _uiContainer.getChildAt(i) as HotRectControl;
+					var hotRect:HotRectControl = _currentClassComponent.getChildAt(i) as HotRectControl;
 					if(hotRect && hotRect.uiInfo && hotRect.selected)
 					{
 						var info:UIElementBaseInfo = hotRect.uiInfo.clone();
