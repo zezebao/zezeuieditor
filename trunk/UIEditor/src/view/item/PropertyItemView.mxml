@@ -67,6 +67,7 @@
 									break;
 								}
 							}
+							combobox.rowCount = _propertyVo.dataProvider.length;
 						}else if(_propertyVo.dataProvider.length == 2)
 						{
 							radioGroup.visible = true;
@@ -91,7 +92,7 @@
 						break;
 					case PropertyType.STRING:
 						valueLabel.visible = true;
-						valueLabel.restrict = "a-z A-Z 0-9._//\\";
+						valueLabel.restrict = "^@";
 						break;
 					case PropertyType.COLOR:
 						valueLabel.width = 151;
