@@ -244,7 +244,7 @@
 					{
 						temp.addItem({label:swfVo.classAry[j],data:new UIClassVo(swfVo.classAry[j],new UIElementBitmapInfo(swfVo.classAry[j]))});
 					}
-					temp.source.sortOn('label');
+					temp.source.sortOn('label',Array.CASEINSENSITIVE);
 					temp.refresh();
 					arrayData.addItem({label:swfVo.name,type:NODE,children:temp});
 				}
