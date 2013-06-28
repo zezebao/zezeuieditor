@@ -17,7 +17,7 @@ package utils
 	import mhqy.ui.UIType;
 	import mhqy.ui.button.MBitmapButton;
 	import mhqy.ui.button.MCheckBox;
-	import mhqy.ui.label.MAssetLabel;
+	import mhqy.ui.label.MAssetLabelII;
 	import mhqy.ui.mcache.btns.MCacheAsset1Btn;
 	import mhqy.ui.mcache.btns.MCacheAsset3Btn;
 	import mhqy.ui.mcache.btns.MCacheAsset4Btn;
@@ -110,7 +110,8 @@ package utils
 					item = getBtnByInfo(info as UIElementButtonInfo);
 					break;
 				case UIType.LABEL:
-					item = new MAssetLabel(label,UIElementLabelInfo(info).typeArr,UIElementLabelInfo(info).align,UIElementLabelInfo(info).wrap);
+					item = new MAssetLabelII(label,UIElementLabelInfo(info).typeArr[0],UIElementLabelInfo(info).wrap);
+					MAssetLabelII(item).setSize(info.width,info.height);
 					break;
 				case UIType.BITMAP_BTN:
 					if(UIElementBitmapInfo(info).isOutside)
@@ -256,7 +257,7 @@ package utils
 			{
 				case UIType.LABEL:
 					var labelInfo:UIElementLabelInfo = info as UIElementLabelInfo;
-					var label:MAssetLabel = target as MAssetLabel;
+					var label:MAssetLabelII = target as MAssetLabelII;
 					label.width = labelInfo.width;
 					label.height = labelInfo.height;
 					var tf:TextFormat = label.defaultTextFormat;

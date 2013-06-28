@@ -110,7 +110,7 @@ package uidata
 			className = xml.@className;
 			isBitmapButton = xml.@isBitmapButton == "true";
 			label = xml.@label;
-			isOutside = xml.@isOutside;
+			isOutside = xml.@isOutside == "true";
 		}
 		
 		override public function writeData(source:IDataOutput):void
