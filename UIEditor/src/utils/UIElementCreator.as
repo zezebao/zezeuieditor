@@ -25,6 +25,7 @@ package utils
 	import mhqy.ui.mcache.btns.MCacheAsset6Btn;
 	import mhqy.ui.mcache.btns.MCacheAsset7Btn;
 	import mhqy.ui.mcache.btns.MCacheAsset8Btn;
+	import mhqy.ui.mcache.btns.selectBtns.MCacheSelectBtn;
 	import mhqy.ui.mcache.btns.tabBtns.MCacheTab1Btn;
 	import mhqy.ui.mcache.splits.MCacheSplit1Line;
 	import mhqy.ui.mcache.splits.MCacheSplit2Line;
@@ -194,9 +195,10 @@ package utils
 				case 5:return new MCacheAsset6Btn(info.scaleType,content);
 				case 6:return new MCacheAsset7Btn(info.scaleType,content);
 				case 7:return new MCacheAsset8Btn(info.scaleType,content);
-				//tab button   100代表0,101代表1
+				//tab button   100代表0,101代表1 102代表2
 				case 100:return new MCacheTab1Btn(0,info.scaleType,content);
 				case 101:return new MCacheTab1Btn(1,info.scaleType,content);
+				case 102:return new MCacheSelectBtn(2,info.scaleType,content);
 			}
 			return new MCacheAsset1Btn(info.scaleType,content);
 		}
