@@ -52,13 +52,31 @@ package manager
 		public function save(showAlert:Boolean=true):void
 		{
 			App.layerManager.stagePanel.save();
+			
 			var file:File = new File(Config.outputXMLPath);
 			var fileSteam:FileStream = new FileStream();
 			fileSteam.open(file,FileMode.WRITE);
+			var copyContent:String = "";
+			try
+			{
+				copyContent = fileSteam.readUTFBytes(fileSteam.bytesAvailable);	
+			} 
+			catch(error:Error){}; 
+			
 			var byte:ByteArray = new ByteArray(); 
 			saveWrite(byte);
 			fileSteam.writeBytes(byte);
 			fileSteam.close();
+			
+			//保存副本============
+			var dateStr:String = new Date().fullYear + ".bak_" + (new Date().month + 1) + "_" + new Date().date;
+			var copyFile:File = new File(Config.outputXMLPath + "_" + dateStr);
+			var copyFileSteam:FileStream = new FileStream();
+			copyFileSteam.open(copyFile,FileMode.WRITE);
+			var copyByte:ByteArray = new ByteArray();
+			copyByte.writeUTFBytes(copyContent);
+			copyFileSteam.writeBytes(copyByte);
+			copyFileSteam.close();
 			
 			if(showAlert)Alert.show("保存xml文件成功");
 		}

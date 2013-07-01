@@ -38,7 +38,7 @@ package
 		public static function setup(appStage:Stage,app:ZeZeUIEditor):void
 		{
 			stage = appStage;
-			UIManager.setup(stage,movieManager,null,null);
+			UIManager.setup(stage,movieManager,null,null,"");
 			
 			//initDatas
 			uiData = new UIData();

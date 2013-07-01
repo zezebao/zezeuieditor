@@ -83,6 +83,12 @@
 //				trace(event);
 			}
 			
+			protected function classList_changeHandler(event:ListEvent):void
+			{
+				var item:Object = classList.selectedItem;
+				if(item)System.setClipboard(item.value);				
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -93,10 +99,11 @@
 				 iconField="icon" labelField="label"
 				 itemDoubleClick="classList_itemDoubleClickHandler(event)"
 				 doubleClickEnabled="true"
+				 change="classList_changeHandler(event)"
 				 dragEnabled="true"
 				 dragComplete="classDragCompleteHandler(event)" 
 				 dragStart="dragStartHandler(event)"
-				 toolTip="双击切换或者选中一个类来编辑"
+				 toolTip="双击切换或者选中一个类来编辑,选中某一个类，会复制该类名到复制框"
 				 >
 		</mx:List>
 		<s:Image x="10" y="10" source="assets/systemIcons/gcroot_co.png" buttonMode="true" click="delClassHandler(event)"/>
