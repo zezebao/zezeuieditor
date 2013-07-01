@@ -48,9 +48,11 @@ package uidata
 				new UIClassVo("Btn5",new UIElementButtonInfo(5,0,"示例")),
 				new UIClassVo("Btn6",new UIElementButtonInfo(6,0,"示例")),
 				new UIClassVo("Btn7",new UIElementButtonInfo(7,0,"示例")),
+				
 				//tabBtns
-				new UIClassVo("TABBUTTON1",new UIElementButtonInfo(100,0,"示例")),
-				new UIClassVo("TABBUTTON2",new UIElementButtonInfo(101,0,"示例")),
+				new UIClassVo("TabButton1",new UIElementButtonInfo(100,0,"示例")),
+				new UIClassVo("TabButton2",new UIElementButtonInfo(101,0,"示例")),
+				new UIClassVo("SelectBtn",new UIElementButtonInfo(102,0,"示例")),
 				//checkBox
 				new UIClassVo("CheckBox",new UIElementCheckBoxInfo("示例")),
 				//line

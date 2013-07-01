@@ -24,6 +24,7 @@ package uidata
 		public var align:String = TextFormatAlign.LEFT;
 		public var leading:int;
 		public var wrap:Boolean;
+		public var isInput:Boolean;
 		
 		public function UIElementLabelInfo(label:String="",font:String="",color:uint=0xffffff,size:int=12,leading:int=0)
 		{
@@ -36,6 +37,8 @@ package uidata
 			{
 				this.font = UIData.labelFontData[0];
 			}
+			this.width = 100;
+			this.height = 100;
 			this.label = label;
 			this.color = color;
 			this.size = size;
@@ -63,6 +66,7 @@ package uidata
 			align = xml.@align;
 			leading = xml.@leading;
 			wrap = xml.@wrap == "true";
+			isInput = xml.@isInput == "true";
 		}
 		
 		override public function writeData(source:IDataOutput):void
@@ -81,6 +85,7 @@ package uidata
 			source.writeByte(leading);
 			source.writeUTF(align);
 			source.writeBoolean(wrap);
+//			source.writeBoolean(isInput);
 		}
 		
 		override public function getPropertys():Vector.<PropertyVo>
@@ -95,6 +100,7 @@ package uidata
 			vec.push(new PropertyVo("underLine","是否下划线",PropertyType.DATAPROVIDER,this.underLine,[true,false]));
 			vec.push(new PropertyVo("leading","行距",PropertyType.NUMBER,this.leading));
 			vec.push(new PropertyVo("wrap","是否自动换行",PropertyType.DATAPROVIDER,this.wrap,[true,false]));
+			vec.push(new PropertyVo("isInput","是否输入文本",PropertyType.DATAPROVIDER,this.isInput,[true,false]));
 			return vec.concat(super.getPropertys());
 		}
 		
@@ -108,6 +114,7 @@ package uidata
 			info.align = align;
 			info.leading = leading;
 			info.wrap = wrap;
+			info.isInput = isInput;
 			info.underLine = underLine;
 			return info;
 		}
@@ -124,6 +131,7 @@ package uidata
 				["align",align],
 				["leading",leading],
 				["wrap",wrap],
+				["isInput",isInput]
 			];
 			return creatContent(arr) + super.toString();
 		}

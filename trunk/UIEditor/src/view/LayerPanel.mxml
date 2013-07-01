@@ -54,12 +54,12 @@
 				var count:int;
 				var seletcedArr:Array = [];
 				var dp:ArrayCollection = new ArrayCollection();
-				for (var i:int = 0; i < _container.numChildren; i++) 
+				for (var i:int = _container.numChildren - 1; i >= 0; i--) 
 				{
 					var item:HotRectControl = _container.getChildAt(i) as HotRectControl;
 					if(item)
 					{
-						dp.addItem({"label": i + ":" + getQualifiedClassName(item.content),"type":1,"info":item.uiInfo,"icon":RenderItemIcon});
+						dp.addItem({"label": i + ":" + getQualifiedClassName(item.content),"layer":i,"type":1,"info":item.uiInfo,"icon":RenderItemIcon});
 						if(item.selected)seletcedArr.push(count);
 						count ++;
 					}
@@ -168,7 +168,13 @@
 			
 			private function selectionChangingHandler():void 
 			{
-				App.dispathEvent(new UIEvent(UIEvent.LAYERS_SELECT_UPDATE,itemList.selectedIndices));
+				var layerArr:Array = [];
+				var arrayCon:ArrayCollection = itemList.dataProvider as ArrayCollection;
+				for (var i:int = 0; i < itemList.selectedIndices.length; i++) 
+				{
+					layerArr.push(arrayCon.getItemAt(itemList.selectedIndices[i]).layer);
+				}
+				App.dispathEvent(new UIEvent(UIEvent.LAYERS_SELECT_UPDATE,layerArr));
 			}
 			
 			private function selectsUpdateHandler(evt:UIEvent):void
@@ -176,7 +182,18 @@
 				var time:Number = getTimer();
 				
 				var arr:Array = evt.data as Array;
-				itemList.selectedIndices = arr;
+				
+				var layerArr:Array = [];
+				var arrayCon:ArrayCollection = itemList.dataProvider as ArrayCollection;
+				for (var i:int = 0; i < arrayCon.length; i++) 
+				{
+					if(arr.indexOf(arrayCon[i].layer) != -1)
+					{
+						layerArr.push(i);
+					}
+				}
+				
+				itemList.selectedIndices = layerArr;
 				
 				trace("层级面板耗时：",getTimer() - time);
 			}

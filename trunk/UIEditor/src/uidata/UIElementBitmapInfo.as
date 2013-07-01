@@ -118,7 +118,12 @@ package uidata
 			super.writeData(source);
 			source.writeByte(0);
 			source.writeUTF(className);
-			source.writeBoolean(isOutside);
+			//静态图片
+			if(!isBitmapButton)
+			{
+				source.writeBoolean(isOutside);				
+			}
+			//按钮图片
 			if(isBitmapButton)
 			{
 				source.writeUTF(label);
