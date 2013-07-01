@@ -85,7 +85,7 @@ package uidata
 			source.writeByte(leading);
 			source.writeUTF(align);
 			source.writeBoolean(wrap);
-//			source.writeBoolean(isInput);
+			source.writeBoolean(isInput);
 		}
 		
 		override public function getPropertys():Vector.<PropertyVo>
