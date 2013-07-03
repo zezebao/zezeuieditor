@@ -318,7 +318,7 @@
 					var hotRect:HotRectControl = _currentClassComponent.getChildAt(i) as HotRectControl;
 					if(hotRect)
 					{
-						if(hotRect.hitTestObject(_hitContainer))hotRect.selected = true;
+						if(hotRect.hitTestObject(_hitContainer) && !hotRect.locked)hotRect.selected = true;
 					}
 				}
 				_hitContainer.graphics.clear();
