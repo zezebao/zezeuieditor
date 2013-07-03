@@ -52,6 +52,7 @@
 					var str:String = fileSteam.readUTFBytes(fileSteam.bytesAvailable);
 					App.xmlParser.parseData(str); 
 					classList.dataProvider = App.classInfoList.getChildList();
+					fileSteam.close();
 				}
 			}
 			

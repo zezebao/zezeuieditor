@@ -41,7 +41,7 @@ package event
 		/**property focus chage [data:PropertyItemView]*/
 		public static const PRPPERTY_FOCUS_CHANGE:String = "propertyFocusChange";
 		
-		/**alt copy [data:Vector.<UIElementBaseInfo>]*/
+		/**alt copy [data:Vector.'<'UIElementBaseInfo'>']*/
 		public static const ALT_COPY_INFOS:String = "altCopyInfos";
 		
 		/**层级辅助类更新[数据：无]*/

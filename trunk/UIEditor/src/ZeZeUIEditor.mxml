@@ -29,6 +29,8 @@
 			
 			import org.osmf.utils.Version;
 			
+			import spark.components.Application;
+			
 			private var _offset:Number = 5;
 			
 			public function addToStage(evt:Event):void
@@ -39,12 +41,14 @@
 				new ResourceTxtLoader();
 				stage.addEventListener(Event.RESIZE,onResizeHandler);
 				onResizeHandler();
+				
+				title = applicationID + "__version1.1.2";
 			}
 			
 			private function initData(evt:Event):void
 			{
 				App.setup(stage,this);
-				trace(Version.version);
+				trace(Version.version,applicationID);
 			}
 			
 			protected function onResizeHandler(event:Event=null):void
@@ -52,7 +56,6 @@
 				if(!stage)return;
 				group.height = stage.stageHeight - group.y + _offset;
 			}
-			
 		]]>
 	</fx:Script>
 	<view:ToolBar id="toolBar" width="100%" x="0" y="22" />

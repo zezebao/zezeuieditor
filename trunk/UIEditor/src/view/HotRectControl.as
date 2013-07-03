@@ -81,11 +81,12 @@ package view
 		public function set locked(value:Boolean):void
 		{
 			_locked = value;
+			mouseEnabled = mouseChildren = !_locked;
 		}
 
 		public function get uiInfo():UIElementBaseInfo
 		{
-			if(_uiInfo.type == UIType.CHECKBOX || _uiInfo.type == UIType.PAGE_VIEW)
+			if(_uiInfo.type == UIType.CHECKBOX)
 			{
 				var rect:Rectangle = getBounds(content);
 				_uiInfo.width = rect.width;
@@ -108,11 +109,21 @@ package view
 			var oldIndex:int = oldParent.getChildIndex(this);
 			creatSkin();
 			if(this.parent != oldParent)oldParent.addChildAt(this,oldIndex);
-			
-			_uiInfo.width = content.width;
-			_uiInfo.height = content.height;
+			if(isStageChangeWH)
+			{
+				_uiInfo.width = content.width;
+				_uiInfo.height = content.height;
+			}
 			x = _uiInfo.x;
 			y = _uiInfo.y;
+			
+			locked = _uiInfo.locked;
+		}
+		
+		/**舞台操作是否影响宽高属性*/
+		private function get isStageChangeWH():Boolean
+		{
+			return _uiInfo && _uiInfo.type != UIType.PAGE_VIEW;
 		}
 		
 		private function creatSkin():void
@@ -479,8 +490,11 @@ package view
 		{
 			if(_uiInfo)
 			{
-				_uiInfo.width = content.width;
-				_uiInfo.height = content.height;
+				if(isStageChangeWH)
+				{
+					_uiInfo.width = content.width;
+					_uiInfo.height = content.height;
+				}
 				_uiInfo.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_STAGE));
 			}
 		}
@@ -499,6 +513,7 @@ package view
 		private function mouseDownHandler(evt:MouseEvent):void
 		{
 			evt.stopImmediatePropagation();
+			if(locked)return;
 			if(evt.altKey)
 			{
 				var vec:Vector.<UIElementBaseInfo> = new Vector.<UIElementBaseInfo>();

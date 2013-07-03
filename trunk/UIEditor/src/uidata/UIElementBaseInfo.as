@@ -31,6 +31,7 @@ package uidata
 		
 		/**可否拉伸*/
 		public var canScale:Boolean = false;
+		public var locked:Boolean = false;
 
 		private var _proVec:Vector.<PropertyVo>;
 		
@@ -52,6 +53,7 @@ package uidata
 			height = xml.@height;
 			name = xml.@name;
 			variable = xml.@variable;
+			locked = xml.@locked == "true";
 		}
 		
 		public function writeData(source:IDataOutput):void
@@ -124,7 +126,8 @@ package uidata
 				["width",width],
 				["height",height],
 				["name",name],
-				["variable",variable]
+				["variable",variable],
+				["locked",locked]
 			];
 			return creatContent(arr);
 		}
