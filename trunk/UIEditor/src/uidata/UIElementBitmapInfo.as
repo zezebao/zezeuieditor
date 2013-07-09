@@ -160,5 +160,20 @@ package uidata
 			];
 			return creatContent(arr) + super.toString();
 		}
+		
+		//======================================
+		//===========UIBIMAP-转换成UIMovieClip
+		//======================================
+		public function getMovieClipInfo():UIElementMovieClipInfo
+		{
+			var info:UIElementMovieClipInfo = new UIElementMovieClipInfo(className);
+			info.width = width;
+			info.height = height;
+			info.variable = variable;
+			info.x = x;
+			info.y = y;
+			
+			return info;
+		}
 	}
 }

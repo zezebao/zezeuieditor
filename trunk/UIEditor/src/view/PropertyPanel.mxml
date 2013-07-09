@@ -94,6 +94,9 @@
 				array.addItem({label:"UI_LINE",value:UIType.LINE});
 				array.addItem({label:"UI_PAGE_VIEW",value:UIType.PAGE_VIEW});
 				array.addItem({label:"UI_COMBO_BOX",value:UIType.COMBO_BOX});
+				array.addItem({label:"UI_TILE",value:UIType.TILE});
+				array.addItem({label:"UI_HOTAREA",value:UIType.HOTSPOT});
+				array.addItem({label:"UI_MOVIECLIP",value:UIType.MOVIECLIP});
 				
 				combobox.dataProvider = array;
 				combobox.selectedIndex = 0;
