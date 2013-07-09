@@ -2,13 +2,16 @@ package utils
 {
 	import avmplus.getQualifiedClassName;
 	
+	import fl.controls.CheckBox;
 	import fl.controls.ComboBox;
 	import fl.controls.RadioButton;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.InteractiveObject;
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.text.TextFormat;
 	import flash.utils.getDefinitionByName;
 	
@@ -16,7 +19,7 @@ package utils
 	
 	import mhqy.ui.UIType;
 	import mhqy.ui.button.MBitmapButton;
-	import mhqy.ui.button.MCheckBox;
+	import mhqy.ui.container.MTile;
 	import mhqy.ui.label.MAssetLabelII;
 	import mhqy.ui.mcache.btns.MCacheAsset1Btn;
 	import mhqy.ui.mcache.btns.MCacheAsset3Btn;
@@ -54,10 +57,13 @@ package utils
 	import uidata.UIElementButtonInfo;
 	import uidata.UIElementCheckBoxInfo;
 	import uidata.UIElementComboboxInfo;
+	import uidata.UIElementHotAreaInfo;
 	import uidata.UIElementLabelInfo;
 	import uidata.UIElementLineInfo;
+	import uidata.UIElementMovieClipInfo;
 	import uidata.UIElementPageViewInfo;
 	import uidata.UIElementRadioButtonInfo;
+	import uidata.UIElementTileInfo;
 	import uidata.vo.PropertyVo;
 
 	public class UIElementCreator
@@ -66,6 +72,7 @@ package utils
 		{
 		}
 		
+		/**创建Item，注：x,y不在此处设置*/
 		public static function createItem(info:UIElementBaseInfo):DisplayObject
 		{
 			var item:DisplayObject;
@@ -131,7 +138,9 @@ package utils
 					}
 					break;
 				case UIType.CHECKBOX:
-					item = new MCheckBox(label);
+					item = new CheckBox();
+					item.width = info.width;
+					CheckBox(item).label = label;
 					break;
 				case UIType.LINE:
 					item = getLineByInfo(info as UIElementLineInfo);
@@ -150,8 +159,52 @@ package utils
 					RadioButton(item).label = label;
 					RadioButton(item).setSize(info.width,info.height);
 					break;
+				case UIType.HOTSPOT:
+					item = new Sprite();
+					Sprite(item).graphics.beginFill(0xff0000,0.3);
+					Sprite(item).graphics.drawRect(0,0,info.width,info.height);
+					Sprite(item).graphics.endFill();
+					break;
+				case UIType.MOVIECLIP:
+					cla = getDefinitionByName(UIElementMovieClipInfo(info).className) as Class;
+					if(cla) item = new cla()
+					break;
+				case UIType.TILE:
+					item = getTile(info as UIElementTileInfo);
+					break;
+			}
+			if(item is Sprite)
+			{
+				Sprite(item).mouseChildren = Sprite(item).mouseEnabled = false;
 			}
 			return item;
+		}
+		
+		private static function getTile(info:UIElementTileInfo):MTile
+		{
+			var tile:MTile = new MTile(info.itemWidth,info.itemHeight,info.columns);
+			tile.graphics.beginFill(0x00ff00,0.1);
+			tile.graphics.drawRect(0,0,info.width,info.height);
+			tile.graphics.endFill();
+			tile.itemGapH = info.itemGapH;
+			tile.itemGapW = info.itemGapW;
+			tile.setSize(info.width,info.height);
+			
+			addTileItem(tile,info);
+			
+			return tile;
+		}
+		
+		private static function addTileItem(tile:MTile,info:UIElementTileInfo):void
+		{
+			for (var i:int = 0; i < 8; i++)
+			{
+				var sp:Sprite = new Sprite();
+				sp.graphics.beginFill(0xffffff,0.4);
+				sp.graphics.drawRect(0,0,info["itemWidth"],info["itemHeight"]);
+				sp.graphics.endFill();
+				tile.appendItem(sp);
+			}
 		}
 		
 		private static function getBorderByType(type:int):DisplayObject
@@ -243,8 +296,15 @@ package utils
 					return new UIElementComboboxInfo(170,22);
 				case UIType.RADIO_BTN:
 					return new UIElementRadioButtonInfo();
+				case UIType.HOTSPOT:
+					return new UIElementHotAreaInfo();
+				case UIType.MOVIECLIP:
+					return new UIElementMovieClipInfo("");
+				case UIType.TILE:
+					return new UIElementTileInfo();
+				
 			}
-			throw new Error("clone info Error");
+			throw new Error("clone info Error,error type lost:" + type);
 		}
 
 		public static function update(target:DisplayObject,info:UIElementBaseInfo):void
@@ -279,6 +339,8 @@ package utils
 				case UIType.LINE:
 				case UIType.PAGE_VIEW:
 				case UIType.COMBO_BOX:
+				case UIType.HOTSPOT:
+				case UIType.MOVIECLIP:
 					var vec:Vector.<PropertyVo> = info.getPropertys();
 					for (var i:int = 0; i < vec.length; i++) 
 					{
@@ -297,13 +359,26 @@ package utils
 					}
 					break;
 				case UIType.CHECKBOX:
-					MCheckBox(target).label = content;
+					CheckBox(target).label = content;
+					target.width = info.width;
 					break;
 				case UIType.RADIO_BTN:
 					RadioButton(target).label = content;
 					RadioButton(target).setSize(info.width,info.height);
 					break;
 				case UIType.BITMAP:
+					
+					break;
+				case UIType.TILE:
+					var tile:MTile = target as MTile;
+					tile.graphics.clear();
+					tile.graphics.beginFill(0x00ff00,0.1);
+					tile.graphics.drawRect(0,0,info.width,info.height);
+					tile.graphics.endFill();
+					tile.setSize(info.width,info.height);
+					tile.clearItems();
+					
+					addTileItem(tile,info as UIElementTileInfo);
 					
 					break;
 			}

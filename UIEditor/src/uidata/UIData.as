@@ -65,6 +65,9 @@ package uidata
 				new UIClassVo("RadioButton",new UIElementRadioButtonInfo("groupName","示例")),
 				new UIClassVo("Combobox",new UIElementComboboxInfo(170,22)),
 				new UIClassVo("PageView",new UIElementPageViewInfo()),
+				
+				new UIClassVo("HotArea",new UIElementHotAreaInfo()),
+				new UIClassVo("MTile",new UIElementTileInfo()),
 			];
 			var len:int = App.configXML.UI_BITMAPS.UI_BITMAP.length();
 			for (var i:int = 0; i < len; i++) 

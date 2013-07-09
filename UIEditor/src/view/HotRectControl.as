@@ -7,6 +7,7 @@ package view
 	import fl.controls.RadioButton;
 	
 	import flash.display.DisplayObjectContainer;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -34,6 +35,7 @@ package view
 	import mhqy.ui.UIType;
 	
 	import uidata.UIElementBaseInfo;
+	import uidata.UIElementBitmapInfo;
 	import uidata.vo.PropertyVo;
 	
 	import utils.UIElementCreator;
@@ -99,16 +101,24 @@ package view
 		{
 			_uiInfo = value;
 			_uiInfo.addEventListener(UIEvent.INFO_UPDATE_PROPERTY,onInfoChangeHandler);
-			if(!_uiInfo.canScale)
-			{
-				lockX = true;
-				lockY = true;
-			}
 			
 			var oldParent:DisplayObjectContainer = this.parent;
 			var oldIndex:int = oldParent.getChildIndex(this);
 			creatSkin();
 			if(this.parent != oldParent)oldParent.addChildAt(this,oldIndex);
+			//====================================================
+			//===========初始化列表的时候不会实例化判断类型，因此类型切换放在实例化对象之后来做,2013-07-09========================
+			//====================================================
+			if(content is MovieClip && _uiInfo is UIElementBitmapInfo)
+			{
+				_uiInfo = UIElementBitmapInfo(_uiInfo).getMovieClipInfo();
+			}
+			//=======end=============================================
+			if(!_uiInfo.canScale)
+			{
+				lockX = true;
+				lockY = true;
+			}
 			if(isStageChangeWH)
 			{
 				_uiInfo.width = content.width;
@@ -215,6 +225,18 @@ package view
 					App.hotRectManager.selectedRects.splice(index,1);
 			}
 			this.controlCotainer.visible = value;
+			
+			if(content && content is MovieClip)
+			{
+				if(value)
+				{
+					MovieClip(content).gotoAndPlay(1);	
+				}else
+				{
+					MovieClip(content).gotoAndStop(MovieClip(content).totalFrames);
+				}
+			}
+			
 		}
 		/** @inheritDoc*/
 		override public function setContent(skin:*, replace:Boolean=true) : void
