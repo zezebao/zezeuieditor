@@ -13,6 +13,7 @@ package manager
 	import mx.core.UIComponent;
 	
 	import uidata.UIClassInfo;
+	import uidata.UIClassInfoList;
 	import uidata.UIElementBaseInfo;
 	
 	import view.HotRectControl;
@@ -25,13 +26,6 @@ package manager
 		
 		public function XMLParser()
 		{
-		}
-		
-		public function parseData(data:*):void
-		{
-//			var temp:XMLList = _xml.classes.className.(@className=='Test1');
-//			trace(temp.children().length());
-			App.classInfoList.parseXML(XML(data));
 		}
 		
 		public function publish():void
@@ -53,50 +47,67 @@ package manager
 		{
 			App.layerManager.stagePanel.save();
 			
-			var file:File = new File(Config.outputXMLPath);
-			var fileSteam:FileStream = new FileStream();
-			fileSteam.open(file,FileMode.WRITE);
-			
-			var byte:ByteArray = new ByteArray(); 
-			saveWrite(byte);
-			fileSteam.writeBytes(byte);
-			fileSteam.close();
-			
-			//保存备份副本============
-			var date:Date = new Date();
-			var dateStr:String = ".bak_" + date.fullYear + "_" + (date.month + 1) + "_" + date.date + "_" + date.hours + "_" + date.minutes + "_" + date.seconds;
-			var copyFile:File = new File(Config.outputXMLPath + dateStr);
-			var copyFileSteam:FileStream = new FileStream();
-			copyFileSteam.open(copyFile,FileMode.WRITE);
-			copyFileSteam.writeBytes(byte);
-			copyFileSteam.close();
+			var uiClassList:UIClassInfoList;
+			for each (uiClassList in App.xmlClassList) 
+			{
+				var file:File = new File(Config.outputXMLPath + "//" + uiClassList.fileName + ".xml");
+				var fileSteam:FileStream = new FileStream();
+				fileSteam.open(file,FileMode.WRITE);
+				
+				var byte:ByteArray = new ByteArray(); 
+				uiClassList.saveWrite(byte);
+				fileSteam.writeBytes(byte);
+				fileSteam.close();
+			}
 			
 			if(showAlert)Alert.show("保存xml文件成功");
 		}
 		
-		private function publishWrite(byte:ByteArray):void
+		public function backup():void
 		{
-			byte.writeInt(App.classInfoList.classLen);
-			var classList:Dictionary = App.classInfoList.classList;
-			for each (var info:UIClassInfo in classList) 
-			{ 
-				var vec:Vector.<UIElementBaseInfo> = info.publishInfoList;
-				var len:int = vec.length
-				byte.writeUTF(info.className);
-				byte.writeInt(len);
-				for (var i:int = 0; i < len; i++)
-				{
-					vec[i].writeData(byte);
-//					trace(vec[i]);
-				}
+			App.layerManager.stagePanel.save();
+			var uiClassList:UIClassInfoList;
+			var date:Date = new Date();
+			var backVersionString:String = date.fullYear + "_" + (date.month + 1) + "_" + date.date + "_" + date.hours;
+			for each (uiClassList in App.xmlClassList) 
+			{
+				var file:File = new File(Config.outputXMLPath + backVersionString + "//" + uiClassList.fileName + ".xml");
+				var fileSteam:FileStream = new FileStream();
+				fileSteam.open(file,FileMode.WRITE);
+				
+				var byte:ByteArray = new ByteArray(); 
+				uiClassList.saveWrite(byte);
+				fileSteam.writeBytes(byte);
+				fileSteam.close();
 			}
+			
+			Alert.show("备份xml文件成功");
 		}
 		
-		private function saveWrite(byte:ByteArray):void
+		private function publishWrite(byte:ByteArray):void
 		{
-			trace("save:",App.classInfoList.xmlStr);
-			var content:String = App.classInfoList.xmlStr;
-			byte.writeUTFBytes(content);
+			var classLength:int = 0;
+			var uiClassList:UIClassInfoList;
+			for each (uiClassList in App.xmlClassList) 
+			{
+				classLength += uiClassList.classLen;
+			}
+			byte.writeInt(classLength);
+			for each (uiClassList in App.xmlClassList) 
+			{
+				var classList:Dictionary = uiClassList.classList;
+				for each (var info:UIClassInfo in classList) 
+				{ 
+					var vec:Vector.<UIElementBaseInfo> = info.publishInfoList;
+					var len:int = vec.length
+					byte.writeUTF(info.className);
+					byte.writeInt(len);
+					for (var i:int = 0; i < len; i++)
+					{
+						vec[i].writeData(byte);
+					}
+				}
+			}
 		}
 	}
 }

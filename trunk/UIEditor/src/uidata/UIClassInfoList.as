@@ -2,20 +2,24 @@ package uidata
 {
 	import event.UIEvent;
 	
+	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
 	import mx.collections.ArrayCollection;
 
 	public class UIClassInfoList
 	{
+		public var fileName:String;
+		public var isChange:Boolean;
+		
 		private var _classList:Dictionary = new Dictionary();
 		
 		/**回收的类*/
 		private var _recycleList:Dictionary = new Dictionary();
 		
-		
-		public function UIClassInfoList()
+		public function UIClassInfoList(fileName:String)
 		{
+			this.fileName = fileName;
 		}
 		
 		public function get classList():Dictionary
@@ -83,12 +87,13 @@ package uidata
 			var array:ArrayCollection = new ArrayCollection();
 			for each (var info:UIClassInfo in _classList) 
 			{
-				array.addItem({"label":info.className,"value":info.className,"icon":"assets/systemIcons/fb_as_16x16.png"});
+//				array.addItem({"label":info.className,"value":info.className,"icon":"assets/systemIcons/fb_as_16x16.png"});
+				array.addItem({"label":info.className,"value":info.className});
 			}
 			return array;
 		}
 		
-		public function get xmlStr():String
+		private function get xmlStr():String
 		{
 			var content:String = "<rss>\n";
 			content += "<classes>\n";
@@ -99,6 +104,11 @@ package uidata
 			content += "</classes>\n";
 			content += "</rss>";
 			return content;
+		}
+		
+		public function saveWrite(byte:ByteArray):void
+		{
+			byte.writeUTFBytes(xmlStr);
 		}
 	}
 }

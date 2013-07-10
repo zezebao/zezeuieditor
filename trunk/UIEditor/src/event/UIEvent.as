@@ -4,8 +4,12 @@ package event
 	
 	public class UIEvent extends Event
 	{
-		/**外部库资源加载完成*/
+		/**外部库加载完成[注：是外部AS类库]*/
 		public static const RSL_LOAD_COMPLETE:String = "RSLLibsLoadComplete";
+		/**外部资源swf（swc）加载完成[数据：无]*/
+		public static const RESOURCE_LOADED:String = "resourceLoaded";
+		/**类数据xml文件加载完成 [数据：无]*/
+		public static const XML_CLASS_LOADED:String = "xmlClassLoaded";
 		/**
 		 * 选中库元件</br>
 		 * [数据：全限定类名]

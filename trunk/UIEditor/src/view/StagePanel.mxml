@@ -262,7 +262,7 @@
 				else if(value is String)
 				{
 					if(_currentClass == value)return;
-					var classInfo:UIClassInfo = App.classInfoList.getClassInfo(_currentClass);
+					var classInfo:UIClassInfo = App.getClassInfo(_currentClass);
 					if(!classInfo)return;
 					classInfo.addHelpClass(value.toString());
 				}
@@ -374,7 +374,7 @@
 			
 			private function selectAClassHandler(evt:UIEvent):void
 			{
-				if(!App.classInfoList.hasClass(String(evt.data)))
+				if(!App.hasClass(String(evt.data)))
 				{
 					if(String(evt.data) == _currentClass)
 					{
@@ -392,11 +392,11 @@
 				clear();
 				currentClass = evt.data.toString();
 				//实例化
-				var classInfo:UIClassInfo = App.classInfoList.getClassInfo(_currentClass);
+				var classInfo:UIClassInfo = App.getClassInfo(_currentClass);
 				if(!classInfo)return;
 				for (var j:int = 0; j < classInfo.helpClassList.length; j++) 
 				{
-					var temp:UIClassInfo = App.classInfoList.getClassInfo(classInfo.helpClassList[j].className);
+					var temp:UIClassInfo = App.getClassInfo(classInfo.helpClassList[j].className);
 					if(!temp)
 					{
 						App.log.error("找不到类：",classInfo.helpClassList[j].className);
@@ -442,7 +442,7 @@
 				for (var i:int = 0; i < _uiContainerList.length; i++) 
 				{
 					var className:String = _uiContainerList[i].className;
-					var info:UIClassInfo = App.classInfoList.getClassInfo(className);
+					var info:UIClassInfo = App.getClassInfo(className);
 					if(!info)continue;
 					info.childrenInfo = new Vector.<UIElementBaseInfo>();
 					var len:int = _uiContainerList[i].numChildren;
@@ -534,7 +534,7 @@
 					title = "舞台" + "    class:   [" + _currentClass + "]---类内编辑：" + className;
 				}
 				
-				var classInfo:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
+				var classInfo:UIClassInfo = App.getClassInfo(App.currentClass);
 				
 				for (var i:int = 0; i < _uiContainerList.length; i++) 
 				{

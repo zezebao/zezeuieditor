@@ -18,6 +18,9 @@ package
 	
 	import mhsm.moviewrapper.MovieManager;
 	
+	import mx.collections.ArrayCollection;
+	
+	import uidata.UIClassInfo;
 	import uidata.UIClassInfoList;
 	import uidata.UIData;
 	import uidata.UIElementBaseInfo;
@@ -34,10 +37,13 @@ package
 		/**外部加载图片缓存[键值：图片名]*/
 		public static var outsideImages:Dictionary = new Dictionary();
 		
-		/**外部库资源加载完成之后，调用此方法*/
-		public static function setup(appStage:Stage,app:ZeZeUIEditor):void
+		public static function initStage(appStage:Stage):void
 		{
 			stage = appStage;
+		}
+		/**外部库资源加载完成之后，调用此方法*/
+		public static function setup(app:ZeZeUIEditor):void
+		{
 			UIManager.setup(stage,movieManager,null,null,"");
 			
 			//initDatas
@@ -46,9 +52,79 @@ package
 		
 		//------------库元件复制数据--------------------
 		public static var copyInfos:Vector.<UIElementBaseInfo>;
+		//====================================================================================
+		//====================================================================================
 		//-----------类数据--------------------------
-		public static var classInfoList:UIClassInfoList = new UIClassInfoList();
+		//====================================================================================
+		public static var xmlLoaded:Boolean;
+//		public static var classInfoList:UIClassInfoList = new UIClassInfoList();
+		/**UI XML列表【键值:UIClassInfoList.fileName,值：UIClassInfoList】*/
+		public static var xmlClassList:Dictionary = new Dictionary();
+		public static function addClassList(data:*,fileName:String):void
+		{
+			var classList:UIClassInfoList = new UIClassInfoList(fileName);
+			classList.parseXML(XML(data));
+			xmlClassList[classList.fileName] = classList;
+		}
+		public static function hasClass(value:String):Boolean
+		{
+			for each (var classList:UIClassInfoList in xmlClassList) 
+			{
+				if(classList.hasClass(value))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		public static function getClassInfo(value:String):UIClassInfo
+		{
+			for each (var classList:UIClassInfoList in xmlClassList) 
+			{
+				if(classList.hasClass(value))
+				{
+					return classList.getClassInfo(value);
+				}
+			}
+			return null;
+		}
+		public static function getChildList():ArrayCollection
+		{
+			var array:ArrayCollection = new ArrayCollection();
+			for each (var classList:UIClassInfoList in xmlClassList) 
+			{
+				array.addItem({label:classList.fileName,"value":classList.fileName,children:classList.getChildList()});
+			}
+			return array;
+		}
+		public static function addClass(className:String,fileName:String):void
+		{
+			var classList:UIClassInfoList = xmlClassList[fileName];
+			if(classList == null)
+			{
+				classList = new UIClassInfoList(fileName);
+				xmlClassList[fileName] = classList;
+			}else
+			{
+				
+			}
+			classList.addClass(className);
+		}
+		public static function delClass(className:String):void
+		{
+			for each (var classList:UIClassInfoList in xmlClassList) 
+			{
+				if(classList.hasClass(className))
+				{
+					classList.delClass(className);
+					return;
+				}
+			}
+		}
 		
+		//====================================================================================
+		//====================================================================================
+		//====================================================================================
 		//-----------managers----------------------------------------
 		public static var soManger:ShareObjManger = new ShareObjManger();;
 		public static var hotRectManager:HotRectManager = new HotRectManager();

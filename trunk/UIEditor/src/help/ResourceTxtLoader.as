@@ -75,13 +75,28 @@ package help
 		private function loadXml():void
 		{
 			var browserFile:File = new File(Config.outputXMLPath);
-			if(browserFile.exists)
+			if(!browserFile.exists)
 			{
-				var fileSteam:FileStream = new FileStream();
-				fileSteam.open(browserFile,FileMode.READ);
-				fileSteam.position = 0;
-				var str:String = fileSteam.readUTFBytes(fileSteam.bytesAvailable);
+				App.log.warn("当前还没有生成配置文件");
+				return;
 			}
+			var fileArr:Array = browserFile.getDirectoryListing();
+			for (var i:int = 0; i < fileArr.length; i++) 
+			{
+				var file:File = fileArr[i];
+				if(file.extension == "xml")
+				{
+					var fileSteam:FileStream = new FileStream();
+					fileSteam.open(file,FileMode.READ);
+					fileSteam.position = 0;
+					var str:String = fileSteam.readUTFBytes(fileSteam.bytesAvailable);
+					var fileName:String = file.name.replace(".xml","");
+					App.addClassList(str,fileName);
+					fileSteam.close();
+				}
+			}
+			App.xmlLoaded = true;
+			App.dispathEvent(new UIEvent(UIEvent.XML_CLASS_LOADED));
 		}
 		
 		private function loadLanguaue():void
