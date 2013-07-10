@@ -18,7 +18,7 @@
 			import uidata.vo.HelpClassVo;
 			protected function upClickHandler(event:MouseEvent):void
 			{
-				var classInfo:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
+				var classInfo:UIClassInfo = App.getClassInfo(App.currentClass);
 				if(classInfo)
 				{
 					var vec:Vector.<HelpClassVo> = classInfo.helpClassList.slice(0); 
@@ -41,7 +41,7 @@
 			
 			protected function downClickHandler(event:MouseEvent):void
 			{
-				var classInfo:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
+				var classInfo:UIClassInfo = App.getClassInfo(App.currentClass);
 				if(classInfo)
 				{
 					var vec:Vector.<HelpClassVo> = classInfo.helpClassList.slice(0); 
@@ -64,7 +64,7 @@
 			
 			protected function delClickHandler(event:MouseEvent):void
 			{
-				var classInfo:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
+				var classInfo:UIClassInfo = App.getClassInfo(App.currentClass);
 				if(classInfo)
 				{
 					if(classInfo.className == itemList.selectedItem.value)
@@ -121,7 +121,7 @@
 			{
 				if(App.currentClass)
 				{
-					var classInfo:UIClassInfo = App.classInfoList.getClassInfo(App.currentClass);
+					var classInfo:UIClassInfo = App.getClassInfo(App.currentClass);
 					if(classInfo)
 					{
 						var index:int = (evt == null) ? classInfo.getHelpClassIndex(App.currentClass) : (classInfo.helpClassList.length - 1);

@@ -178,6 +178,7 @@
 				loadCount --;
 				if(loadCount <= 0)
 				{
+					App.dispathEvent(new UIEvent(UIEvent.RESOURCE_LOADED));
 					showInitInfo();
 					setData();
 				}
