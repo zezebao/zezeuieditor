@@ -42,10 +42,10 @@
 						nativeProcessStartupInfo.arguments = Vector.<String>([
 							File.applicationDirectory.nativePath + "\\log.txt",
 						]);
-						
 						process.start(nativeProcessStartupInfo);// 运行本地进程
 						break;
 					case MenuType.ERROR_LOG:
+						App.log.toggle();
 						break;
 				}
 			}

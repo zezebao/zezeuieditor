@@ -35,26 +35,33 @@
 			
 			public function addToStage(evt:Event):void
 			{
-				this.tabChildren = false;
-				App.initStage(stage);
-				App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
-				App.addEventListener(UIEvent.RESOURCE_LOADED,resourceLoadedHandler);
-				new ResourceTxtLoader();
-				stage.addEventListener(Event.RESIZE,onResizeHandler);
-				onResizeHandler();
-				
-				title = applicationID + "1.1.3.1";
-				
-				loadingGroup.graphics.beginFill(0,0.3);
-				loadingGroup.graphics.drawRect(-1000,-1000,3000,3000);
-				loadingGroup.graphics.endFill();
+				try
+				{
+					this.tabChildren = false;
+					App.initStage(stage);
+					App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
+					App.addEventListener(UIEvent.RESOURCE_LOADED,resourceLoadedHandler);
+					new ResourceTxtLoader();
+					stage.addEventListener(Event.RESIZE,onResizeHandler);
+					onResizeHandler();
+					
+					title = applicationID + "1.1.5";
+					
+					loadingGroup.graphics.beginFill(0,0.1);
+					loadingGroup.graphics.drawRect(-1000,-1000,3000,3000);
+					loadingGroup.graphics.endFill();
+				} 
+				catch(error:Error) 
+				{
+					App.log.error(error.message);
+				}
 			}
 			
 			private function resourceLoadedHandler(evt:UIEvent):void
 			{
 				if(loadingGroup.parent)
 				{
-					removeElement(loadingGroup);				
+					removeElement(loadingGroup);		
 				}
 			}
 			

@@ -48,6 +48,7 @@ package
 			
 			//initDatas
 			uiData = new UIData();
+			stage.addChild(log);
 		}
 		
 		//------------库元件复制数据--------------------
@@ -104,11 +105,10 @@ package
 			{
 				classList = new UIClassInfoList(fileName);
 				xmlClassList[fileName] = classList;
-			}else
-			{
-				
 			}
 			classList.addClass(className);
+			
+			App.log.echo("新建类：---",fileName,"--->",className);
 		}
 		public static function delClass(className:String):void
 		{
@@ -118,6 +118,16 @@ package
 				{
 					classList.delClass(className);
 					return;
+				}
+			}
+		}
+		public static function saveRange(className:String):void
+		{
+			for each (var classList:UIClassInfoList in xmlClassList) 
+			{
+				if(classList.hasClass(className))
+				{
+					classList.isChange = true;
 				}
 			}
 		}

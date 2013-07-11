@@ -16,7 +16,8 @@
 			import mx.managers.PopUpManager;
 			protected function okBtn_clickHandler(event:MouseEvent):void
 			{
-				var fileName:String = combobox.selectedItem.value;
+				var fileName:String;
+				if(combobox.selectedItem) fileName = combobox.selectedItem.value
 				if(input0.text != "")
 				{
 					fileName = input0.text;

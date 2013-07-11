@@ -443,6 +443,7 @@
 				{
 					var className:String = _uiContainerList[i].className;
 					var info:UIClassInfo = App.getClassInfo(className);
+					App.saveRange(className);
 					if(!info)continue;
 					info.childrenInfo = new Vector.<UIElementBaseInfo>();
 					var len:int = _uiContainerList[i].numChildren;

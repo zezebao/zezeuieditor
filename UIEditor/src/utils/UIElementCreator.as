@@ -12,6 +12,7 @@ package utils
 	import flash.display.InteractiveObject;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import flash.text.Font;
 	import flash.text.TextFormat;
 	import flash.utils.getDefinitionByName;
 	
@@ -102,6 +103,8 @@ package utils
 					{
 						item = child as DisplayObject;
 					}
+					if(info.width != 0)item.width = info.width;
+					if(info.height != 0)item.height = info.height;
 					break;
 				case UIType.BAR:
 					item = getBarByType(UIElementBarInfo(info).barType);
@@ -119,7 +122,8 @@ package utils
 					break;
 				case UIType.LABEL:
 					item = new MAssetLabelII(label,UIElementLabelInfo(info).typeArr[0],UIElementLabelInfo(info).wrap);
-					MAssetLabelII(item).setSize(info.width,info.height);
+//					MAssetLabelII(item).setSize(info.width,info.height);
+					update(item,info);
 					break;
 				case UIType.BITMAP_BTN:
 					if(UIElementBitmapInfo(info).isOutside)
@@ -134,8 +138,11 @@ package utils
 						}else
 						{
 							item = new MBitmapButton(new BitmapData(100,100),label);
+							App.log.error("找不到类：",info["className"]);
 						}
 					}
+					item.width = info.width;
+					item.height = info.height;
 					break;
 				case UIType.CHECKBOX:
 					item = new CheckBox();
@@ -167,7 +174,15 @@ package utils
 					break;
 				case UIType.MOVIECLIP:
 					cla = getDefinitionByName(UIElementMovieClipInfo(info).className) as Class;
-					if(cla) item = new cla()
+					if(cla)
+					{
+						item = new cla();
+						item.width = info.width;
+						item.height = info.height;
+					}else
+					{
+						App.log.error("找不到类：",info["className"]);
+					}
 					break;
 				case UIType.TILE:
 					item = getTile(info as UIElementTileInfo);
@@ -323,7 +338,16 @@ package utils
 					label.width = labelInfo.width;
 					label.height = labelInfo.height;
 					var tf:TextFormat = label.defaultTextFormat;
-					tf.font = labelInfo.font;
+					if(labelInfo.font == "华文行楷")
+					{
+						tf.font = "STXingkai";
+					}else if(labelInfo.font == "微软雅黑")
+					{
+						tf.font = "Microsoft YaHei";						
+					}else
+					{
+						tf.font = labelInfo.font;
+					}
 					tf.bold = labelInfo.bold;
 					tf.leading = labelInfo.leading;
 					tf.align = labelInfo.align;
@@ -333,6 +357,7 @@ package utils
 					label.defaultTextFormat = tf;
 					label.wordWrap = labelInfo.wrap;
 					label.htmlText = content;
+					label.setTextFormat(tf);
 					break;
 				case UIType.BORDOR:
 				case UIType.BAR:
@@ -352,7 +377,6 @@ package utils
 					break;
 				case UIType.BUTTON:
 				case UIType.TAB_BTN:
-				case UIType.BITMAP_BTN:
 					if(target.hasOwnProperty("label"))
 					{
 						target["label"] = content;
@@ -367,7 +391,13 @@ package utils
 					RadioButton(target).setSize(info.width,info.height);
 					break;
 				case UIType.BITMAP:
-					
+				case UIType.BITMAP_BTN:
+					target.width = info.width;
+					target.height = info.height;
+					if(target.hasOwnProperty("label"))
+					{
+						target["label"] = content;
+					}
 					break;
 				case UIType.TILE:
 					var tile:MTile = target as MTile;

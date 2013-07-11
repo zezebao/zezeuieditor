@@ -46,21 +46,26 @@ package manager
 		public function save(showAlert:Boolean=true):void
 		{
 			App.layerManager.stagePanel.save();
-			
+			var hasSave:Boolean = false;
 			var uiClassList:UIClassInfoList;
 			for each (uiClassList in App.xmlClassList) 
 			{
-				var file:File = new File(Config.outputXMLPath + "//" + uiClassList.fileName + ".xml");
-				var fileSteam:FileStream = new FileStream();
-				fileSteam.open(file,FileMode.WRITE);
-				
-				var byte:ByteArray = new ByteArray(); 
-				uiClassList.saveWrite(byte);
-				fileSteam.writeBytes(byte);
-				fileSteam.close();
+				if(uiClassList.isChange)
+				{
+					hasSave = true;
+					App.log.echo("保存模块文件：",uiClassList.fileName + ".xml");
+					var file:File = new File(Config.outputXMLPath + "//" + uiClassList.fileName + ".xml");
+					var fileSteam:FileStream = new FileStream();
+					fileSteam.open(file,FileMode.WRITE);
+					
+					var byte:ByteArray = new ByteArray(); 
+					uiClassList.saveWrite(byte);
+					fileSteam.writeBytes(byte);
+					fileSteam.close();
+				}
 			}
 			
-			if(showAlert)Alert.show("保存xml文件成功");
+			if(showAlert && hasSave)Alert.show("保存xml文件成功");
 		}
 		
 		public function backup():void
