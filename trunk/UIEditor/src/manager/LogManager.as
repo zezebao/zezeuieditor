@@ -1,33 +1,42 @@
 package manager 
 {
+	import fl.containers.ScrollPane;
+	import fl.controls.ScrollPolicy;
+	
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.FocusEvent;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.filters.GlowFilter;
+	import flash.geom.Rectangle;
 	import flash.system.System;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.ui.Keyboard;
 	
+	import mhqy.ui.container.MScrollPanel;
+	
 	/**日志管理器*/
 	public class LogManager extends Sprite 
 	{
 		private var _msgs:Array = [];
-		private var _box:Sprite;
+		private var _listView:MScrollPanel;
 		private var _textField:TextField;
 		private var _filter:TextField;
 		private var _filters:Array = [];
-		private var _canScroll:Boolean = true;
-		private var _scroll:TextField;
 		
 		public function LogManager() 
 		{
+			this.visible = false;
 			//容器
-			_box = new Sprite();
-			_box.visible = false;
-			addChild(_box);
+			_listView = new MScrollPanel();
+			_listView.setSize(400,290);
+			_listView.verticalScrollPolicy = ScrollPolicy.ON;
+			addChild(_listView);
+			_listView.graphics.beginFill(0);
+			_listView.graphics.drawRoundRect(0,0,400,290,10,10);
+			_listView.graphics.endFill();
 			//筛选栏
 			_filter = new TextField();
 			_filter.width = 270;
@@ -39,34 +48,34 @@ package manager
 			_filter.defaultTextFormat = new TextFormat("Arial", 12);
 			_filter.addEventListener(KeyboardEvent.KEY_DOWN, onFilterKeyDown);
 			_filter.addEventListener(FocusEvent.FOCUS_OUT, onFilterFocusOut);
-			_box.addChild(_filter);
+//			addChild(_filter);
 			//控制按钮			
-			var clear:TextField = createLinkButton("Clear");
+			var clear:TextField = createLinkButton("清空");
 			clear.addEventListener(MouseEvent.CLICK, onClearClick);
 			clear.x = 280;
-			_box.addChild(clear);
-			_scroll = createLinkButton("Pause");
-			_scroll.addEventListener(MouseEvent.CLICK, onScrollClick);
-			_scroll.x = 315;
-			_box.addChild(_scroll);
-			var copy:TextField = createLinkButton("Copy");
+			addChild(clear);
+			var copy:TextField = createLinkButton("复制");
 			copy.addEventListener(MouseEvent.CLICK, onCopyClick);
-			copy.x = 350;
-			_box.addChild(copy);
+			copy.x = 315;
+			addChild(copy);
+			var close:TextField = createLinkButton("关闭");
+			close.addEventListener(MouseEvent.CLICK, onCloseClick);
+			close.x = 350;
+			addChild(close);
 			//信息栏
 			_textField = new TextField();
-			_textField.width = 400;
+			_textField.width = 380;
 			_textField.height = 280;
-			_textField.y = 20;
+			_textField.y = 0;
 			_textField.multiline = true;
 			_textField.wordWrap = true;
 			_textField.defaultTextFormat = new TextFormat("微软雅黑,Arial");
-			_box.addChild(_textField);
+			_listView.getContainer().addChild(_textField);
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 		
 		private function onAddedToStage(e:Event):void {
-			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+//			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onStageKeyDown);
 		}
 		
@@ -80,16 +89,12 @@ package manager
 			return tf;
 		}
 		
-		private function onCopyClick(e:MouseEvent):void {
-			System.setClipboard(_textField.text);
+		protected function onCloseClick(event:MouseEvent):void {
+			toggle();			
 		}
 		
-		private function onScrollClick(e:MouseEvent):void {
-			_canScroll = !_canScroll;
-			_scroll.text = _canScroll ? "Pause" : "Start";
-			if (_canScroll) {
-				refresh(null);
-			}
+		private function onCopyClick(e:MouseEvent):void {
+			System.setClipboard(_textField.text);
 		}
 		
 		private function onClearClick(e:MouseEvent):void {
@@ -99,7 +104,7 @@ package manager
 		
 		private function onFilterKeyDown(e:KeyboardEvent):void {
 			if (e.keyCode == Keyboard.ENTER) {
-				App.stage.focus = _box;
+				App.stage.focus = _listView;
 			}
 		}
 		
@@ -146,15 +151,15 @@ package manager
 				_msgs.length = 0;
 			}
 			_msgs.push(msg);
-			if (_box.visible) {
+			if (this.visible) {
 				refresh(msg);
 			}
 		}
 		
 		/**打开或隐藏面板*/
-		private function toggle():void {
-			_box.visible = !_box.visible;
-			if (_box.visible) {
+		public function toggle():void {
+			this.visible = !this.visible;
+			if (this.visible) {
 				refresh(null);
 			}
 		}
@@ -175,9 +180,9 @@ package manager
 				}
 				_textField.htmlText = msg;
 			}
-			if (_canScroll) {
-				_textField.scrollV = _textField.maxScrollV;
-			}
+			
+			_listView.getContainer().height=_textField.textHeight;
+			_listView.update();
 		}
 		
 		/**是否是筛选属性*/

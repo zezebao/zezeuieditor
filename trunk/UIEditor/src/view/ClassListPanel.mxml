@@ -64,8 +64,9 @@
 				if(classList.selectedItem)
 				{
 					var className:String = classList.selectedItem.value;
-//					App.classInfoList.delClass(className);
+					App.delClass(className);
 					Alert.show("删除成功");
+					App.log.echo("删除类：",className);
 				}
 			}
 			

@@ -35,7 +35,7 @@ package data
 			getMenuInfoByType(MAIN).add(new MenuInfo(2,"保存"));
 			
 			getMenuInfoByType(EDIT).add(new MenuInfo(LOG,"更新日志"));
-			getMenuInfoByType(EDIT).add(new MenuInfo(ERROR_LOG,"错误日志"));
+			getMenuInfoByType(EDIT).add(new MenuInfo(ERROR_LOG,"错误日志 Ctrl + L"));
 		}
 		
 		/**获取菜单项*/

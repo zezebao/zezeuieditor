@@ -207,7 +207,7 @@
 					}
 					content += "【" + swfVec[i].name + "】  ";
 				}
-//				trace(content);
+//				App.log.echo(content);
 			}
 			
 			public function setData():void

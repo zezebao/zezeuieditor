@@ -42,6 +42,8 @@ package uidata
 			_imgLoader = new Loader();
 			_imgLoader.contentLoaderInfo.addEventListener(Event.COMPLETE,onImgCompleteHandler);
 			_imgLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onErrorHandler);
+			
+			canScale = true;
 		}
 		
 		public function set bitmapData(value:BitmapData):void
