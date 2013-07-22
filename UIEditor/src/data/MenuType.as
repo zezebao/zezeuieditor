@@ -1,6 +1,8 @@
 package data
 {
 	import flash.sampler.getMemberNames;
+	
+	import mx.collections.XMLListCollection;
 
 	public class MenuType
 	{

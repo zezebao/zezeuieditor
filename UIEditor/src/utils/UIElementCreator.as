@@ -1,7 +1,5 @@
 package utils
 {
-	import avmplus.getQualifiedClassName;
-	
 	import fl.controls.CheckBox;
 	import fl.controls.ComboBox;
 	import fl.controls.RadioButton;
@@ -9,10 +7,8 @@ package utils
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
-	import flash.display.InteractiveObject;
-	import flash.display.MovieClip;
 	import flash.display.Sprite;
-	import flash.text.Font;
+	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.utils.getDefinitionByName;
 	
@@ -51,6 +47,7 @@ package utils
 	import mhsm.ui.BorderAsset8;
 	import mhsm.ui.BorderAsset9;
 	
+	import uidata.UIData;
 	import uidata.UIElementBarInfo;
 	import uidata.UIElementBaseInfo;
 	import uidata.UIElementBitmapInfo;
@@ -63,7 +60,9 @@ package utils
 	import uidata.UIElementLineInfo;
 	import uidata.UIElementMovieClipInfo;
 	import uidata.UIElementPageViewInfo;
+	import uidata.UIElementPosInfo;
 	import uidata.UIElementRadioButtonInfo;
+	import uidata.UIElementScrollPanelInfo;
 	import uidata.UIElementTileInfo;
 	import uidata.vo.PropertyVo;
 
@@ -186,6 +185,19 @@ package utils
 					break;
 				case UIType.TILE:
 					item = getTile(info as UIElementTileInfo);
+					break;
+				case UIType.SCROLL_PANEL:
+				case UIType.POS:
+					var sp:Sprite = new Sprite();
+					sp.graphics.beginFill(0,0.2);
+					sp.graphics.drawRect(0,0,info.width,info.height);
+					sp.graphics.endFill();
+					item = sp;
+					var txt:TextField = new TextField();
+					txt.width = 100;
+					txt.wordWrap = true;
+					txt.text = UIData.getLabelByType(info.type);
+					sp.addChild(txt);
 					break;
 			}
 			if(item is Sprite)
@@ -317,7 +329,10 @@ package utils
 					return new UIElementMovieClipInfo("");
 				case UIType.TILE:
 					return new UIElementTileInfo();
-				
+				case UIType.SCROLL_PANEL:
+					return new UIElementScrollPanelInfo();
+				case UIType.POS:
+					return new UIElementPosInfo();
 			}
 			throw new Error("clone info Error,error type lost:" + type);
 		}
@@ -366,6 +381,8 @@ package utils
 				case UIType.COMBO_BOX:
 				case UIType.HOTSPOT:
 				case UIType.MOVIECLIP:
+				case UIType.SCROLL_PANEL:
+				case UIType.POS:
 					var vec:Vector.<PropertyVo> = info.getPropertys();
 					for (var i:int = 0; i < vec.length; i++) 
 					{
@@ -409,7 +426,6 @@ package utils
 					tile.clearItems();
 					
 					addTileItem(tile,info as UIElementTileInfo);
-					
 					break;
 			}
 		}

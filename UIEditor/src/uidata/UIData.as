@@ -2,15 +2,10 @@ package uidata
 {
 	import flash.text.TextFormatAlign;
 	
+	import mhqy.ui.UIType;
 	import mhqy.ui.label.MAssetLabelII;
-	import mhqy.ui.mcache.btns.MCacheAsset1Btn;
-	import mhqy.ui.mcache.btns.MCacheAsset3Btn;
-	import mhqy.ui.mcache.btns.MCacheAsset4Btn;
-	import mhqy.ui.mcache.btns.MCacheAsset5Btn;
 	
-	import mhsm.ui.BarAsset1;
-	import mhsm.ui.BarAsset8;
-	import mhsm.ui.BorderAsset2;
+	import mx.collections.ArrayCollection;
 	
 	import uidata.vo.UIClassVo;
 	
@@ -68,6 +63,8 @@ package uidata
 				
 				new UIClassVo("HotArea",new UIElementHotAreaInfo()),
 				new UIClassVo("MTile",new UIElementTileInfo()),
+				new UIClassVo("MScrollPanel",new UIElementScrollPanelInfo()),
+				new UIClassVo("只获取位置类型...",new UIElementPosInfo()),
 			];
 			var len:int = App.configXML.UI_BITMAPS.UI_BITMAP.length();
 			for (var i:int = 0; i < len; i++) 
@@ -78,6 +75,44 @@ package uidata
 			}
 		}
 		
+		private static var _typeArrayCollection:ArrayCollection;
+		public static function get typeArrayCollection():ArrayCollection
+		{
+			if(_typeArrayCollection != null)return _typeArrayCollection;
+			_typeArrayCollection = new ArrayCollection();
+			_typeArrayCollection.addItem({label:"UI_BITMAP",value:UIType.BITMAP});
+			_typeArrayCollection.addItem({label:"UI_BITMAPBTN",value:UIType.BITMAP_BTN});
+			_typeArrayCollection.addItem({label:"UI_BORDER",value:UIType.BORDOR});
+			_typeArrayCollection.addItem({label:"UI_BAR",value:UIType.BAR});
+			_typeArrayCollection.addItem({label:"UI_BUTTON",value:UIType.BUTTON});
+			_typeArrayCollection.addItem({label:"UI_TABBUTTON",value:UIType.TAB_BTN});
+			_typeArrayCollection.addItem({label:"UI_LABEL",value:UIType.LABEL});
+			
+			_typeArrayCollection.addItem({label:"UI_CHECKBOX",value:UIType.CHECKBOX});
+			_typeArrayCollection.addItem({label:"UI_RADIO_BTN",value:UIType.RADIO_BTN});
+			_typeArrayCollection.addItem({label:"UI_LINE",value:UIType.LINE});
+			_typeArrayCollection.addItem({label:"UI_PAGE_VIEW",value:UIType.PAGE_VIEW});
+			_typeArrayCollection.addItem({label:"UI_COMBO_BOX",value:UIType.COMBO_BOX});
+			_typeArrayCollection.addItem({label:"UI_TILE",value:UIType.TILE});
+			_typeArrayCollection.addItem({label:"UI_HOTAREA",value:UIType.HOTSPOT});
+			_typeArrayCollection.addItem({label:"UI_MOVIECLIP",value:UIType.MOVIECLIP});
+			_typeArrayCollection.addItem({label:"UI_SCROLLPANEL",value:UIType.SCROLL_PANEL});
+			_typeArrayCollection.addItem({label:"只获取位置，宽高",value:UIType.POS});
+			return _typeArrayCollection;
+		}
+		
+		public static function getLabelByType(type:int):String
+		{
+			for(var i:int=0;i<typeArrayCollection.length;i++){
+				var obj:Object = typeArrayCollection.getItemAt(i);
+				if(obj.value == type)
+				{
+					return obj.label;
+				}
+			}
+			return "不知道类型。。。。囧啊";
+		}
+		
 		/**
 		 * 对齐方式 
 		 */		
@@ -86,7 +121,7 @@ package uidata
 			TextFormatAlign.CENTER,
 			TextFormatAlign.RIGHT
 		];
-		
+
 		/**temp  label datas*/
 		public static function get labelColorData():Array
 		{

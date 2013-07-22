@@ -16,6 +16,7 @@
 			
 			import spark.events.IndexChangeEvent;
 			
+			import uidata.UIData;
 			import uidata.UIElementBaseInfo;
 			import uidata.UIElementBorderInfo;
 			import uidata.vo.PropertyVo;
@@ -80,23 +81,7 @@
 			
 			private function initData():void
 			{
-				array = new ArrayCollection();
-				array.addItem({label:"UI_BITMAP",value:UIType.BITMAP});
-				array.addItem({label:"UI_BITMAPBTN",value:UIType.BITMAP_BTN});
-				array.addItem({label:"UI_BORDER",value:UIType.BORDOR});
-				array.addItem({label:"UI_BAR",value:UIType.BAR});
-				array.addItem({label:"UI_BUTTON",value:UIType.BUTTON});
-				array.addItem({label:"UI_TABBUTTON",value:UIType.TAB_BTN});
-				array.addItem({label:"UI_LABEL",value:UIType.LABEL});
-				
-				array.addItem({label:"UI_CHECKBOX",value:UIType.CHECKBOX});
-				array.addItem({label:"UI_RADIO_BTN",value:UIType.RADIO_BTN});
-				array.addItem({label:"UI_LINE",value:UIType.LINE});
-				array.addItem({label:"UI_PAGE_VIEW",value:UIType.PAGE_VIEW});
-				array.addItem({label:"UI_COMBO_BOX",value:UIType.COMBO_BOX});
-				array.addItem({label:"UI_TILE",value:UIType.TILE});
-				array.addItem({label:"UI_HOTAREA",value:UIType.HOTSPOT});
-				array.addItem({label:"UI_MOVIECLIP",value:UIType.MOVIECLIP});
+				array = UIData.typeArrayCollection;
 				
 				combobox.dataProvider = array;
 				combobox.selectedIndex = 0;
