@@ -230,12 +230,10 @@
 		</mx:List>
 	</s:Group>
 	<s:Group width="100%" height="20%">
-		<s:layout>
-			<s:HorizontalLayout/>
-		</s:layout>
-		<s:Image x="10" y="241" buttonMode="true" source="@Embed('assets/systemIcons/up.png')" click="upClickHandler(event)" toolTip="上移（Ctrl + 上）"/>
-		<s:Image x="31" y="241" buttonMode="true" source="@Embed('assets/systemIcons/down.png')" click="downClickHandler(event)" toolTip="上移（Ctrl + 下）"/>
-		<s:Image x="53" y="241" buttonMode="true" source="@Embed('assets/security_closed_16.png')" click="lockClickHandler(event)" toolTip="锁定[锁定之后，只能通过层级面板选中，且只能在属性面板编辑]"/>
-		<s:Image x="53" y="241" buttonMode="true" source="@Embed('assets/systemIcons/rungc_co.gif')" click="delClickHandler(event)" toolTip="删除（DELETE）"/>
+		<!-- <s:layout> <s:HorizontalLayout/> </s:layout>-->
+		<s:Image x="10" buttonMode="true" source="@Embed('assets/systemIcons/up.png')" click="upClickHandler(event)" toolTip="上移（Ctrl + 上）"/>
+		<s:Image x="31" buttonMode="true" source="@Embed('assets/systemIcons/down.png')" click="downClickHandler(event)" toolTip="上移（Ctrl + 下）"/>
+		<s:Image x="53" buttonMode="true" source="@Embed('assets/security_closed_16.png')" click="lockClickHandler(event)" toolTip="锁定[锁定之后，只能通过层级面板选中，且只能在属性面板编辑]"/>
+		<s:Image x="300" buttonMode="true" source="@Embed('assets/systemIcons/rungc_co.gif')" toolTip="删除（DELETE）"  click="delClickHandler(event)"/>
 	</s:Group>
 </s:Panel>

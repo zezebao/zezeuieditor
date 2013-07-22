@@ -45,7 +45,7 @@
 					stage.addEventListener(Event.RESIZE,onResizeHandler);
 					onResizeHandler();
 					
-					title = applicationID + "1.1.5";
+					title = applicationID + "1.1.7";
 					
 					loadingGroup.graphics.beginFill(0,0.1);
 					loadingGroup.graphics.drawRect(-1000,-1000,3000,3000);
@@ -79,7 +79,7 @@
 		]]>
 	</fx:Script>
 	<view:ToolBar id="toolBar" width="100%" x="0" y="22" />
-	<view:UIMenuBar id="uiMenuBar" x="0" y="0" width="100%" symbolColor="#FFFFFF"/>
+	<view:EditorMenuBar id="uiMenuBar" x="0" y="0" width="100%" symbolColor="#FFFFFF"/>
 	<!-- Panel添加伸缩 -->
 	<s:Group id="group" left="0" top="58" width="100%" height="634" y="45">
 		<mx:DividedBox id="dbox" direction="horizontal" width="100%" height="100%">

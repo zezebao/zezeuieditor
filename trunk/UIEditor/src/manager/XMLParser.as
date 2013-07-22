@@ -40,7 +40,7 @@ package manager
 			fileSteam.writeBytes(byte);
 			fileSteam.close();
 			
-			Alert.show("发布成功");
+			Alert.show("发布并保存成功");
 		}
 		
 		public function save(showAlert:Boolean=true):void

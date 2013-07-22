@@ -36,8 +36,8 @@ package uidata
 			_className = className;
 			type = UIType.BITMAP;
 			
-			getProperty("width").isCanEdit = false;
-			getProperty("height").isCanEdit = false;
+//			getProperty("width").isCanEdit = false;
+//			getProperty("height").isCanEdit = false;
 			
 			_imgLoader = new Loader();
 			_imgLoader.contentLoaderInfo.addEventListener(Event.COMPLETE,onImgCompleteHandler);
@@ -50,6 +50,8 @@ package uidata
 		{
 			_bitmapData = value;
 			_bitmap.bitmapData = _bitmapData;
+			_bitmap.width = width;
+			_bitmap.height = height;
 		}
 
 		protected function onImgCompleteHandler(event:Event):void
