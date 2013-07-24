@@ -1,5 +1,7 @@
 package view
 {
+	import commands.ChangeUndoCommand;
+	
 	import data.Direction;
 	
 	import event.UIEvent;
@@ -19,7 +21,6 @@ package view
 	import flashx.textLayout.events.UpdateCompleteEvent;
 	
 	import ghostcat.display.GBase;
-	import ghostcat.display.graphics.DragPoint;
 	import ghostcat.events.DragEvent;
 	import ghostcat.events.MoveEvent;
 	import ghostcat.manager.DragManager;
@@ -39,6 +40,8 @@ package view
 	import uidata.vo.PropertyVo;
 	
 	import utils.UIElementCreator;
+	
+	import view.item.DragPoint;
 	
 	/**
 	 * 图像变形控制器，点击自动选中，并调整大小
@@ -141,6 +144,7 @@ package view
 			super.skin = UIElementCreator.createItem(_uiInfo);
 		}
 		
+		/**属性面板编辑触发此改变*/
 		protected function onInfoChangeHandler(evt:UIEvent):void
 		{
 			var isChangeView:Boolean = Boolean(evt.data);
@@ -201,7 +205,25 @@ package view
 		{
 			super.init();
 			this.addEventListener(MouseEvent.MOUSE_DOWN,mouseDownHandler);
+			this.addEventListener(UIEvent.HOTRECT_DRAG_START,dragPointStartHandler);
+//			this.addEventListener(UIEvent.HOTRECT_DRAG_COMPLETE,dragPointCompleteHandler);
 			stage.addEventListener(MouseEvent.MOUSE_UP,mouseUpHandler);
+		}
+		
+		protected function dragPointStartHandler(evt:UIEvent):void
+		{
+			evt.stopImmediatePropagation();
+			var vec:Vector.<UIElementBaseInfo> = new Vector.<UIElementBaseInfo>();
+			if(!uiInfo)return;
+			trace("wd change record");
+			uiInfo.record();
+			vec.push(uiInfo);
+			if(App.classInfo)App.classInfo.addCommand(new ChangeUndoCommand(vec));
+		}
+		
+		protected function dragPointCompleteHandler(event:Event):void
+		{
+			updateWD();			
 		}
 		/** @inheritDoc*/
 		public override function set selected(value:Boolean):void
@@ -346,7 +368,6 @@ package view
 			leftLineControl.setPosition(new Point(rect.x,rect.y + rect.height/2),true);
 			rightLineControl.setPosition(new Point(rect.right,rect.y + rect.height/2),true);
 			
-			trace("宽高：",content.width,content.height);
 			updateWD();
 		}
 		
@@ -503,9 +524,8 @@ package view
 			} 
 			catch(error:Error) 
 			{
-				
+				App.log.error(error.message);
 			}
-//			updatePos(evt.dragObj.x,evt.dragObj.y);
 		}
 		
 		public function updateWD():void
@@ -514,10 +534,16 @@ package view
 			{
 				if(isStageChangeWH)
 				{
+					if(_uiInfo.width == content.width && _uiInfo.height == content.height)
+					{
+						return;
+					}
+					
 					_uiInfo.width = content.width;
 					_uiInfo.height = content.height;
+					_uiInfo.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_STAGE));
 				}
-				_uiInfo.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_STAGE));
+				trace("宽高：",content.width,content.height);
 			}
 		}
 		
@@ -525,11 +551,15 @@ package view
 		{
 			if(_uiInfo)
 			{
+				if(_uiInfo.x == x && _uiInfo.y == y)
+				{
+					return;
+				}
 				_uiInfo.x = x;
 				_uiInfo.y = y;
 				_uiInfo.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_STAGE));
 			}
-//			trace("当前位置：",_uiInfo.x,_uiInfo.y);
+			trace("当前位置：",_uiInfo.x,_uiInfo.y);
 		}
 		
 		private function mouseDownHandler(evt:MouseEvent):void
@@ -583,7 +613,7 @@ package view
 		{
 			this.removeEventListener(MouseEvent.MOUSE_DOWN,mouseDownHandler);
 			stage.removeEventListener(MouseEvent.MOUSE_UP,mouseUpHandler);
-			
+			this.removeEventListener(UIEvent.HOTRECT_DRAG_COMPLETE,dragPointCompleteHandler);
 			super.destory();
 		}
 	}

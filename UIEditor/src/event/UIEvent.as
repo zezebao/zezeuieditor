@@ -53,6 +53,10 @@ package event
 		/**辅助层级选中[数据：选中类名]*/
 		public static const HELP_CLASS_SELECTED:String = "helpClassSelected";
 		
+		/**HotRect热区按钮拖动开始,[数据：无]*/
+		public static const HOTRECT_DRAG_START:String = "hotRectDragStart";
+		/**HotRect热区按钮拖动完成,[数据：无]*/
+		public static const HOTRECT_DRAG_COMPLETE:String = "hotRectDragComplete";
 		
 		public var data:Object;
 		

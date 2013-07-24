@@ -91,7 +91,14 @@ package help
 					fileSteam.position = 0;
 					var str:String = fileSteam.readUTFBytes(fileSteam.bytesAvailable);
 					var fileName:String = file.name.replace(".xml","");
-					App.addClassList(str,fileName);
+					try
+					{
+						App.addClassList(str,fileName);
+					} 
+					catch(error:Error) 
+					{
+						App.log.error(fileName,"====xml配置错误",error.message);
+					}
 					fileSteam.close();
 				}
 			}

@@ -11,6 +11,8 @@
 		<![CDATA[
 			import avmplus.getQualifiedClassName;
 			
+			import commands.ChangeUndoCommand;
+			
 			import data.Direction;
 			
 			import event.UIEvent;
@@ -32,14 +34,19 @@
 			import spark.core.IEditableText;
 			
 			import uidata.UIClassInfo;
+			import uidata.UIElementBarInfo;
 			import uidata.UIElementBaseInfo;
 			import uidata.vo.HelpClassVo;
 			import uidata.vo.UIClassVo;
 			
 			import utils.UIElementCreator;
 			
+			import view.item.RuleView;
+			
 			private var _currentClass:String;
 			
+			//标尺
+			private var _ruleView:RuleView;
 			//容器
 			private var _uiContainerList:Vector.<ClassComponent> = new Vector.<ClassComponent>(10);
 			private var _uiContainer:UIComponent;
@@ -81,11 +88,20 @@
 				_uiMask.graphics.endFill();
 					
 				_uiContainer = new UIComponent();
+				_uiContainer.x = 15;
+				_uiContainer.y = 10;
 				addElement(_uiContainer);
 				_uiContainer.mask = _uiMask;
 //				_uiContainer.addChild(new CursorSprite());
 				_hitContainer = new UIComponent();
+				_hitContainer.x = _uiContainer.x;
+				_hitContainer.y = _uiContainer.y;
 				addElement(_hitContainer);
+				_ruleView = new RuleView();
+				_ruleView.x = _uiContainer.x;
+				_ruleView.y = _uiContainer.y;
+				_ruleView.mask = _uiMask;
+				addElement(_ruleView);
 				
 				for (var i:int = 0; i < _uiContainerList.length; i++) 
 				{
@@ -176,16 +192,40 @@
 					case Keyboard.V:
 						if(evt.ctrlKey)pasteInfos(App.copyInfos);
 						break;
-					
+					case Keyboard.U:
+						if(evt.ctrlKey)
+						{
+							App.hotRectManager.lock();
+							App.layerManager.layerPanel.setChild(_currentClassComponent);
+						}
+						break;
+					case Keyboard.Z:
+						if(classInfo)classInfo.undo();
+						break;
 				}
 				if(_direction != 0)
 				{
-					this.addEventListener(Event.ENTER_FRAME,onETHandler);
+					if(!hasEventListener(Event.ENTER_FRAME))
+					{
+						addEventListener(Event.ENTER_FRAME,onETHandler);
+						//记录初始移动
+						var vec:Vector.<UIElementBaseInfo> = App.hotRectManager.getMoveVec();
+						if(vec.length > 0)
+						{
+							if(classInfo)classInfo.addCommand(new ChangeUndoCommand(vec));
+						}
+					}
 				}
 			}
 			
 			protected function onKeyUpHandler(evt:KeyboardEvent):void
 			{
+				//temp
+				var _moveKeys:Array = [
+					Keyboard.A,Keyboard.S,Keyboard.W,Keyboard.D,
+					Keyboard.LEFT,Keyboard.DOWN,Keyboard.UP,Keyboard.RIGHT
+				];
+				
 				switch(evt.keyCode)
 				{
 					case Keyboard.A:
@@ -202,12 +242,20 @@
 						break;
 					case Keyboard.S:
 					case Keyboard.DOWN:
-						_direction = _direction & 0;	
+						_direction = _direction & 0;
 						break;
 				}
 				if(_direction == 0)
 				{
-					this.removeEventListener(Event.ENTER_FRAME,onETHandler);
+					if(hasEventListener(Event.ENTER_FRAME))
+					{
+						removeEventListener(Event.ENTER_FRAME,onETHandler);
+					}
+					if(_moveKeys.indexOf(evt.keyCode) != -1)
+					{
+						//记录移动距离
+						App.hotRectManager.moveOver();
+					}
 				}
 			}
 			
@@ -262,7 +310,6 @@
 				else if(value is String)
 				{
 					if(_currentClass == value)return;
-					var classInfo:UIClassInfo = App.getClassInfo(_currentClass);
 					if(!classInfo)return;
 					classInfo.addHelpClass(value.toString());
 				}
@@ -350,15 +397,21 @@
 			protected function onRightDownHandler(event:MouseEvent):void
 			{
 				_uiContainer.startDrag(false);
+//				_ruleView.startDrag(false);
+				_ruleView.visible = false;
 				Mouse.cursor = MouseCursor.HAND;
 			}
 			
 			protected function onRightUpHandler(event:MouseEvent):void
 			{
 				_uiContainer.stopDrag();
+//				_ruleView.stopDrag();
+				_ruleView.visible = true;
 				Mouse.cursor = MouseCursor.AUTO;
 				_hitContainer.x = _uiContainer.x;
 				_hitContainer.y = _uiContainer.y;
+				_ruleView.x = _uiContainer.x;
+				_ruleView.y = _uiContainer.y;
 			}
 			
 			protected function panel1_resizeHandler(event:ResizeEvent):void
@@ -392,7 +445,6 @@
 				clear();
 				currentClass = evt.data.toString();
 				//实例化
-				var classInfo:UIClassInfo = App.getClassInfo(_currentClass);
 				if(!classInfo)return;
 				for (var j:int = 0; j < classInfo.helpClassList.length; j++) 
 				{
@@ -535,8 +587,6 @@
 					title = "舞台" + "    class:   [" + _currentClass + "]---类内编辑：" + className;
 				}
 				
-				var classInfo:UIClassInfo = App.getClassInfo(App.currentClass);
-				
 				for (var i:int = 0; i < _uiContainerList.length; i++) 
 				{
 					if(className == _uiContainerList[i].className)
@@ -572,6 +622,11 @@
 						}
 					}
 				}
+			}
+			
+			private function get classInfo():UIClassInfo
+			{
+				return App.classInfo;
 			}
 		]]>
 	</fx:Script>

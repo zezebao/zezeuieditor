@@ -92,18 +92,36 @@ package utils
 						item = UIElementBitmapInfo(info).bitmap;
 					}else
 					{
-						cla = getDefinitionByName(UIElementBitmapInfo(info).className) as Class;
-						child = new cla();
+						try
+						{
+							cla = getDefinitionByName(UIElementBitmapInfo(info).className) as Class;
+							child = new cla();
+							if(child is BitmapData)
+							{
+								item = new Bitmap(child as BitmapData);						
+							}else if(child is DisplayObject)
+							{
+								item = child as DisplayObject;
+							}
+							if(info.width != 0)item.width = info.width;
+							if(info.height != 0)item.height = info.height;
+						} 
+						catch(error:Error) 
+						{
+							var bmd:BitmapData = new BitmapData(info.width,info.height);
+							info.isResourceError = true;
+							var tf:TextField = new TextField();
+							tf.width = 100;
+							tf.wordWrap = true;
+							if(tf.width > info.width)tf.width = info.width;
+							if(tf.height > info.height)tf.height = info.height;
+							tf.textColor = 0xff0000;
+							tf.text = info["className"] + "不存在";
+							bmd.draw(tf);
+							item = new Bitmap(bmd);
+							App.log.error("找不到类：",info["className"]);
+						}
 					}
-					if(child is BitmapData)
-					{
-						item = new Bitmap(child as BitmapData);						
-					}else if(child is DisplayObject)
-					{
-						item = child as DisplayObject;
-					}
-					if(info.width != 0)item.width = info.width;
-					if(info.height != 0)item.height = info.height;
 					break;
 				case UIType.BAR:
 					item = getBarByType(UIElementBarInfo(info).barType);
@@ -130,11 +148,15 @@ package utils
 						item = UIElementBitmapInfo(info).bitmap;
 					}else
 					{
-						cla = getDefinitionByName(UIElementBitmapInfo(info).className) as Class;
-						if(cla)
+						try
 						{
-							item = new MBitmapButton(new cla(),label);
-						}else
+							cla = getDefinitionByName(UIElementBitmapInfo(info).className) as Class;
+							if(cla)
+							{
+								item = new MBitmapButton(new cla(),label);
+							}
+						} 
+						catch(error:Error) 
 						{
 							item = new MBitmapButton(new BitmapData(100,100),label);
 							App.log.error("找不到类：",info["className"]);
@@ -172,13 +194,17 @@ package utils
 					Sprite(item).graphics.endFill();
 					break;
 				case UIType.MOVIECLIP:
-					cla = getDefinitionByName(UIElementMovieClipInfo(info).className) as Class;
-					if(cla)
+					try
 					{
-						item = new cla();
-						item.width = info.width;
-						item.height = info.height;
-					}else
+						cla = getDefinitionByName(UIElementMovieClipInfo(info).className) as Class;
+						if(cla)
+						{
+							item = new cla();
+							item.width = info.width;
+							item.height = info.height;
+						}
+					} 
+					catch(error:Error) 
 					{
 						App.log.error("找不到类：",info["className"]);
 					}
@@ -197,6 +223,8 @@ package utils
 					txt.width = 100;
 					txt.wordWrap = true;
 					txt.text = UIData.getLabelByType(info.type);
+					if(txt.width > info.width)txt.width = info.width;
+					if(txt.height > info.height)txt.height = info.height;
 					sp.addChild(txt);
 					break;
 			}

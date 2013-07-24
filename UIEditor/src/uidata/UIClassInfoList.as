@@ -6,7 +6,10 @@ package uidata
 	import flash.utils.Dictionary;
 	
 	import mx.collections.ArrayCollection;
-
+	/**
+	 * 一个承载一系列类的xml的数据 
+	 * @author Administrator
+	 */
 	public class UIClassInfoList
 	{
 		public var fileName:String;

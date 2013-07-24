@@ -30,7 +30,6 @@ package uidata
 		public function UIElementBitmapInfo(className:String="",isOutside:Boolean=false)
 		{
 			_bitmap = new Bitmap();
-			bitmapData = new BitmapData(100,100);
 
 			this.isOutside = isOutside;
 			_className = className;
@@ -50,21 +49,24 @@ package uidata
 		{
 			_bitmapData = value;
 			_bitmap.bitmapData = _bitmapData;
-			_bitmap.width = width;
-			_bitmap.height = height;
+			
+			_bitmap.width = width ? width : _bitmapData.width;
+			_bitmap.height = height ? height : _bitmapData.height;
+			
+			width = width ? width : _bitmapData.width;
+			height = height ? height : _bitmapData.height;
 		}
 
 		protected function onImgCompleteHandler(event:Event):void
 		{
 			var bitmap:Bitmap = _imgLoader.content as Bitmap;
 			bitmapData = bitmap.bitmapData;
-			
 			App.outsideImages[_className] = _bitmapData;
 		}
 		
 		protected function onErrorHandler(event:IOErrorEvent):void
 		{
-			_bitmapData = new BitmapData(100,100);
+			_bitmapData = new BitmapData(width,height);
 			var tf:TextField = new TextField();
 			tf.width = 100;
 			tf.wordWrap = true;
@@ -72,6 +74,10 @@ package uidata
 			tf.text = _className + "不存在";
 			_bitmapData.draw(tf);
 			bitmapData = _bitmapData;
+			
+			isResourceError = true;
+			
+			App.log.warn(_className + "不存在");
 		}
 		/**具体类映射,如果是外部图片，则为图片名*/
 		public function get className():String
@@ -101,7 +107,14 @@ package uidata
 			className = _className;
 			return _bitmap;	
 		}
-
+		
+		override public function set width(value:int):void
+		{
+			// TODO Auto Generated method stub
+			super.width = value;
+		}
+		
+		
 		override public function get type():int
 		{
 			if(isBitmapButton)return UIType.BITMAP_BTN;
@@ -179,5 +192,17 @@ package uidata
 			
 			return info;
 		}
+		
+		override public function update(propertyName:String):void
+		{
+			//改变位图源重置宽高，默认为新源的宽高
+			if(propertyName == "className")
+			{
+				width = 0;
+				height = 0;
+			}
+			super.update(propertyName);
+		}
+		
 	}
 }
