@@ -33,7 +33,8 @@
 			{
 				if(_info[_property] == getValue())return;
 				_info[_property] = getValue();
-				_info.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_PROPERTY,_propertyVo.isChangeView));
+//				_info.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_PROPERTY,_propertyVo.isChangeView));
+				_info.update(_property);
 			}
 			
 			public function setData(property:String,propertyVo:PropertyVo,info:UIElementBaseInfo):void

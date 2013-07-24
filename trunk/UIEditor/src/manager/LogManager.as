@@ -137,6 +137,7 @@ package manager
 		/**错误*/
 		public function error(... args):void {
 			print("error", args, 0xFF4646);
+			if(!this.visible)toggle();
 		}
 		
 		/**警告*/

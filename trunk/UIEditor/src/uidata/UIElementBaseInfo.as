@@ -15,15 +15,16 @@ package uidata
 	import mhqy.ui.UIType;
 	
 	import uidata.vo.PropertyVo;
+	import uidata.vo.RecordVo;
 	
 	import utils.UIElementCreator;
 
 	public class UIElementBaseInfo extends EventDispatcher implements ICloneAble
 	{
-		public var x:int;
-		public var y:int;
-		public var width:int;
-		public var height:int;
+		private var _x:int;
+		private var _y:int;
+		private var _width:int;
+		private var _height:int;
 		public var name:String="";
 		public var variable:String="";
 		//类型标识
@@ -35,22 +36,65 @@ package uidata
 
 		private var _proVec:Vector.<PropertyVo>;
 		
+		/**资源是否出错：若出错，则width、height属性不能被改变（如Bitmap的宽高在不能正常加载会出错等情况）*/
+		public var isResourceError:Boolean;
+		
+		private var _recordList:Vector.<RecordVo> = new Vector.<RecordVo>(); 
+		
 		public function UIElementBaseInfo()
 		{
 			type = UIType.BITMAP;
 		}
 		
-		public function update():void
+		/**
+		 * 记录改变，若前一记录状态与之相同，则不记录 
+		 * @return 
+		 */		
+		public function record():Boolean
 		{
-			dispatchEvent(new Event(Event.CHANGE));
+			trace("record");
+			var recordVo:RecordVo = new RecordVo();
+			recordVo.x = this.x;
+			recordVo.y = this.y;
+			recordVo.width = this.width;
+			recordVo.height = this.height;
+			if(_recordList.length > 0)
+			{
+				var preRecordVo:RecordVo = _recordList[_recordList.length - 1];
+				if(recordVo.equal(preRecordVo))
+					return false;
+			}
+			_recordList.push(recordVo);
+			
+			return true;
+		}
+		
+		/**撤销改变*/
+		public function undo():void
+		{
+			if(_recordList.length > 0)
+			{
+				var recordVo:RecordVo = _recordList.pop();
+				this.x = recordVo.x;
+				this.y = recordVo.y;
+				this.width = recordVo.width;
+				this.height = recordVo.height;
+				
+				update("x");
+			}
+		}
+		
+		public function update(propertyName:String):void
+		{
+			dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_PROPERTY,getProperty(propertyName).isChangeView));
 		}
 		
 		public function readXML(xml:XML):void
 		{
 			x = xml.@x;
 			y = xml.@y;
-			width = xml.@width;
-			height = xml.@height;
+			_width = xml.@width;
+			_height = xml.@height;
 			name = xml.@name;
 			variable = xml.@variable;
 			locked = xml.@locked == "true";
@@ -142,5 +186,47 @@ package uidata
 			}
 			return content;
 		}
+		
+		//===================setter,getter============================
+		public function get y():int
+		{
+			return _y;
+		}
+		public function set y(value:int):void
+		{
+			_y = value;
+		}
+		public function get x():int
+		{
+			return _x;
+		}
+		public function set x(value:int):void
+		{
+			_x = value;
+		}
+		public function get height():int
+		{
+			return _height;
+		}
+		public function set height(value:int):void
+		{
+			if(!isResourceError)
+			{
+				_height = value;
+			}
+		}
+		public function get width():int
+		{
+			return _width;
+		}
+		public function set width(value:int):void
+		{
+			if(!isResourceError)
+			{
+				_width = value;
+			}
+		}
+		
+		//====================================================
 	}
 }

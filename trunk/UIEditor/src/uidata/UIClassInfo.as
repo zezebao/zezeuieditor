@@ -1,5 +1,7 @@
 package uidata
 {
+	import commands.Command;
+	
 	import event.UIEvent;
 	
 	import flash.events.EventDispatcher;
@@ -20,11 +22,27 @@ package uidata
 		public var childrenInfo:Vector.<UIElementBaseInfo> = new Vector.<UIElementBaseInfo>();
 		private var _helpClassList:Vector.<HelpClassVo> = new Vector.<HelpClassVo>();
 		
+		private var _recordList:Vector.<Command> = new Vector.<Command>();
+		
 		public function UIClassInfo(className:String,folder:String="")
 		{
 			this.className = className;
 			this.folder = folder;
 			super();
+		}
+		
+		public function addCommand(cmd:Command):void
+		{
+			_recordList.push(cmd);
+		}
+		
+		public function undo():void
+		{
+			if(_recordList.length > 0)
+			{
+				var commond:Command = _recordList.pop();
+				commond.execute();
+			}
 		}
 		
 		public function set helpClassList(value:Vector.<HelpClassVo>):void

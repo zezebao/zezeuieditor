@@ -197,14 +197,25 @@
 				 >
 		</mx:List>
 	</s:Group>
-	<s:Group width="100%" height="20%">
+	<s:Group width="100%">
 		<s:layout>
 			<s:HorizontalLayout/>
 		</s:layout>
-		<s:Image x="10" y="241" buttonMode="true" source="@Embed('assets/systemIcons/up.png')" click="upClickHandler(event)" toolTip="上移"/>
-		<s:Image x="31" y="241" buttonMode="true" source="@Embed('assets/systemIcons/down.png')" click="downClickHandler(event)" toolTip="上移"/>
-		<s:Image x="53" y="241" buttonMode="true" source="@Embed('assets/systemIcons/rungc_co.gif')" click="delClickHandler(event)" toolTip="删除"/>
-		<s:Image x="53" y="241" buttonMode="true" source="@Embed('assets/view_16.png')" click="visibelChangeHandler(event)" toolTip="隐藏"/>
+		<s:Group width="70%" height="20%">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+			<s:Image x="10" y="241" buttonMode="true" source="@Embed('assets/systemIcons/down.png')" click="upClickHandler(event)" toolTip="上移"/>
+			<s:Image x="31" y="241" buttonMode="true" source="@Embed('assets/systemIcons/up.png')" click="downClickHandler(event)" toolTip="上移"/>
+			<s:Image x="53" y="241" buttonMode="true" source="@Embed('assets/view_16.png')" click="visibelChangeHandler(event)" toolTip="隐藏"/>
+		</s:Group>
+		<s:Group width="30%" height="20%">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+			<s:Image buttonMode="true" click="delClickHandler(event)"
+					 source="@Embed('assets/systemIcons/rungc_co.gif')" toolTip="删除"/>
+		</s:Group>
 	</s:Group>
 	
 </s:Panel>

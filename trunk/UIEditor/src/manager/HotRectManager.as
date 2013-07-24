@@ -1,15 +1,15 @@
 package manager
 {
-	import data.LayoutAlignType;
+	import commands.ChangeUndoCommand;
+	
 	import data.Direction;
+	import data.LayoutAlignType;
 	
-	import event.UIEvent;
-	
-	import flash.display.DisplayObjectContainer;
 	import flash.geom.Rectangle;
 	
-	import ghostcat.events.DragEvent;
 	import ghostcat.manager.DragManager;
+	
+	import uidata.UIElementBaseInfo;
 	
 	import view.HotRectControl;
 
@@ -48,6 +48,11 @@ package manager
 		/**开始拖动*/
 		public function startDrag(bounds:Rectangle=null, startHandler:Function=null, stopHandler:Function=null, onHandler:Function=null, type:String="direct", lockCenter:Boolean=false, upWhenLeave:Boolean=false, collideByRect:Boolean=false):void
 		{
+			var vec:Vector.<UIElementBaseInfo> = App.hotRectManager.getMoveVec();
+			if(vec.length > 0)
+			{
+				if(App.classInfo)App.classInfo.addCommand(new ChangeUndoCommand(vec));
+			}
 			for each (var rect:HotRectControl in selectedRects)
 			{
 				DragManager.startDrag(rect,bounds,startHandler,stopHandler,onHandler,type,lockCenter,upWhenLeave);
@@ -79,6 +84,33 @@ package manager
 							break;
 					}
 				}
+//				rect.updatePos();
+			}
+		}
+		
+		//移动开始，记录
+		public function getMoveVec():Vector.<UIElementBaseInfo>
+		{
+			var vec:Vector.<UIElementBaseInfo> = new Vector.<UIElementBaseInfo>();
+			for (var i:int = selectedRects.length - 1;i>=0;i--)
+			{
+				var rect:HotRectControl = selectedRects[i];
+				if(rect.uiInfo)
+				{
+					var flag:Boolean = rect.uiInfo.record();
+					vec.push(rect.uiInfo);
+//					if(flag)vec.push(rect.uiInfo);
+				}
+			}
+			return vec;
+		}
+		
+		//移动结束，根据视图改变属性
+		public function moveOver():void
+		{
+			for (var i:int = selectedRects.length - 1;i>=0;i--)
+			{
+				var rect:HotRectControl = selectedRects[i];
 				rect.updatePos();
 			}
 		}
@@ -173,6 +205,17 @@ package manager
 						selectedRects[i].y = selectedRects[targetIndex].y + selectedRects[targetIndex].height / 2 - selectedRects[i].height / 2;
 					}
 					break;
+			}
+		}
+		
+		/**锁定选中的HotRect*/
+		public function lock():void
+		{
+			for (var i:int = 0; i < selectedRects.length; i++) 
+			{
+				var hotRect:HotRectControl = selectedRects[i]; 
+				hotRect.uiInfo.locked = !hotRect.locked;
+				hotRect.locked = hotRect.uiInfo.locked;
 			}
 		}
 	}
