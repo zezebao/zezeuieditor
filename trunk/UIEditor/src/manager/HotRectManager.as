@@ -206,6 +206,12 @@ package manager
 					}
 					break;
 			}
+			
+			for (var j:int = 0; j < selectedRects.length; j++) 
+			{
+				selectedRects[j].updatePos();
+			}
+			
 		}
 		
 		/**锁定选中的HotRect*/

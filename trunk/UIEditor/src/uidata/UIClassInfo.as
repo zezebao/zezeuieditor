@@ -146,7 +146,20 @@ package uidata
 			{
 				if(childrenInfo[i].type != UIType.RADIO_BTN)
 				{
-					vec.push(childrenInfo[i]);
+					if(childrenInfo[i].hasLayout)
+					{
+						for (var j:int = 0; j < childrenInfo[i].layoutColumn * childrenInfo[i].layoutRow; j++) 
+						{
+							var uiInfo:UIElementBaseInfo = childrenInfo[i].clone() as UIElementBaseInfo;
+							if(uiInfo.variable != "")uiInfo.variable = uiInfo.variable + j.toString();
+							uiInfo.x += (j % uiInfo.layoutColumn) * (uiInfo.layoutOffsetX);
+							uiInfo.y += int(j / uiInfo.layoutColumn) * (uiInfo.layoutOffsetY);
+							vec.push(uiInfo);
+						}
+					}else
+					{
+						vec.push(childrenInfo[i]);
+					}
 				}
 			}
 			vec = vec.concat(radioGroups);

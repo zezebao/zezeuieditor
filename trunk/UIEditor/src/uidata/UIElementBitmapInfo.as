@@ -110,7 +110,6 @@ package uidata
 		
 		override public function set width(value:int):void
 		{
-			// TODO Auto Generated method stub
 			super.width = value;
 		}
 		
