@@ -83,7 +83,7 @@
 				
 				_uiMask = new UIComponent();
 				addElement(_uiMask);
-				_uiMask.graphics.beginFill(0,0);
+				_uiMask.graphics.beginFill(0,0.3);
 				_uiMask.graphics.drawRect(0,0,this.width,this.height);
 				_uiMask.graphics.endFill();
 					
@@ -98,10 +98,10 @@
 				_hitContainer.y = _uiContainer.y;
 				addElement(_hitContainer);
 				_ruleView = new RuleView();
-				_ruleView.x = _uiContainer.x;
-				_ruleView.y = _uiContainer.y;
-				_ruleView.mask = _uiMask;
-				addElement(_ruleView);
+//				_ruleView.x = _uiContainer.x;
+//				_ruleView.y = _uiContainer.y;
+//				_ruleView.mask = _uiMask;
+				_uiContainer.addChild(_ruleView);
 				
 				for (var i:int = 0; i < _uiContainerList.length; i++) 
 				{
@@ -397,21 +397,15 @@
 			protected function onRightDownHandler(event:MouseEvent):void
 			{
 				_uiContainer.startDrag(false);
-//				_ruleView.startDrag(false);
-				_ruleView.visible = false;
 				Mouse.cursor = MouseCursor.HAND;
 			}
 			
 			protected function onRightUpHandler(event:MouseEvent):void
 			{
 				_uiContainer.stopDrag();
-//				_ruleView.stopDrag();
-				_ruleView.visible = true;
 				Mouse.cursor = MouseCursor.AUTO;
 				_hitContainer.x = _uiContainer.x;
 				_hitContainer.y = _uiContainer.y;
-				_ruleView.x = _uiContainer.x;
-				_ruleView.y = _uiContainer.y;
 			}
 			
 			protected function panel1_resizeHandler(event:ResizeEvent):void

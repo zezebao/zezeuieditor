@@ -2,12 +2,11 @@ package view
 {
 	import commands.ChangeUndoCommand;
 	
-	import data.Direction;
-	
 	import event.UIEvent;
 	
 	import fl.controls.RadioButton;
 	
+	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -16,17 +15,11 @@ package view
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
-	import flash.utils.getTimer;
-	
-	import flashx.textLayout.events.UpdateCompleteEvent;
 	
 	import ghostcat.display.GBase;
 	import ghostcat.events.DragEvent;
 	import ghostcat.events.MoveEvent;
-	import ghostcat.manager.DragManager;
-	import ghostcat.parse.DisplayParse;
 	import ghostcat.parse.display.RectParse;
-	import ghostcat.parse.graphics.GraphicsClear;
 	import ghostcat.parse.graphics.GraphicsFill;
 	import ghostcat.parse.graphics.GraphicsLineStyle;
 	import ghostcat.parse.graphics.GraphicsRect;
@@ -37,7 +30,6 @@ package view
 	
 	import uidata.UIElementBaseInfo;
 	import uidata.UIElementBitmapInfo;
-	import uidata.vo.PropertyVo;
 	
 	import utils.UIElementCreator;
 	
@@ -117,19 +109,8 @@ package view
 				_uiInfo = UIElementBitmapInfo(_uiInfo).getMovieClipInfo();
 			}
 			//=======end=============================================
-			if(!_uiInfo.canScale)
-			{
-				lockX = true;
-				lockY = true;
-			}
-			if(isStageChangeWH)
-			{
-				_uiInfo.width = content.width;
-				_uiInfo.height = content.height;
-			}
 			x = _uiInfo.x;
 			y = _uiInfo.y;
-			
 			locked = _uiInfo.locked;
 		}
 		
@@ -141,7 +122,22 @@ package view
 		
 		private function creatSkin():void
 		{
-			super.skin = UIElementCreator.createItem(_uiInfo);
+			if(_uiInfo.hasLayout)
+			{
+				var container:Sprite = new Sprite();
+				for (var i:int = 0; i < _uiInfo.layoutColumn * _uiInfo.layoutRow; i++) 
+				{
+					var item:DisplayObject = UIElementCreator.createItem(_uiInfo);
+					item.x = (i % _uiInfo.layoutColumn) * (_uiInfo.layoutOffsetX);
+					item.y = int( i / _uiInfo.layoutColumn) * (_uiInfo.layoutOffsetY);
+					container.addChild(item);
+				}
+				super.skin = container;
+			}else
+			{
+				super.skin = UIElementCreator.createItem(_uiInfo);
+			}
+			updateWD(false);
 		}
 		
 		/**属性面板编辑触发此改变*/
@@ -153,10 +149,23 @@ package view
 				creatSkin();
 			}else
 			{
-				trace("update propertys");
 				this.x = _uiInfo.x;
 				this.y = _uiInfo.y;
-				UIElementCreator.update(content,_uiInfo);
+				if(_uiInfo.hasLayout)
+				{
+//					UIElementCreator.update(content,_uiInfo);
+					for (var i:int = 0; i < DisplayObjectContainer(content).numChildren; i++) 
+					{
+						var display:DisplayObject = DisplayObjectContainer(content).getChildAt(i);
+						if(display)
+						{
+							UIElementCreator.update(display,_uiInfo);
+						}
+					}
+				}else
+				{
+					UIElementCreator.update(content,_uiInfo);
+				}
 			}
 			updateControls();
 		}
@@ -172,11 +181,11 @@ package view
 			bottomLineControl.visible = value;
 			leftLineControl.visible = value;
 			rightLineControl.visible = value;
-			if(value)
-			{
-				lockX = _lockX;
-				lockY = _lockY;
-			}
+//			if(value)
+//			{
+//				lockX = _lockX;
+//				lockY = _lockY;
+//			}
 		}
 		
 		public function get lockX():Boolean
@@ -340,10 +349,11 @@ package view
 		public function updateControls():void
 		{
 			DisplayUtil.moveToHigh(controlCotainer);
-			if(!content)
-			{
-				return;
-			}
+			if(!content)return;
+			
+			lockX = !_uiInfo.canScale;
+			lockY = !_uiInfo.canScale;
+			
 			var rect:Rectangle;
 			if(content is TextField)
 			{
@@ -368,7 +378,7 @@ package view
 			leftLineControl.setPosition(new Point(rect.x,rect.y + rect.height/2),true);
 			rightLineControl.setPosition(new Point(rect.right,rect.y + rect.height/2),true);
 			
-			updateWD();
+			updateWD(false);
 		}
 		
 		private function setContentRect(x:Number = NaN,y:Number = NaN,width:Number = NaN ,height:Number = NaN):void
@@ -528,22 +538,28 @@ package view
 			}
 		}
 		
-		public function updateWD():void
+		public function updateWD(isDispath:Boolean=true):void
 		{
 			if(_uiInfo)
 			{
-				if(isStageChangeWH)
+				if(uiInfo.hasLayout)
 				{
-					if(_uiInfo.width == content.width && _uiInfo.height == content.height)
-					{
-						return;
-					}
-					
-					_uiInfo.width = content.width;
-					_uiInfo.height = content.height;
-					_uiInfo.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_STAGE));
+					var display:DisplayObject = DisplayObjectContainer(content).getChildAt(0);
+					if(display)doUpdate(display);
+				}else if(isStageChangeWH)
+				{
+					doUpdate(content);
 				}
-				trace("宽高：",content.width,content.height);
+			}
+			function doUpdate(dis:DisplayObject):void
+			{
+				if(_uiInfo.width == dis.width && _uiInfo.height == dis.height)
+				{
+					return;
+				}
+				_uiInfo.width = dis.width;
+				_uiInfo.height = dis.height;
+				if(isDispath)_uiInfo.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_STAGE));
 			}
 		}
 		

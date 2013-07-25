@@ -30,6 +30,8 @@ package uidata
 		//类型标识
 		protected var _type:int;
 		
+		private var _layout:String = "";
+		
 		/**可否拉伸*/
 		public var canScale:Boolean = false;
 		public var locked:Boolean = false;
@@ -45,14 +47,13 @@ package uidata
 		{
 			type = UIType.BITMAP;
 		}
-		
+
 		/**
 		 * 记录改变，若前一记录状态与之相同，则不记录 
 		 * @return 
 		 */		
 		public function record():Boolean
 		{
-			trace("record");
 			var recordVo:RecordVo = new RecordVo();
 			recordVo.x = this.x;
 			recordVo.y = this.y;
@@ -98,6 +99,7 @@ package uidata
 			name = xml.@name;
 			variable = xml.@variable;
 			locked = xml.@locked == "true";
+			layout = xml.@layout;
 		}
 		
 		public function writeData(source:IDataOutput):void
@@ -117,10 +119,11 @@ package uidata
 		{
 			_proVec = new Vector.<PropertyVo>();
 			_proVec.push(new PropertyVo("variable","变量名",PropertyType.STRING,this.variable));
+			if(canLayout)_proVec.push(new PropertyVo("layout","格式：1,2,3,4,代表：列，行，X间隔，Y间隔",PropertyType.STRING,this.layout,null,true,true));
 			_proVec.push(new PropertyVo("x","x坐标",PropertyType.NUMBER,this.x));
 			_proVec.push(new PropertyVo("y","y坐标",PropertyType.NUMBER,this.y));
-			_proVec.push(new PropertyVo("width","宽度",PropertyType.NUMBER,this.width));
-			_proVec.push(new PropertyVo("height","高度",PropertyType.NUMBER,this.height));
+			_proVec.push(new PropertyVo("width","宽度",PropertyType.NUMBER,this.width,null,true,hasLayout));
+			_proVec.push(new PropertyVo("height","高度",PropertyType.NUMBER,this.height,null,true,hasLayout));
 			return _proVec;
 		}
 		
@@ -144,6 +147,7 @@ package uidata
 			info.height = height;
 			info.name = name;
 			info.variable = variable;
+			info.layout = layout;
 			return info;
 		}
 		
@@ -171,7 +175,8 @@ package uidata
 				["height",height],
 				["name",name],
 				["variable",variable],
-				["locked",locked]
+				["locked",locked],
+				["layout",layout],
 			];
 			return creatContent(arr);
 		}
@@ -227,6 +232,66 @@ package uidata
 			}
 		}
 		
+		public function get layoutData():Object
+		{
+			return null;
+		}
 		//====================================================
+		
+		//-------布局信息------------------------------------
+		private function get canLayout():Boolean
+		{
+			return type != UIType.CHECKBOX 
+				&& type != UIType.COMBO_BOX 
+				&& type != UIType.PAGE_VIEW 
+				&& type != UIType.RADIO_BTN
+				&& type != UIType.SCROLL_PANEL
+				&& type != UIType.TILE
+		}
+		/**格式：1,2,3,4,代表：列，行，X间隔，Y间隔*/
+		public function get layout():String
+		{
+			return _layout;
+		}
+		/**
+		 * @private
+		 */
+		public function set layout(value:String):void
+		{
+			_layout = value;
+			canScale = !hasLayout;
+		}
+		public function get hasLayout():Boolean
+		{
+			return layoutColumn != 0 && layoutRow != 0;
+		}
+		public function get layoutColumn():uint
+		{
+			var arr:Array = layout.split(",");
+			if(arr.length > 0)
+				return arr[0];
+			return 0;
+		}
+		public function get layoutRow():uint
+		{
+			var arr:Array = layout.split(",");
+			if(arr.length > 1)
+				return arr[1];
+			return 0;
+		}
+		public function get layoutOffsetX():uint
+		{
+			var arr:Array = layout.split(",");
+			if(arr.length > 2)
+				return arr[2];
+			return 0;
+		}
+		public function get layoutOffsetY():uint
+		{
+			var arr:Array = layout.split(",");
+			if(arr.length > 3)
+				return arr[3];
+			return 0;
+		}
 	}
 }
