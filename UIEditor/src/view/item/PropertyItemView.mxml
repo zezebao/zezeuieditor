@@ -7,6 +7,8 @@
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
+			import commands.ChangeUndoCommand;
+			
 			import data.PropertyType;
 			
 			import event.UIEvent;
@@ -32,6 +34,24 @@
 			private function update():void
 			{
 				if(_info[_property] == getValue())return;
+				
+				//////////////////////////////////
+				//----添加在这里是因为x,y,width,height在改变之前，记录下之前的位置状态
+				//////////////////////////////////
+				if(_property == "x" 
+					|| _property == "y"
+					|| _property == "width"
+					|| _property == "height"
+					)
+				{
+					var vec:Vector.<UIElementBaseInfo> = App.hotRectManager.getMoveVec();
+					if(vec.length > 0)
+					{
+						if(App.classInfo)App.classInfo.addCommand(new ChangeUndoCommand(vec));
+					}
+				}
+				//////////////////////////////////
+				
 				_info[_property] = getValue();
 //				_info.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_PROPERTY,_propertyVo.isChangeView));
 				_info.update(_property);

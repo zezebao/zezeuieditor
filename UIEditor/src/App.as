@@ -24,6 +24,7 @@ package
 	import uidata.UIClassInfoList;
 	import uidata.UIData;
 	import uidata.UIElementBaseInfo;
+	import uidata.UIElementMultipleSelectInfo;
 
 	public class App
 	{
@@ -33,6 +34,7 @@ package
 		public static var stage:Stage;
 		public static var uiData:UIData;
 		public static var configXML:XML;
+		public static var multipleSelectInfo:UIElementMultipleSelectInfo = new UIElementMultipleSelectInfo();
 		
 		/**外部加载图片缓存[键值：图片名]*/
 		public static var outsideImages:Dictionary = new Dictionary();
