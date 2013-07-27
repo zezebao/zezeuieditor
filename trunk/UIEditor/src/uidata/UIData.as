@@ -80,6 +80,7 @@ package uidata
 		{
 			if(_typeArrayCollection != null)return _typeArrayCollection;
 			_typeArrayCollection = new ArrayCollection();
+			_typeArrayCollection.addItem({label:"混合多选",value:99});
 			_typeArrayCollection.addItem({label:"UI_BITMAP",value:UIType.BITMAP});
 			_typeArrayCollection.addItem({label:"UI_BITMAPBTN",value:UIType.BITMAP_BTN});
 			_typeArrayCollection.addItem({label:"UI_BORDER",value:UIType.BORDOR});

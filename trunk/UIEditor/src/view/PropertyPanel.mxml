@@ -44,6 +44,7 @@
 				App.addEventListener(UIEvent.LAYERS_SELECT_UPDATE,itemSelectHandler);
 				App.addEventListener(UIEvent.STAGE_SELECT_UPDATE,itemSelectHandler);
 				App.addEventListener(UIEvent.PRPPERTY_FOCUS_CHANGE,propertyFocusChangeHandler);
+				App.multipleSelectInfo.addEventListener(UIEvent.INFO_UPDATE_STAGE,onInfoUpdateHandler);
 			}
 			
 			private function itemSelectHandler(evt:UIEvent):void
@@ -51,32 +52,46 @@
 				var time:Number = getTimer();
 				clearItems();
 				group.visible = false;
+				var proVec:Vector.<PropertyVo>
 				if(App.hotRectManager.selectedRects.length == 0)
 				{
-					
+					App.multipleSelectInfo.updateSelects(null);
 				}else if(App.hotRectManager.selectedRects.length == 1)
 				{
 					var rect:HotRectControl = App.hotRectManager.selectedRects[0];
-					var vec:Vector.<PropertyVo> = rect.uiInfo.getPropertys();
+					proVec = rect.uiInfo.getPropertys();
 					rect.uiInfo.addEventListener(UIEvent.INFO_UPDATE_STAGE,onInfoUpdateHandler);
-					createPropertyItems(vec,rect.uiInfo);
-					
-					//可编辑状态
-					group.visible = true;
-					for(var i:int=0;i<array.length;i++){
-						var obj:Object = array.getItemAt(i);
-						if(obj.value == rect.uiInfo.type)
-						{
-							combobox.selectedIndex = i;
-							break;
-						}
-					}
+					createPropertyItems(proVec,rect.uiInfo);
+					setTypeView(rect.uiInfo);
 				}else
 				{
-					clearItems();
+					var infoVec:Vector.<UIElementBaseInfo> = new Vector.<UIElementBaseInfo>();
+					for (var j:int = 0; j < App.hotRectManager.selectedRects.length; j++) 
+					{
+						infoVec.push(App.hotRectManager.selectedRects[j].uiInfo);
+						App.hotRectManager.selectedRects[j].addEventListener(UIEvent.INFO_UPDATE_STAGE,onInfoUpdateHandler);
+					}
+					App.multipleSelectInfo.updateSelects(infoVec);
+					proVec = App.multipleSelectInfo.getPropertys();
+					createPropertyItems(proVec,App.multipleSelectInfo);
+					setTypeView(App.multipleSelectInfo);
 				}
 				
 				trace("属性面板耗时：",getTimer() - time);
+			}
+			
+			private function setTypeView(uiInfo:UIElementBaseInfo):void
+			{
+				//可编辑状态
+				group.visible = true;
+				for(var i:int=0;i<array.length;i++){
+					var obj:Object = array.getItemAt(i);
+					if(obj.value == uiInfo.type)
+					{
+						combobox.selectedIndex = i;
+						break;
+					}
+				}
 			}
 			
 			private function initData():void

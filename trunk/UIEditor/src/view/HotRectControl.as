@@ -574,6 +574,10 @@ package view
 				_uiInfo.x = x;
 				_uiInfo.y = y;
 				_uiInfo.dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_STAGE));
+				if(App.multipleSelectInfo.hasMultiple())
+				{
+					App.multipleSelectInfo.delayUpdate();
+				}
 			}
 			trace("当前位置：",_uiInfo.x,_uiInfo.y);
 		}

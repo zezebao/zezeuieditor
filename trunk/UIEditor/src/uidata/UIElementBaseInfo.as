@@ -135,7 +135,7 @@ package uidata
 				if(vec[i].proterty == property)
 					return vec[i];
 			}
-			return new PropertyVo("","",0,null);//for no errors
+			return new PropertyVo("","",0,null);
 		}
 		
 		public function clone():*
