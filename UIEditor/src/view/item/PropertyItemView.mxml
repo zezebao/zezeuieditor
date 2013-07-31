@@ -16,6 +16,7 @@
 			import fl.data.DataProvider;
 			
 			import mx.core.UIComponent;
+			import mx.events.ColorPickerEvent;
 			import mx.events.ItemClickEvent;
 			
 			import spark.events.IndexChangeEvent;
@@ -85,10 +86,14 @@
 								if(obj.data == info[property])
 								{
 									combobox.selectedIndex = i;
+									colorPicker.selectedColor = combobox.selectedItem.data;
 									break;
 								}
 							}
 							combobox.rowCount = _propertyVo.dataProvider.length;
+							
+							colorPicker.visible = (_property == "color");
+							
 						}else if(_propertyVo.dataProvider.length == 2)
 						{
 							radioGroup.visible = true;
@@ -202,6 +207,27 @@
 				update();				
 			}
 			
+			protected function colorPicker_changeHandler(event:ColorPickerEvent):void
+			{
+				trace(colorPicker.selectedColor);
+				var colorOffset:uint = Math.abs(combobox.dataProvider.getItemAt(0).data - colorPicker.selectedColor);
+				var colorIndex:int = 0;
+				for(var i:int=1;i<combobox.dataProvider.length;i++){
+					var obj:Object = combobox.dataProvider.getItemAt(i);
+					var temp:uint = Math.abs(obj.data -colorPicker.selectedColor); 
+					if(colorOffset > temp)
+					{
+						colorOffset = temp;
+						colorIndex = i;
+					}
+				}
+				if(combobox.selectedIndex != colorIndex)
+				{
+					combobox.selectedIndex = colorIndex;
+					update();
+				}
+			}
+			
 		]]>
 	</fx:Script>
 		
@@ -211,7 +237,7 @@
 				 contentBackgroundColor="#F2F2F2" focusOut="valueLabel_focusOutHandler(event)" keyDown="valueLabel_keyDownHandler(event)"
 				 prompt="value input"/>
 	<mx:ComboBox id="combobox" x="84" y="3" width="111" change="combobox_changeHandler(event)"/>
-	<mx:ColorPicker id="colorPicker" x="243" y="3"/>
+	<mx:ColorPicker id="colorPicker" x="243" y="3" change="colorPicker_changeHandler(event)"/>
 	<fx:Declarations>
 		<s:RadioButtonGroup id="radio"/>
 	</fx:Declarations>

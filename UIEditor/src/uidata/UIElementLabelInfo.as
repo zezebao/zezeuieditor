@@ -26,7 +26,7 @@ package uidata
 		public var wrap:Boolean;
 		public var isInput:Boolean;
 		
-		public function UIElementLabelInfo(label:String="",font:String="",color:uint=0xffffff,size:int=12,leading:int=0)
+		public function UIElementLabelInfo(label:String="",font:String="",color:uint=0xdfd9c9,size:int=12,leading:int=0)
 		{
 			type = UIType.LABEL;
 			canScale = true;
