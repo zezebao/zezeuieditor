@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <rss>
 	<SITE>http://192.168.6.201:3610/</SITE>
-	<!-- isRelative：是否相对路径  -->
+	<!-- isRelative：是否相对路径   -->
 	<SWFS_PATH isRelative='false'>E:/ys_client/asset/asset</SWFS_PATH>
 	<OUTPUT_PATH isRelative='true'>output/ys_ui.txt</OUTPUT_PATH>
 	<OUTPUT_XML_PATH isRelative='true'>output/xml</OUTPUT_XML_PATH>

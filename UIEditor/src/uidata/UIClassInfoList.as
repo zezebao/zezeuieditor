@@ -88,11 +88,21 @@ package uidata
 		public function getChildList():ArrayCollection
 		{
 			var array:ArrayCollection = new ArrayCollection();
+			var temp:Array = new Array();
 			for each (var info:UIClassInfo in _classList) 
 			{
-//				array.addItem({"label":info.className,"value":info.className,"icon":"assets/systemIcons/fb_as_16x16.png"});
-				array.addItem({"label":info.className,"value":info.className});
+				temp.push(info);
 			}
+			temp.sortOn("className",Array.CASEINSENSITIVE);
+			for (var i:int = 0; i < temp.length; i++) 
+			{
+				array.addItem({"label":temp[i].className,"value":temp[i].className});
+			}
+//			for each (var info:UIClassInfo in _classList) 
+//			{
+//				array.addItem({"label":info.className,"value":info.className,"icon":"assets/systemIcons/fb_as_16x16.png"});
+//				array.addItem({"label":info.className,"value":info.className});
+//			}
 			return array;
 		}
 		
@@ -100,10 +110,23 @@ package uidata
 		{
 			var content:String = "<rss>\n";
 			content += "<classes>\n";
+			
+			var array:ArrayCollection = new ArrayCollection();
+			var temp:Array = new Array();
 			for each (var info:UIClassInfo in _classList) 
 			{
-				content += info.xmlStr + "\n";
+				temp.push(info);
 			}
+			temp.sortOn("className",Array.CASEINSENSITIVE);
+			for (var i:int = 0; i < temp.length; i++) 
+			{
+				content += temp[i].xmlStr + "\n";
+			}
+			
+//			for each (var info:UIClassInfo in _classList) 
+//			{
+//				content += info.xmlStr + "\n";
+//			}
 			content += "</classes>\n";
 			content += "</rss>";
 			return content;

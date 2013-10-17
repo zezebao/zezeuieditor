@@ -15,7 +15,11 @@
 			
 			import event.UIEvent;
 			
+			import ghostcat.debug.Debug;
+			
 			import help.HelpLoader;
+			
+			import manager.LogManager;
 			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
