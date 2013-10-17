@@ -5,13 +5,13 @@ package manager
 	
 	import mhqy.ui.UIManager;
 	
-	import mhsm.constData.CampType;
-	import mhsm.constData.CareerType;
-	import mhsm.constData.CategoryType;
-	import mhsm.constData.CommonConfig;
-	import mhsm.constData.PropertyType;
-	import mhsm.constData.VipType;
-	import mhsm.constData.WarType;
+//	import mhsm.constData.CampType;
+//	import mhsm.constData.CareerType;
+//	import mhsm.constData.CategoryType;
+//	import mhsm.constData.CommonConfig;
+//	import mhsm.constData.PropertyType;
+//	import mhsm.constData.VipType;
+//	import mhsm.constData.WarType;
 	
 	public class LanguageManager
 	{
@@ -37,12 +37,12 @@ package manager
 					_words[name] = value;
 				}
 			}			
-			CategoryType.setLanguage(getWord);
-			CampType.setLanguage(getWord);
-			CareerType.setLanguage(getWord);
-			VipType.setLanguage(getWord);
-			WarType.setLanguage(getWord);
-			PropertyType.setLanguage(getWord);
+//			CategoryType.setLanguage(getWord);
+//			CampType.setLanguage(getWord);
+//			CareerType.setLanguage(getWord);
+//			VipType.setLanguage(getWord);
+//			WarType.setLanguage(getWord);
+//			PropertyType.setLanguage(getWord);
 			UIManager.setLanguage(getWord);
 		}
 		

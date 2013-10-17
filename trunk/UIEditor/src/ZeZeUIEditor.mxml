@@ -45,7 +45,7 @@
 					stage.addEventListener(Event.RESIZE,onResizeHandler);
 					onResizeHandler();
 					
-					title = applicationID + "1.2.2";
+					title = applicationID + "1.2.5";
 					
 					loadingGroup.graphics.beginFill(0,0.1);
 					loadingGroup.graphics.drawRect(-1000,-1000,3000,3000);
@@ -53,7 +53,8 @@
 				} 
 				catch(error:Error) 
 				{
-					App.log.error(error.message);
+					//App.log.error(error.message);
+					trace(error.getStackTrace());
 				}
 			}
 			
