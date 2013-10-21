@@ -26,6 +26,11 @@ package uidata
 			this.addEventListener(UIEvent.INFO_UPDATE_PROPERTY,infoUpdateHandler);
 		}
 		
+		public function get vec():Vector.<UIElementBaseInfo>
+		{
+			return _vec;
+		}
+
 		protected function infoUpdateHandler(event:Event):void
 		{
 			updateProperty(0);

@@ -10,6 +10,7 @@ package data
 		public static const PROJECT:int = 1000;
 		public static const MAIN:int = 1001;
 		public static const EDIT:int = 1002;
+		public static const TOOL:int = 1003;
 		/**子菜单[起始ID 10000]*/
 		//------项目-----------
 		public static const PROJECT_SEETING:uint = 10001;
@@ -18,6 +19,9 @@ package data
 		//-----日志-------------
 		public static const LOG:uint = 100010;
 		public static const ERROR_LOG:uint = 100011;
+		
+		//----工具-----------------
+		public static const LAYOUT_TOOL:uint = 100020;
 		
 		
 		public static var MEAN_TYPES:Vector.<MenuInfo>;
@@ -28,6 +32,7 @@ package data
 			MEAN_TYPES.push(new MenuInfo(PROJECT,"项目"));
 			MEAN_TYPES.push(new MenuInfo(MAIN,"菜单"));
 			MEAN_TYPES.push(new MenuInfo(EDIT,"日志"));
+			MEAN_TYPES.push(new MenuInfo(TOOL,"工具"));
 			
 			//
 			getMenuInfoByType(PROJECT).add(new MenuInfo(PROJECT_SEETING,"项目配置"));
@@ -38,6 +43,8 @@ package data
 			
 			getMenuInfoByType(EDIT).add(new MenuInfo(LOG,"更新日志"));
 			getMenuInfoByType(EDIT).add(new MenuInfo(ERROR_LOG,"错误日志 Ctrl + L"));
+			
+			getMenuInfoByType(TOOL).add(new MenuInfo(LAYOUT_TOOL,"布局工具"));
 		}
 		
 		/**获取菜单项*/

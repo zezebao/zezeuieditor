@@ -20,6 +20,8 @@
 			import mx.events.FlexEvent;
 			import mx.events.MenuEvent;
 			import mx.managers.PopUpManager;
+			
+			import view.helper.LayoutWindow;
 			[Bindable]
 			public var menuBarCollection:XMLListCollection;
 //			public var menuBarCollection:ArrayCollection;
@@ -31,11 +33,11 @@
 				switch(int(evt.item.@data))
 				{
 					case MenuType.PROJECT_SEETING:
-						var title:ConfigurePopWindow = new ConfigurePopWindow();
-						title.width = 500;
-						title.height = 500;
-						title.x = 100;
-						PopUpManager.addPopUp(title,this,true);
+						var configWindow:ConfigurePopWindow = new ConfigurePopWindow();
+						configWindow.width = 500;
+						configWindow.height = 500;
+						configWindow.x = 100;
+						PopUpManager.addPopUp(configWindow,this,true);
 						break;
 					case MenuType.LOG:
 						var file:File = new File("C:\\Windows\\notepad.exe"); 
@@ -49,6 +51,11 @@
 						break;
 					case MenuType.ERROR_LOG:
 						App.log.toggle();
+						break;
+					case MenuType.LAYOUT_TOOL:
+						var layoutWindow:LayoutWindow = new LayoutWindow();
+						layoutWindow.x = 100;
+						PopUpManager.addPopUp(layoutWindow,this);
 						break;
 				}
 			}

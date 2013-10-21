@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="270" height="144"
+			   title="布局辅助"
+			   initialize="init()"
+			   >
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	<fx:Declarations>
+		<s:RadioButtonGroup id="radiogroup1"/>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.containers.Form;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			
+			import uidata.UIElementBaseInfo;
+			
+			import utils.UIUtils;
+			
+			private function init(evt:Event = null):void
+			{
+				addEventListener(Event.CLOSE,closeHandler);
+			}
+			
+			protected function okBtn_clickHandler(event:MouseEvent):void
+			{
+				var value:int = parseInt(valueLabel.text);
+				if(value == -1)return;
+				var vec:Vector.<UIElementBaseInfo> = App.multipleSelectInfo.vec;
+				var arr:Array = new Array();
+				for (var i:int = 0; i < vec.length; i++) 
+				{
+					arr.push(vec[i]);
+				}
+				if(xSelect.selected)arr.sortOn("x",Array.NUMERIC);
+				if(ySelect.selected)arr.sortOn("y",Array.NUMERIC);
+				App.hotRectManager.getMoveVec();
+				if(arr.length > 1)
+				{
+					var startValue:Number = (xSelect.selected) ? arr[0].x : arr[0].y;
+					for (var j:int = 1; j < arr.length; j++) 
+					{
+						if(xSelect.selected)arr[j].x = startValue + value * j;
+						else arr[j].y = startValue + value * j;
+						UIElementBaseInfo(arr[j]).update("x");
+					}	
+				}
+				
+				
+			}
+			
+			protected function closeHandler(event:CloseEvent):void
+			{
+				PopUpManager.removePopUp(this);				
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Button id="okBtn" x="10" y="72" label="确定" click="okBtn_clickHandler(event)"/>
+	<s:TextInput id="valueLabel" x="97" y="37" text="-1" restrict="0-9-"/>
+	<s:Label x="97" y="80" color="#949494" text="注：-1代表不操作"/>
+	<s:VGroup x="46" y="0">
+	</s:VGroup>
+	<s:RadioButton id="xSelect" x="25" y="14" label="处理X" selected="true" groupName="radiogroup1"/>
+	<s:RadioButton id="ySelect" x="25" y="38" label="处理Y" groupName="radiogroup1"/>
+	
+</s:TitleWindow>
