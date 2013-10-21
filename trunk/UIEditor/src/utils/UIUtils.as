@@ -366,6 +366,16 @@ package utils
 				parent.addChild(varArr[j] as DisplayObject);
 			}
 		}
+		
+		public static function vecToArray(vec:Vector.<Object>):Array
+		{
+			var result:Array = new Array();
+			for (var i:int = 0; i < vec.length; i++) 
+			{
+				result.push(vec[i]);
+			}
+			return result;
+		}
 	}
 	
 }
