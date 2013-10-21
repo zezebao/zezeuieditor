@@ -295,17 +295,17 @@ package view
 			topLeftControl = new DragPoint(pointSkin);
 			topLeftControl.cursor = CursorSprite.CURSOR_HV_DRAG;
 			topLeftControl.addEventListener(MoveEvent.MOVE,topLeftControlHandler);
-			controlCotainer.addChild(topLeftControl);
+//			controlCotainer.addChild(topLeftControl);
 			
 			topRightControl = new DragPoint(pointSkin);	
 			topRightControl.cursor = CursorSprite.CURSOR_VH_DRAG;
 			topRightControl.addEventListener(MoveEvent.MOVE,topRightControlHandler);
-			controlCotainer.addChild(topRightControl);
+//			controlCotainer.addChild(topRightControl);
 			
 			bottomLeftControl = new DragPoint(pointSkin);	
 			bottomLeftControl.cursor = CursorSprite.CURSOR_VH_DRAG;
 			bottomLeftControl.addEventListener(MoveEvent.MOVE,bottomLeftControlHandler);
-			controlCotainer.addChild(bottomLeftControl);
+//			controlCotainer.addChild(bottomLeftControl);
 			
 			bottomRightControl = new DragPoint(pointSkin);	
 			bottomRightControl.cursor = CursorSprite.CURSOR_HV_DRAG;
@@ -316,7 +316,7 @@ package view
 			topLineControl.cursor = CursorSprite.CURSOR_V_DRAG;
 			topLineControl.lockX = true;
 			topLineControl.addEventListener(MoveEvent.MOVE,topLineControlHandler);
-			controlCotainer.addChild(topLineControl);
+//			controlCotainer.addChild(topLineControl);
 			
 			bottomLineControl = new DragPoint(pointSkin);	
 			bottomLineControl.cursor = CursorSprite.CURSOR_V_DRAG;
@@ -328,7 +328,7 @@ package view
 			leftLineControl.cursor = CursorSprite.CURSOR_H_DRAG;
 			leftLineControl.lockY = true;
 			leftLineControl.addEventListener(MoveEvent.MOVE,leftLineControlHandler);
-			controlCotainer.addChild(leftLineControl);
+//			controlCotainer.addChild(leftLineControl);
 			
 			rightLineControl = new DragPoint(pointSkin);	
 			rightLineControl.cursor = CursorSprite.CURSOR_H_DRAG;
