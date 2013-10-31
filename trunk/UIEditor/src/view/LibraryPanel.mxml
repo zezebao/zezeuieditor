@@ -65,7 +65,12 @@
 			
 			private function loadOutsideImgs():void
 			{
-				loadResource(Config.outsideImgPath,2);
+				for each (var url:String in Config.outsideImgPath) 
+				{
+					loadResource(url,2);
+				}
+				
+//				loadResource(Config.outsideImgPath,2);
 			}
 			
 			/**

@@ -51,7 +51,7 @@ package help
 			var swfsPath:String = xml.SWFS_PATH.toString();
 			var outputPath:String = xml.OUTPUT_PATH.toString();
 			var outputXMLPath:String = xml.OUTPUT_XML_PATH.toString();
-			var outsideImgPath:String = xml.OUTSIDE_IMGS.toString();
+			
 			
 			if(xml.LANGUAGE_PATH.@isRelative == "true")
 				languagePath = File.applicationDirectory.nativePath + "\\" + xml.LANGUAGE_PATH.toString();
@@ -61,6 +61,17 @@ package help
 				outputPath = File.applicationDirectory.nativePath + "\\" + xml.OUTPUT_PATH.toString();
 			if(xml.OUTPUT_XML_PATH.@isRelative == "true")
 				outputXMLPath = File.applicationDirectory.nativePath + "\\" + xml.OUTPUT_XML_PATH.toString();
+			var len:int = xml.OUTSIDE_IMGS.length();
+			var vec:Vector.<String> = new Vector.<String>();
+			trace("OUTSIDE_IMGS length:" + len);
+			for (var i:int = 0; i < len; i++) 
+			{
+				var outsideImgPath:String = xml.OUTSIDE_IMGS[i].toString();
+				if(xml.OUTSIDE_IMGS[i].@isRelative == "true")
+					outsideImgPath = File.applicationDirectory.nativePath + "\\" + xml.OUTSIDE_IMGS[i].toString();
+				vec.push(outsideImgPath);
+			}
+			
 			if(xml.OUTSIDE_IMGS.@isRelative == "true")
 				outsideImgPath = File.applicationDirectory.nativePath + "\\" + xml.OUTSIDE_IMGS.toString();
 			
@@ -68,7 +79,7 @@ package help
 			Config.swfsPath = swfsPath;
 			Config.outputPath = outputPath;
 			Config.outputXMLPath = outputXMLPath; 
-			Config.outsideImgPath = outsideImgPath;
+			Config.outsideImgPath = vec;
 			Config.site = xml.SITE.toString();
 		}
 		

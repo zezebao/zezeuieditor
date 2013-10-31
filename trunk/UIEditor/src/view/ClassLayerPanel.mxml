@@ -205,7 +205,7 @@
 			<s:layout>
 				<s:HorizontalLayout/>
 			</s:layout>
-			<s:Image x="10" y="241" buttonMode="true" source="@Embed('assets/systemIcons/down.png')" click="upClickHandler(event)" toolTip="上移"/>
+			<s:Image x="10" y="241" buttonMode="true" source="@Embed('assets/systemIcons/down.png')" click="upClickHandler(event)" toolTip="下移"/>
 			<s:Image x="31" y="241" buttonMode="true" source="@Embed('assets/systemIcons/up.png')" click="downClickHandler(event)" toolTip="上移"/>
 			<s:Image x="53" y="241" buttonMode="true" source="@Embed('assets/view_16.png')" click="visibelChangeHandler(event)" toolTip="隐藏"/>
 		</s:Group>
