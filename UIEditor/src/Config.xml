@@ -7,6 +7,7 @@
 	<OUTPUT_XML_PATH isRelative='true'>output/xml</OUTPUT_XML_PATH>
 	<LANGUAGE_PATH isRelative='false'>http://192.168.6.201:3620/languageC.txt</LANGUAGE_PATH>
 	<OUTSIDE_IMGS isRelative='false'>//192.168.6.201/smys/resource/img/asset1</OUTSIDE_IMGS>
+	<OUTSIDE_IMGS isRelative='false'>//192.168.6.201/smys/resource/img/asset1/paopao</OUTSIDE_IMGS>
 	<!-- UI Bitmap元素 -->
 	<UI_BITMAPS>
 		<UI_BITMAP className='mhsm.ui.CellBgAsset1' describe='CellBgAsset1' />

@@ -74,17 +74,33 @@
 			
 			private function setChildPos(child:DisplayObject):void
 			{
+				var cw:Number = child.width;
+				var ch:Number = child.height;
+				
+//				if(child is Bitmap)
+//				{
+//					var bmd:BitmapData = (child as Bitmap).bitmapData;
+//					if(bmd != null)
+//					{
+//						var maskColor:uint = 0xFFFFFF; 
+//						var color:uint = 0xFF0000;  
+//						var notRedBounds:Rectangle = bmd.getColorBoundsRect(maskColor, color, false);	
+//						cw = notRedBounds.width;
+//						ch = notRedBounds.height;
+//					}
+//				}
+				
 				var scaleValue:Number = 1;
-				if(child.width > this.width)
+				if(cw > this.width)
 				{
-					scaleValue = width / child.width;
-				}else if(child.height > this.height)
+					scaleValue = width / cw;
+				}else if(ch > this.height)
 				{
-					scaleValue = height / child.height;
+					scaleValue = height / ch;
 				}
 				child.scaleX = child.scaleY = scaleValue;
-				child.x = (this.width - child.width) / 2;
-				child.y = (this.height - child.height) / 2;
+				child.x = (this.width - cw) / 2;
+				child.y = (this.height - ch) / 2;
 			}
 			
 			protected function group1_resizeHandler(event:ResizeEvent):void
