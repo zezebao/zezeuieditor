@@ -39,6 +39,7 @@
 				{
 					this.tabChildren = false;
 					App.initStage(stage);
+					App.addEventListener(UIEvent.REFRESH_RESOURCE,refeshResourceHandler);
 					App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
 					App.addEventListener(UIEvent.RESOURCE_LOADED,resourceLoadedHandler);
 					new ResourceTxtLoader();
@@ -74,6 +75,11 @@
 			protected function onResizeHandler(event:Event=null):void
 			{
 				
+			}
+			
+			private function refeshResourceHandler(evt:UIEvent):void
+			{
+				addElement(loadingGroup);		
 			}
 			
 		]]>

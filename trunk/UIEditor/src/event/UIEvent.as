@@ -58,6 +58,9 @@ package event
 		/**HotRect热区按钮拖动完成,[数据：无]*/
 		public static const HOTRECT_DRAG_COMPLETE:String = "hotRectDragComplete";
 		
+		/**刷新资源,[数据：无]*/
+		public static const REFRESH_RESOURCE:String = "refreshResource";
+		
 		public var data:Object;
 		
 		public function UIEvent(type:String, data:Object=null, bubbles:Boolean=false, cancelable:Boolean=false)
