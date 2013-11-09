@@ -282,13 +282,20 @@
 //				trace(event);
 			}
 			
+			protected function refeshClickHandler(event:MouseEvent):void
+			{
+				App.dispathEvent(new UIEvent(UIEvent.REFRESH_RESOURCE));
+				loadAllSwf();
+//				loadOutsideImgs();	
+			}
+			
 		]]>
 	</fx:Script>
 	<s:Group id="group1" width="100%" height="85">
 		<view:LibraryItemPreView width="100%" height="100%">
 		</view:LibraryItemPreView>
 	</s:Group>
-	<s:Group id="group2" x="0" y="85" width="100%" height="100%">
+	<s:VGroup id="group2" x="0" y="85" width="100%" height="100%">
 		<mx:Tree id="libraryTree" width="100%" height="100%"
 				 change="libraryTree_changeHandler(event)" contentBackgroundColor="#FFFFFF"
 				 allowDragSelection="false"
@@ -297,6 +304,6 @@
 				 dragStart="dragStartHandler(event)"
 				 labelField="label">
 		</mx:Tree>
-	</s:Group>
-	
+		<!-- <s:Image source="assets/systemIcons/synced.gif" toolTip="点击刷新资源" click="refeshClickHandler(event)"/> -->
+	</s:VGroup>
 </s:Panel>
