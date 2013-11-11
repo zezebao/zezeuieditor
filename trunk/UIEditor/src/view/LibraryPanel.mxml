@@ -20,6 +20,7 @@
 			import ghostcat.debug.Debug;
 			
 			import help.HelpLoader;
+			import help.ResourceTxtLoader;
 			
 			import manager.LogManager;
 			
@@ -294,6 +295,8 @@
 				swfVec = new Vector.<SwfVo>();
 				outsidePics= new Vector.<String>(); 
 				setTimeout(initData,30);
+				
+				new ResourceTxtLoader(true);
 			}
 			
 		]]>

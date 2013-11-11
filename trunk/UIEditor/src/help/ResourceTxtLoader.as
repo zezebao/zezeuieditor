@@ -28,10 +28,13 @@ package help
 		private var _loadCount:int;
 		
 		/**语言包资源加载*/
-		public function ResourceTxtLoader()
+		public function ResourceTxtLoader(isRefresh:Boolean = false)
 		{
-			loadConfig();
-			loadLanguaue();
+			if(!isRefresh)
+			{
+				loadConfig();
+				loadLanguaue();
+			}
 			loadXml();
 			loadRSLLibs();
 		}
@@ -63,7 +66,6 @@ package help
 				outputXMLPath = File.applicationDirectory.nativePath + "\\" + xml.OUTPUT_XML_PATH.toString();
 			var len:int = xml.OUTSIDE_IMGS.length();
 			var vec:Vector.<String> = new Vector.<String>();
-			trace("OUTSIDE_IMGS length:" + len);
 			for (var i:int = 0; i < len; i++) 
 			{
 				var outsideImgPath:String = xml.OUTSIDE_IMGS[i].toString();
