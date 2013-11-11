@@ -5,6 +5,7 @@ package
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.system.ApplicationDomain;
 	import flash.utils.Dictionary;
 	
 	import help.ResourceTxtLoader;
@@ -28,6 +29,9 @@ package
 
 	public class App
 	{
+		//当前域
+		public static var currentDomain:ApplicationDomain;
+		
 		/**当前操作类的类名*/
 		public static var currentClass:String;
 		public static var rslLoaded:Boolean;
