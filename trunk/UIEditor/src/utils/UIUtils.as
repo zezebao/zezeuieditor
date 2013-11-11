@@ -45,6 +45,11 @@ package utils
 		{
 		}
 		
+		public static function getDefinition(name:String):Object
+		{
+			return App.currentDomain.getDefinition(name);
+		}
+		
 		/**
 		 * 处理元素与数据的关系（不处理位置,放在包装容器UIElementItem处理显示）
 		 * (UI编辑器用)
@@ -172,7 +177,7 @@ package utils
 		 */		
 		public static function clone(obj:DisplayObject,info:UIElementBaseInfo):DisplayObject
 		{
-			var Cl:Class = getDefinitionByName(getQualifiedClassName(obj)) as Class;
+			var Cl:Class = getDefinition(getQualifiedClassName(obj)) as Class;
 			var returnObj:DisplayObject;
 			
 			
@@ -200,7 +205,7 @@ package utils
 						try
 						{
 							//域中未找到资源的情况
-							var BD:Class = getDefinitionByName(binfo.sourceClass) as Class;
+							var BD:Class = getDefinition(binfo.sourceClass) as Class;
 							returnObj = new Cl(new BD());
 						}	 
 						catch(error:Error) 
@@ -216,7 +221,7 @@ package utils
 					returnObj = new Cl();
 					if(obj is Bitmap)
 					{
-						Cl = getDefinitionByName(getQualifiedClassName(Bitmap(obj).bitmapData)) as Class;
+						Cl = getDefinition(getQualifiedClassName(Bitmap(obj).bitmapData)) as Class;
 						returnObj = new Bitmap(new Cl() as BitmapData);
 					}
 					break;
@@ -239,7 +244,7 @@ package utils
 		 */		
 		public static function cloneInfo(info:UIElementBaseInfo):UIElementBaseInfo
 		{
-			var Cl:Class = getDefinitionByName(getQualifiedClassName(info)) as Class;
+			var Cl:Class = getDefinition(getQualifiedClassName(info)) as Class;
 			var rinfo:UIElementBaseInfo = new Cl();
 			var arr:Array = ObjectUtil.getClassInfo(info).properties as Array;
 			var len:int = arr.length;

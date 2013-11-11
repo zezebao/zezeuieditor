@@ -15,6 +15,8 @@
 			
 			import event.UIEvent;
 			
+			import flash.utils.setTimeout;
+			
 			import ghostcat.debug.Debug;
 			
 			import help.HelpLoader;
@@ -120,7 +122,9 @@
 					}
 					
 					var loader:HelpLoader = new HelpLoader();
-					var loaderContext:LoaderContext = new LoaderContext(false,ApplicationDomain.currentDomain); 
+//					var loaderContext:LoaderContext = new LoaderContext(false,ApplicationDomain.currentDomain);
+					App.currentDomain = new ApplicationDomain(ApplicationDomain.currentDomain);
+					var loaderContext:LoaderContext = new LoaderContext(false,App.currentDomain);
 				　　loaderContext.allowLoadBytesCodeExecution = true; 
 					loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loadCompleteHandler);
 					loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);
@@ -157,6 +161,8 @@
 			
 			private function loadCompleteHandler(evt:Event):void
 			{
+				trace("loadComplete",loadCount);
+				
 				var loaderInfo:LoaderInfo = evt.target as LoaderInfo;
 				loaderInfo.loader.contentLoaderInfo.removeEventListener(Event.COMPLETE,loadCompleteHandler);
 				var byteArray:ByteArray = loaderInfo.bytes;
@@ -285,8 +291,9 @@
 			protected function refeshClickHandler(event:MouseEvent):void
 			{
 				App.dispathEvent(new UIEvent(UIEvent.REFRESH_RESOURCE));
-				loadAllSwf();
-//				loadOutsideImgs();	
+				swfVec = new Vector.<SwfVo>();
+				outsidePics= new Vector.<String>(); 
+				setTimeout(initData,30);
 			}
 			
 		]]>
@@ -304,6 +311,6 @@
 				 dragStart="dragStartHandler(event)"
 				 labelField="label">
 		</mx:Tree>
-		<!-- <s:Image source="assets/systemIcons/synced.gif" toolTip="点击刷新资源" click="refeshClickHandler(event)"/> -->
+		<s:Image source="assets/systemIcons/synced.gif" toolTip="点击刷新资源" click="refeshClickHandler(event)"/>
 	</s:VGroup>
 </s:Panel>
