@@ -46,7 +46,7 @@
 					stage.addEventListener(Event.RESIZE,onResizeHandler);
 					onResizeHandler();
 					
-					title = applicationID + "1.2.7";
+					title = applicationID + "1.2.8";
 					
 					loadingGroup.graphics.beginFill(0,0.1);
 					loadingGroup.graphics.drawRect(-1000,-1000,3000,3000);

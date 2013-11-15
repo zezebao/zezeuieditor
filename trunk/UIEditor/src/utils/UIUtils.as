@@ -47,7 +47,14 @@ package utils
 		
 		public static function getDefinition(name:String):Object
 		{
-			return App.currentDomain.getDefinition(name);
+			var result:Object; 
+			for (var i:int = App.hasDomain.length - 1; i >= 0; i--) 
+			{
+				result = App.hasDomain[i].getDefinition(name);
+				if(result != null)return result;
+			}
+			return result;
+//			return App.currentDomain.getDefinition(name);
 		}
 		
 		/**

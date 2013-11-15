@@ -49,8 +49,12 @@
 			protected var swfVec:Vector.<SwfVo> = new Vector.<SwfVo>();
 			/**外部图片名列表*/
 			protected var outsidePics:Vector.<String> = new Vector.<String>(); 
+			
+			protected var loaded:Boolean = false;
+			
 			protected function addToStage(event:Event):void
 			{
+				App.currentDomain = ApplicationDomain.currentDomain;
 				if(App.rslLoaded)initData();
 				else App.addEventListener(UIEvent.RSL_LOAD_COMPLETE,initData);
 			}
@@ -124,7 +128,6 @@
 					
 					var loader:HelpLoader = new HelpLoader();
 //					var loaderContext:LoaderContext = new LoaderContext(false,ApplicationDomain.currentDomain);
-					App.currentDomain = new ApplicationDomain(ApplicationDomain.currentDomain);
 					var loaderContext:LoaderContext = new LoaderContext(false,App.currentDomain);
 				　　loaderContext.allowLoadBytesCodeExecution = true; 
 					loader.contentLoaderInfo.addEventListener(Event.COMPLETE,loadCompleteHandler);
@@ -194,6 +197,7 @@
 				loadCount --;
 				if(loadCount <= 0)
 				{
+					loaded = true;
 					App.dispathEvent(new UIEvent(UIEvent.RESOURCE_LOADED));
 					showInitInfo();
 					setData();
@@ -291,9 +295,12 @@
 			
 			protected function refeshClickHandler(event:MouseEvent):void
 			{
+				if(!loaded)return;
+				loaded = false; 
 				App.dispathEvent(new UIEvent(UIEvent.REFRESH_RESOURCE));
 				swfVec = new Vector.<SwfVo>();
 				outsidePics= new Vector.<String>(); 
+				App.currentDomain = new ApplicationDomain();
 				setTimeout(initData,30);
 				
 				new ResourceTxtLoader(true);
@@ -314,6 +321,6 @@
 				 dragStart="dragStartHandler(event)"
 				 labelField="label">
 		</mx:Tree>
-		<s:Image source="assets/systemIcons/synced.gif" toolTip="点击刷新资源" click="refeshClickHandler(event)"/>
+		<s:Image source="assets/systemIcons/synced.gif" buttonMode="true" toolTip="点击刷新资源" click="refeshClickHandler(event)"/>
 	</s:VGroup>
 </s:Panel>
