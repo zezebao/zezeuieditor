@@ -66,7 +66,13 @@ package uidata
 		
 		protected function onErrorHandler(event:IOErrorEvent):void
 		{
-			_bitmapData = new BitmapData(width,height);
+			if(width != 0 && height != 0)
+			{
+				_bitmapData = new BitmapData(width,height);
+			}else
+			{
+				_bitmapData = new BitmapData(100,100);
+			}
 			var tf:TextField = new TextField();
 			tf.width = 100;
 			tf.wordWrap = true;

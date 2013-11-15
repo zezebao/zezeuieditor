@@ -30,7 +30,9 @@ package
 	public class App
 	{
 		//当前域
-		public static var currentDomain:ApplicationDomain;
+		private static var _currentDomain:ApplicationDomain;
+		//已有域
+		public static var hasDomain:Vector.<ApplicationDomain> = new Vector.<ApplicationDomain>();
 		
 		/**当前操作类的类名*/
 		public static var currentClass:String;
@@ -43,6 +45,20 @@ package
 		/**外部加载图片缓存[键值：图片名]*/
 		public static var outsideImages:Dictionary = new Dictionary();
 		
+		public static function get currentDomain():ApplicationDomain
+		{
+			return _currentDomain;
+		}
+
+		public static function set currentDomain(value:ApplicationDomain):void
+		{
+			_currentDomain = value;
+			if(value != null && hasDomain.indexOf(value) != -1)
+			{
+				hasDomain.push(value);
+			}
+		}
+
 		public static function initStage(appStage:Stage):void
 		{
 			stage = appStage;
