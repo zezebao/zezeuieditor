@@ -77,8 +77,9 @@ package uidata
 			source.writeUTF(label);
 			var fontIndex:int = App.uiData.getFontIndex(font);
 			source.writeByte(fontIndex);
-			var colorIndex:int = App.uiData.getColorIndex(color);
-			source.writeByte(colorIndex);
+//			var colorIndex:int = App.uiData.getColorIndex(color);
+//			source.writeByte(colorIndex);
+			source.writeInt(color);
 			source.writeByte(size);
 			source.writeBoolean(bold);
 			source.writeBoolean(underLine);
