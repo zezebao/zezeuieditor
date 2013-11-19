@@ -12,6 +12,7 @@
 			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
+			import mx.events.CloseEvent;
 			import mx.events.DragEvent;
 			import mx.events.ListEvent;
 			
@@ -68,9 +69,17 @@
 				if(classList.selectedItem)
 				{
 					var className:String = classList.selectedItem.value;
-					App.delClass(className);
-					Alert.show("删除成功");
-					App.log.echo("删除类：",className);
+					Alert.show("确定要删除该类","提示",Alert.OK | Alert.CANCEL,this,closeHandler);
+				}
+				
+				function closeHandler(evt:CloseEvent):void
+				{
+					if(evt.detail == Alert.OK)
+					{
+						App.delClass(className);
+						Alert.show("删除成功","",4,this);
+						App.log.echo("删除类：",className);
+					}
 				}
 			}
 			
@@ -86,8 +95,8 @@
 			
 			protected function classList_changeHandler(event:ListEvent):void
 			{
-				var item:Object = classList.selectedItem;
-				if(item)System.setClipboard(item.value);				
+//				var item:Object = classList.selectedItem;
+//				if(item)System.setClipboard(item.value);				
 			}
 			
 			protected function input_changeHandler(event:TextOperationEvent):void
@@ -124,6 +133,12 @@
 				}
 			}
 			
+			protected function copyNameHandler(evt:MouseEvent):void
+			{
+				var item:Object = classList.selectedItem;
+				if(item)System.setClipboard(item.value);
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -141,10 +156,14 @@
 				 dragComplete="classDragCompleteHandler(event)" 
 				 dragStart="dragStartHandler(event)"
 				 labelField="label"
-				 toolTip="双击切换或者选中一个类来编辑,选中某一个类，会复制该类名到复制框"
+				 horizontalScrollPolicy="on"
+				 toolTip="双击切换或者选中一个类来编辑"
 				 >
 		</mx:Tree>
-		<s:Image x="10" y="10" source="assets/systemIcons/gcroot_co.png" buttonMode="true" click="delClassHandler(event)"/>
+		<s:HGroup>
+			<s:Image x="10" y="10" source="assets/systemIcons/gcroot_co.png" buttonMode="true" toolTip="删除类" click="delClassHandler(event)"/>
+			<s:Image x="10" y="10" source="assets/systemIcons/package_obj.gif" buttonMode="true" toolTip="复制文本" click="copyNameHandler(event)"/>	
+		</s:HGroup>
 	</s:VGroup>
 	<s:VGroup y="20" width="100%" height="100%">
 		<s:List id="seachClassList" visible="false" width="100%" height="100%" doubleClickEnabled="true" doubleClick="seachClassList_doubleClickHandler(event)">
