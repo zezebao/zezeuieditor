@@ -8,6 +8,8 @@
 	</s:layout>
 	<fx:Script>
 		<![CDATA[
+			import data.vo.LayerDPVO;
+			
 			import event.UIEvent;
 			
 			import flash.utils.getQualifiedClassName;
@@ -17,7 +19,9 @@
 			import mx.collections.ArrayList;
 			import mx.collections.IList;
 			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
 			import mx.controls.listClasses.ListItemRenderer;
+			import mx.events.CloseEvent;
 			
 			import spark.events.IndexChangeEvent;
 			import spark.modules.Module;
@@ -51,6 +55,9 @@
 			
 			private function updateList():void
 			{
+				var tempHorzontal:Number = itemList.horizontalScrollPosition; 
+				var tempVertical:Number = itemList.verticalScrollPosition;
+				
 				var count:int;
 				var seletcedArr:Array = [];
 				var dp:ArrayCollection = new ArrayCollection();
@@ -59,17 +66,23 @@
 					var item:HotRectControl = _container.getChildAt(i) as HotRectControl;
 					if(item)
 					{
-						dp.addItem({"label": i + ":" + getLockStr() + getQualifiedClassName(item.content),"layer":i,"type":1,"info":item.uiInfo,"icon":RenderItemIcon});
+						var dpVO:LayerDPVO = new LayerDPVO(item,updateList);
+						dpVO.layer = i;
+						dp.addItem(dpVO);
+						
+						item.uiInfo.dpVO = dpVO;
+						
+//						dp.addItem({"label": i + ":" + getLockStr() + label,"layer":i,"type":1,"info":item.uiInfo,"icon":RenderItemIcon});
+						
 						if(item.selected)seletcedArr.push(count);
 						count ++;
-					}
-					function getLockStr():String
-					{
-						return item.uiInfo.locked ? "[锁]" : "";
 					}
 				}
 				itemList.dataProvider = dp;
 				itemList.selectedIndices = seletcedArr;
+				
+				itemList.horizontalScrollPosition = tempHorzontal;
+				itemList.verticalScrollPosition = tempVertical;
 			}
 			
 			public function getContainer():DisplayObjectContainer
@@ -89,7 +102,14 @@
 			
 			protected function delClickHandler(event:MouseEvent):void
 			{
-				delHandler();
+				Alert.show("确定删除?","",Alert.OK | Alert.CANCEL,this,closeHandler);
+				function closeHandler(evt:CloseEvent):void
+				{
+					if(evt.detail == Alert.OK)
+					{
+						delHandler();
+					}
+				}
 			}
 			
 			//上下顶底删
@@ -219,6 +239,7 @@
 			itemRenderer="view.item.LayerItemRender"
 			allowMultipleSelection="true"
 			iconField="icon" labelField="label"
+			horizontalScrollPolicy="on"
 			change="selectionChangingHandler();"
 			>
 		</mx:List>

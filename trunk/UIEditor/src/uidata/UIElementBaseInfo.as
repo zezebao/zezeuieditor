@@ -1,6 +1,7 @@
 package uidata
 {
 	import data.PropertyType;
+	import data.vo.LayerDPVO;
 	
 	import event.UIEvent;
 	
@@ -11,6 +12,8 @@ package uidata
 	import flash.utils.IDataOutput;
 	
 	import interfaces.ICloneAble;
+	
+	import manager.LanguageManager;
 	
 	import mhqy.ui.UIType;
 	
@@ -88,6 +91,7 @@ package uidata
 		public function update(propertyName:String):void
 		{
 			dispatchEvent(new UIEvent(UIEvent.INFO_UPDATE_PROPERTY,getProperty(propertyName).isChangeView));
+			if(dpVO != null)dpVO.update();
 		}
 		
 		public function readXML(xml:XML):void
@@ -292,6 +296,34 @@ package uidata
 			if(arr.length > 3)
 				return arr[3];
 			return 0;
+		}
+		//////////////////////////////////////////////////////////////////////////////////
+		// 增加： 2013-11-19
+		//////////////////////////////////////////////////////////////////////////////////
+		public var dpVO:LayerDPVO;
+		
+		//获取名字
+		public function get layerName():String
+		{
+			if(hasOwnProperty("label"))
+			{
+				var label:String = this["label"];
+				if(label != "")
+				{
+					label = LanguageManager.getWord(label);
+					if(label == "")label = this["label"];
+					return label;
+				}
+			}
+			
+			if(variable != "")return variable;
+			
+			if(hasOwnProperty("className"))
+			{
+				var className:String = this["className"];
+				if(className != "")return className;
+			}
+			return "";
 		}
 	}
 }

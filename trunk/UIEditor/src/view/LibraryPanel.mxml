@@ -317,6 +317,7 @@
 				 change="libraryTree_changeHandler(event)" contentBackgroundColor="#FFFFFF"
 				 allowDragSelection="false"
 				 dragEnabled="true"
+				 horizontalScrollPolicy="on"
 				 dragComplete="libraryTree_dragCompleteHandler(event)" 
 				 dragStart="dragStartHandler(event)"
 				 labelField="label">
