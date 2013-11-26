@@ -316,7 +316,7 @@ package utils
 			switch(info.lineType)
 			{
 				case 0:return new MCacheSplit1Line(info.width,info.height);
-				case 1:return new MCacheSplit2Line(info.width,info.height);
+				case 1:return new MCacheSplit2Line(100,info.width,info.height);
 				case 2:return new MCacheSplit3Line();
 				case 3:return new MCacheSplit4Line();
 				case 4:return new MCacheSplit6Line();
