@@ -20,6 +20,7 @@ package
 	import mhsm.moviewrapper.MovieManager;
 	
 	import mx.collections.ArrayCollection;
+	import mx.controls.Alert;
 	
 	import uidata.UIClassInfo;
 	import uidata.UIClassInfoList;
@@ -132,13 +133,15 @@ package
 			
 			App.log.echo("新建类：---",fileName,"--->",className);
 		}
-		public static function delClass(className:String):void
+		public static function delClass(delClassName:String):void
 		{
 			for each (var classList:UIClassInfoList in xmlClassList) 
 			{
-				if(classList.hasClass(className))
+				if(classList.hasClass(delClassName))
 				{
-					classList.delClass(className);
+					classList.delClass(delClassName);
+					Alert.show("删除成功","",4,layerManager.stagePanel);
+					App.log.echo("删除类：",delClassName);
 					return;
 				}
 			}
