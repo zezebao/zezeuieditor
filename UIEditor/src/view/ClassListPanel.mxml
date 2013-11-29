@@ -68,7 +68,7 @@
 			{
 				if(classList.selectedItem)
 				{
-					var className:String = classList.selectedItem.value;
+					var delClassName:String = classList.selectedItem.value;
 					Alert.show("确定要删除该类","提示",Alert.OK | Alert.CANCEL,this,closeHandler);
 				}
 				
@@ -76,9 +76,7 @@
 				{
 					if(evt.detail == Alert.OK)
 					{
-						App.delClass(className);
-						Alert.show("删除成功","",4,this);
-						App.log.echo("删除类：",className);
+						App.delClass(delClassName);
 					}
 				}
 			}
