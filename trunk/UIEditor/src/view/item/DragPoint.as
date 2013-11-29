@@ -16,9 +16,6 @@ package view.item
 	/**
 	 * 可拖动操控点
 	 * 可监听其MoveEvent事件来执行操作
-	 * 
-	 * @author flashyiyi
-	 * 
 	 */
 	public class DragPoint extends GBase
 	{
