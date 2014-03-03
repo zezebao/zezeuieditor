@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<rss>
+	<!-- 背景音乐,默认无 -->
+	<BG_SOUND></BG_SOUND>
+	<!-- 背景图片 -->
+	<BACKGROUND>
+		<IMG>images/bg/1.jpg</IMG>
+		<IMG>images/bg/1.jpg</IMG>
+	</BACKGROUND>
+</rss>

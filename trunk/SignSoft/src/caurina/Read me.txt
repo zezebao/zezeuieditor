@@ -1,0 +1,51 @@
+认识Tweener缓动类[转](2010-02-23 17:43:10)
+转载标签： 杂谈 分类： as3网络精华帖  
+多年来，补间引擎Tweener赢得了相当多用户的欢迎。最初他是一个ActionScript 2.0版本的引擎，后来被移植到ActionScript 3.0，现在两个版本都有。实际上，Tweener至少部分是基于更早的一款ActionScript 1.0引擎MC Tween开发的，它发布于2003年。Tweener最初由Zeh Fernando(http://zehfernando.com)编写，也有其他一些人的贡献。
+
+安装Tweener之前要到Google代码库：http://code.google.com/p/tweener/下载源文件。这个包的顶层目录叫做caurina。把这个文件夹放到与你其他的项目文件相同的文件夹（或者其他你的开发环境能找到的地方）。这个引擎的主类是 caurina.transitions.Tweener。
+
+Tweener的语法很容易适应。与Adobe的Tween类不同，你不需要实例化主类Tweener。而是调用Tweener的静态方法。主要的方法是addTween。就像这样：
+
+ 
+Tweener.addTween(target, tweeningParameters);
+
+ 
+参数target和tweeningParameters的数据类型都是Object。target是你要改变的对象——通常是个 MovieClip, Sprite或者别的可视对象（虽然目标可以是任何具有至少一个可变数字公共属性的对象）。tweeningParameters属性是一个一般的 Object对象，它拥有若干属性让你可以控制补间的数值，缓动函数，时间等等。所以你可以像下面这样调用它，它将在3秒钟内把一个名为sprite的对象移动到x值为800的位置：
+
+ 
+Tweener.addTween(sprite,{x:800, time:3});
+
+ 
+或者像这样，把sprite移动到x值为800，y值为400的位置：
+
+ 
+Tweener.addTween(sprite,{x:800, y:400, time:3});
+
+ 
+显然这个过程比Adobe的两个Tween类都要简单得多。你添加到tweeningParameters的任何属性都会在target对象上被改变。请注意这里没有初始值。目标对象各个属性的当前值被默认为初始值。同需要注意的是你添加到tweeningParameters里的值都是目标的绝对值。换句话说，sprite不会在x轴方向移动800像素，y轴方向移动400像素，而是移动到800，400位置。
+
+ 
+tweeningParameters的Object数据类型是Tweener的长项之一，也是很多严肃的开发者不太喜欢的地方之一。一方面，他带来了巨大的灵活性，让你可以改变任何对象的任何公共数值属性。比如，尽管Tweener是在Flash 10出现之前很早被写成的，你依然可以用它来改变一个Sprite的3D属性，没有任何问题：
+
+ 
+Tweener.addTween(sprite,{x:800, z:800, rotationX:180, rotationY:270, time:3});
+
+ 
+另一方面，因为使用了一般的Object类型，你可以给它添加任何数据类型的任何属性，包括各种不可能被执行的属性。编译器会高高兴兴地编译他，而你只有在看到运行时错误提示的时候才会意识到他们——如果你安装了调试版Flash播放器的话。比如，你可以这样创建一个补间：
+
+ 
+Tweener.addTween(sprite, {dog:800, time:3});
+
+ 
+显然，dog不是一个Sprite类的一个属性，不应该在那。在你运行SWF文件时它当然会出错，而在编译时不会有任何警告。你还可以给出错误的数据类型，像这样：
+
+ 
+Tweener.addTween(sprite, {x:”dog”, time:3});
+
+ 
+现在我们知道x应该是一个数值，但是如果一个字符串被放到这个位置，你会丢掉全部的编译时类型检测。这甚至连运行时都不会报错。sprite只是从屏幕上消失，跑到x坐标为把“dog”转换成数值的位置。当然，Tweener会相当聪明的把一个字符串形式的数值转换成数值类型。所以下面的语句会被正确执行：
+
+ 
+Tweener.addTween(sprite, {x:”800”, time:3});
+
+tweener.googlecode.com/files/tweener_1_33_74_as3.zip
