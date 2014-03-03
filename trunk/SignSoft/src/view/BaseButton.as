@@ -15,6 +15,7 @@ package view
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.net.URLRequest;
+	import flash.utils.getTimer;
 	
 	public class BaseButton extends Sprite
 	{
@@ -25,6 +26,7 @@ package view
 		private var _isVisible:Boolean = true;
 		private var _position:Point;
 		private var _posPerertyName:String;
+		private var _downTime:Number;
 		
 		public function BaseButton(posPerertyName:String)
 		{
@@ -74,19 +76,25 @@ package view
 		
 		protected function onMosueDownHandler(event:MouseEvent):void
 		{
+			event.stopImmediatePropagation();
+			_downTime = getTimer();
+			var ts:Number = 1.05;
+			Tweener.addTween(this,{scaleX:ts,scaleY:ts,time:0.1});
 			this.startDrag(false,new Rectangle(0,0,stage.stageWidth - _btnImg.width,stage.stageHeight - _btnImg.height));
 		}
 		
 		protected function onMouseUpHandler(event:MouseEvent):void
 		{
+			Tweener.addTween(this,{scaleX:1,scaleY:1,time:0.1});
 			this.stopDrag();
 			ShareObjectManager.getInstance().setProperty(_posPerertyName,new Point(stage.stageWidth - this.x,this.y));
 		}
 		
 		protected function onClickHandler(event:MouseEvent):void
 		{
+			if(getTimer() - _downTime > 300)return;
 			if(clickCallback != null)
-				clickCallback();
+				clickCallback(this);
 		}
 		
 		protected function onErrorHandler(event:IOErrorEvent):void
@@ -98,9 +106,9 @@ package view
 		{
 			var bitmap:Bitmap = _imgLoader.content as Bitmap;
 			_btnImg.bitmapData = bitmap.bitmapData;
+			_btnImg.x = -_btnImg.width/2;
+			_btnImg.y = -_btnImg.height/2;
 			_imgLoader.unloadAndStop();
-			
-			trace("loaded");
 		}
 		
 		protected function onResizeHandler(event:Event=null):void

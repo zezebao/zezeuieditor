@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <rss>
+	<!-- 摄像头显示宽高，默认为400,400 -->
+	<CAMERA width='400' height='400'/>
+	
 	<!-- UI文件夹路径 -->
 	<UI_PATH>images/ui/</UI_PATH>
 	
@@ -8,7 +11,6 @@
 	
 	<!-- 背景图片 -->
 	<BACKGROUND>
-		<IMG>images/bg/1.jpg</IMG>
 		<IMG>images/bg/1.jpg</IMG>
 	</BACKGROUND>
 	

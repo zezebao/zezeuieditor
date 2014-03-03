@@ -20,6 +20,9 @@ package data
 		public static var PREVIEW_TOGGLE:Boolean = true;
 		public static var PRINT_TOGGLE:Boolean = true;
 		
+		public static var CAMERA_WIDTH:int = 400;
+		public static var CAMERA_HEIGHT:int = 400;
+		
 		public static var UI_PATH:String;
 		public static var BGSND_PATH:String;
 		public static var BG_IMGS:Vector.<String> = new Vector.<String>();
@@ -33,6 +36,9 @@ package data
 			UI_PATH = String(xml.UI_PATH);
 			if(UI_PATH.charAt(UI_PATH.length - 1) != '/')UI_PATH += "/";
 			BGSND_PATH = String(xml.BG_SOUND);
+			
+			CAMERA_WIDTH = int(xml.CAMERA.@width);
+			CAMERA_HEIGHT = int(xml.CAMERA.@height);
 			
 			PHOTO_TOGGLE = (xml.FUNCTIONS.PHOTO.@toggle=='true');
 			SIGN_TOGGLE = (xml.FUNCTIONS.SIGN.@toggle=='true');
