@@ -1,10 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <rss>
+	<!-- UI文件夹路径 -->
+	<UI_PATH>images/ui/</UI_PATH>
+	
 	<!-- 背景音乐,默认无 -->
 	<BG_SOUND></BG_SOUND>
+	
 	<!-- 背景图片 -->
 	<BACKGROUND>
 		<IMG>images/bg/1.jpg</IMG>
 		<IMG>images/bg/1.jpg</IMG>
 	</BACKGROUND>
+	
+	<!-- 功能按钮,打开状态，toggle值为true -->
+	<FUNCTIONS>
+		<PHOTO toggle='true'/><!-- 拍照 -->
+		<SIGN toggle='true'/><!-- 签字 -->
+		<SAVE toggle='true'/><!-- 保存 -->
+		<PREVIEW toggle='true'/><!-- 预览 -->
+		<PRINT toggle='true'/><!-- 打印 -->
+	</FUNCTIONS>
 </rss>
