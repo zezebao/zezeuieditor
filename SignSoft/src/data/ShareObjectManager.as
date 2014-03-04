@@ -15,13 +15,11 @@ package data
 			return _instance;
 		}
 		
-		
-		
 		protected var _so:SharedObject;
 		
 		public function ShareObjectManager()
 		{
-			_so = SharedObject.getLocal("signSoft__1_");
+			_so = SharedObject.getLocal("signSoft__6_");
 			initDefaultSettings();
 		}
 		
@@ -57,8 +55,16 @@ package data
 				return null;
 			}
 			
-			_so.data.info[propertyName] = value;
-			_so.flush();
+			if(propertyName == Config.POS_PHOTO 
+				|| propertyName == Config.POS_SIGN
+				|| propertyName == Config.POS_SAVE
+				|| propertyName == Config.POS_PREVIEW
+				|| propertyName == Config.POS_PRINT
+				)
+			{
+				_so.data.info[propertyName] = value;
+				_so.flush();
+			}
 		}
 	}
 }

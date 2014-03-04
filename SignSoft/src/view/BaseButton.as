@@ -114,6 +114,7 @@ package view
 		protected function onResizeHandler(event:Event=null):void
 		{
 			var pos:Object = ShareObjectManager.getInstance().getProperty(_posPerertyName);
+			if(pos == null)return;
 			this.x = stage.stageWidth - pos["x"];
 			this.y = pos["y"];
 		}
