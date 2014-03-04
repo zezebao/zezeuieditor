@@ -6,6 +6,7 @@
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.filters.BlurFilter;
+	import flash.geom.ColorTransform;
 	import flash.geom.Rectangle;
 
 	/**
@@ -22,7 +23,7 @@
 		private var b_mc:Sprite ;
 		private var canNotDraw:Boolean = true;
 		private var forDraw_mc:Sprite;//清屏对象
-		private const tof:int = 2;//笔触
+		private var tof:int = 4;//笔触
 		private var defaultScale:Number = 0.8;//默认笔触的大小
 		private var oldScale:Number;
 		private var cx:Number = 0.06;// .02;//粗细变化参数
@@ -65,7 +66,7 @@
 			bmd.draw(forDraw_mc);
 		}
 		
-		private function _enterframe(e:MouseEvent):void 
+		private function onEnterFrameHandler(e:MouseEvent):void 
 		{
 			if (! isDown) {
 				return;
@@ -79,8 +80,9 @@
 				//改变笔触的大小,越快越小
 //                if (dis > 0.12) { 
 				if (dis > 0.06) {
-                    if (scale > 1) scale = 1;
-					else if (scale < brushMin) scale = brushMin;
+//                    if (scale > 1) scale = 1;
+//					else if (scale < brushMin) scale = brushMin;
+					if (scale < brushMin) scale = brushMin;
 					scale = (oldScale + scale) * 0.52;//0.5
                 }
 				const count:int = dis * brushAlpha;
@@ -90,6 +92,11 @@
 					brush = new BrushAsset();
 					brush.gotoAndStop(tof);
 					brush_mc.addChild(brush);
+					
+					var trans:ColorTransform = new ColorTransform();
+					trans.color = Controller.brushColor;
+					brush.transform.colorTransform = trans;
+					
 					//brush.filters = [bf];
 					brush.alpha = 0.6;
                     brush.scaleX = brush.scaleY = oldScale-i * scaleBili; 
@@ -111,19 +118,24 @@
 		{
 			if (canNotDraw) {
 				//addEventListener(Event.ENTER_FRAME, _enterframe);
-				stage.addEventListener(MouseEvent.MOUSE_MOVE, _enterframe);
+				stage.addEventListener(MouseEvent.MOUSE_MOVE, onEnterFrameHandler);
 				isDown = true;
 				oldX = mouseX;
 				oldY = mouseY;
 				oldScale = 1;
+				
+				//计算笔触大小
+				defaultScale = 2 * (Controller.brushSize / 6) * 2;
+				brushAlpha = 0.3 + (Controller.brushSize / 6) * 0.5;
+				brushMin = 0.4 + (Controller.brushSize / 6) * 0.3;
+				bf = new BlurFilter(Controller.brushSize,Controller.brushSize,1);
 			}
-			
 		}
 
 		private function onMouseUpHandler(e:MouseEvent):void
 		{
 			//removeEventListener(Event.ENTER_FRAME, _enterframe);
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, _enterframe);
+			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onEnterFrameHandler);
 			isDown = false;
 			oldX = NaN;
 			stopDrag();

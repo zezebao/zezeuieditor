@@ -2,6 +2,11 @@ package data
 {
 	public class Config
 	{
+		public static function get CONN_NAME():String
+		{
+			return "signSoftConnect_4__";
+		}
+		
 		public static const POS_PHOTO:String = "posPhoto";
 		public static const POS_SIGN:String = "posSign";
 		public static const POS_SAVE:String = "posSave";
@@ -13,6 +18,7 @@ package data
 		public static const SAVE_IMG:String = "save.png";
 		public static const PREVIEW_IMG:String = "preview.png";
 		public static const PRINT_IMG:String = "print.png";
+		public static const OK_IMG:String = "okBtn.png";
 		
 		public static var PHOTO_TOGGLE:Boolean = true;
 		public static var SIGN_TOGGLE:Boolean = true;
@@ -62,6 +68,7 @@ package data
 				case POS_SAVE:return SAVE_IMG;
 				case POS_PREVIEW:return PREVIEW_IMG;
 				case POS_PRINT:return PRINT_IMG;
+				case OK_IMG:return OK_IMG;
 			}
 			return "";
 		}
