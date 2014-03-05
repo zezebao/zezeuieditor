@@ -26,7 +26,8 @@ package com.flashandmath.dg.GUI {
 		public var swatchHeight:Number;
 		public var displayedColor:uint;
 		
-		public function GradientSwatch(swatchColor1, swatchColor2, w=16,h=16) {
+		public function GradientSwatch(swatchColor1:uint, swatchColor2:uint, w:Number=16,h:Number=16) 
+		{
 			_color1 = swatchColor1;
 			_color2 = swatchColor2;
 			_red1 = (_color1 >> 16);
