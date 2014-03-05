@@ -2,11 +2,13 @@
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.BlendMode;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.filters.BlurFilter;
 	import flash.geom.ColorTransform;
+	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 
 	/**
@@ -29,7 +31,8 @@
 		private var cx:Number = 0.06;// .02;//粗细变化参数
 		private var brushMin:Number = 0.12;//.08;//最细笔触限制
 		private var brushAlpha:Number = 0.65;//笔刷浓度
-		private var bf:BlurFilter=new BlurFilter(2,2,1);
+//		private var bf:BlurFilter=new BlurFilter(2,2,1);
+		private var bf:BlurFilter=new BlurFilter(6,6,10);
 		
 		//temp
 		private var clear_mc:Sprite;
@@ -71,6 +74,24 @@
 			if (! isDown) {
 				return;
 			}
+			if(Controller.brushType == 4)
+			{
+				var radio:Number = 40;
+				var sp:Sprite = new Sprite();
+				sp.graphics.beginFill(0,1);
+				sp.graphics.drawCircle(-radio/2,-radio/2,radio);
+				sp.graphics.endFill();
+				brush_mc.addChild(sp);
+				sp.x = stage.mouseX;
+				sp.y = stage.mouseY;
+					
+				bmd.draw(brush_mc,new Matrix(),new ColorTransform(),BlendMode.ERASE);
+				e.updateAfterEvent();
+				while (brush_mc.numChildren>0) {
+					brush_mc.removeChildAt(0);
+				}
+				return;
+			}
 			if (! isNaN(oldX)) {
 				//为防止鼠标移动速度过快，计算老坐标和新坐标直接的距离，在两个坐标中间填充若干笔触
 				const disX:Number=mouseX-oldX;
@@ -83,7 +104,7 @@
 //                    if (scale > 1) scale = 1;
 //					else if (scale < brushMin) scale = brushMin;
 					if (scale < brushMin) scale = brushMin;
-					scale = (oldScale + scale) * 0.52;//0.5
+					scale = (oldScale + scale) * 0.5;//0.5
                 }
 				const count:int = dis * brushAlpha;
 				const scaleBili:Number = (oldScale-scale) / count;
@@ -126,9 +147,10 @@
 				
 				//计算笔触大小
 				defaultScale = 2 * (Controller.brushSize / 6) * 2;
-				brushAlpha = 0.3 + (Controller.brushSize / 6) * 0.5;
+				//brushAlpha = 0.3 + (Controller.brushSize / 6) * 0.5;
+				brushAlpha = 0.8;
 				brushMin = 0.4 + (Controller.brushSize / 6) * 0.3;
-				bf = new BlurFilter(Controller.brushSize,Controller.brushSize,1);
+				//bf = new BlurFilter(Controller.brushSize,Controller.brushSize,1);
 			}
 		}
 

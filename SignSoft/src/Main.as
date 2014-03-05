@@ -21,11 +21,15 @@ package
 	import flash.net.URLRequest;
 	import flash.printing.PrintJob;
 	import flash.printing.PrintJobOptions;
+	import flash.text.TextField;
+	import flash.text.TextFormat;
 	import flash.utils.ByteArray;
 	
 	import view.Background;
 	import view.BaseButton;
 	import view.Brush;
+	import view.BrushPen;
+	import view.Canvas;
 	import view.Controller;
 	import view.VideoArea;
 	
@@ -70,9 +74,14 @@ package
 			var bg:Background = new Background();
 			_drawCon.addChild(bg);
 			
+			_drawCon.addChild(Canvas.bitmap);
+			
 			_brush = new Brush();
 			_drawCon.addChild(_brush);
 			_brush.mouseEnabled = _brush.mouseChildren = false;
+			
+//			var tmp:BrushPen = new BrushPen();
+//			addChild(tmp);
 			
 			_videoArea = new VideoArea();
 			_drawCon.addChild(_videoArea);
@@ -99,7 +108,15 @@ package
 			btn.clickCallback = printClickHandler;
 			addChild(btn);
 			
+			
 			this.addEventListener(Event.ENTER_FRAME,onETHandler);
+			
+			var tf:TextField = new TextField();
+			tf.defaultTextFormat = new TextFormat("",50);
+			tf.width = 1000;
+			_drawCon.addChild(tf);
+			tf.mouseEnabled = tf.mouseWheelEnabled = false;
+			tf.text = "制作中........";
 		}
 			
 		protected var count:int = 0;
