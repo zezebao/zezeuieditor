@@ -7,6 +7,8 @@ package data
 			return "signSoftConnect_4__";
 		}
 		
+		public static var USE_TOUCH:Boolean = true;
+		
 		public static const POS_PHOTO:String = "posPhoto";
 		public static const POS_SIGN:String = "posSign";
 		public static const POS_SAVE:String = "posSave";
@@ -45,6 +47,8 @@ package data
 			
 			CAMERA_WIDTH = int(xml.CAMERA.@width);
 			CAMERA_HEIGHT = int(xml.CAMERA.@height);
+			
+			USE_TOUCH = (String(xml.USE_TOUCH) =='true');
 			
 			PHOTO_TOGGLE = (xml.FUNCTIONS.PHOTO.@toggle=='true');
 			SIGN_TOGGLE = (xml.FUNCTIONS.SIGN.@toggle=='true');

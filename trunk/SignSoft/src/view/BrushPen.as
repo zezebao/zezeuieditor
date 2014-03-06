@@ -12,7 +12,7 @@ package view
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	
-	public class BrushPen extends Sprite
+	public class BrushPen extends BaseBrush
 	{
 		private var lineLayer:Sprite;
 		private var lastSmoothedMouseX:Number;
@@ -40,9 +40,9 @@ package view
 		private var targetColorLevel:Number;
 		private var smoothedMouseX:Number;
 		private var smoothedMouseY:Number;
-		private var boardBitmap:Bitmap;
-		private var boardBitmapData:BitmapData;
-		private var bitmapHolder:Sprite;
+//		private var boardBitmap:Bitmap;
+//		private var boardBitmapData:BitmapData;
+//		private var bitmapHolder:Sprite;
 		private var boardWidth:Number;
 		private var boardHeight:Number;
 		private var smoothingFactor:Number;
@@ -89,16 +89,17 @@ package view
 		
 		private var colorChangeRate:Number;
 		
-		public function BrushPen()
+		public function BrushPen(main:Main)
 		{
-			super();
-			init();
+			super(main);
+			initData();
 		}
 		
-		private function init():void {
+		private function initData():void 
+		{
 			
-			boardWidth = 1700;
-			boardHeight = 1500;
+			boardWidth = 1920;
+			boardHeight = 1080;
 			
 			minThickness = 0.2;
 			thicknessFactor = 0.25;
@@ -139,37 +140,35 @@ package view
 				0xD0D0D0, 0xFFFFFF]);
 			swatches = new Vector.<GradientSwatch>;
 			
-			boardBitmapData = new BitmapData(boardWidth, boardHeight, true,0x0);
-			boardBitmap = new Bitmap(boardBitmapData);
-			
-			
 			//The undo buffer will hold the previous drawing.
 			//If we want more levels of undo, we would have to record several undo buffers.  We only use one
 			//here for simplicity.
 			undoStack = new Vector.<BitmapData>;
-			bitmapHolder = new Sprite();
 			lineLayer = new Sprite();
 			
 			/*
 			Bitmaps cannot receive mouse events.  so we add it to a holder sprite.
 			*/
-			this.addChild(bitmapHolder);
-			bitmapHolder.x = 5;
-			bitmapHolder.y = 5;
-			bitmapHolder.addChild(boardBitmap);
 			
-			bitmapSaver = new BitmapSaver(boardBitmapData);
+			bitmapSaver = new BitmapSaver(bmd);
 			bitmapSaver.x = 0.5*(boardWidth - bitmapSaver.width);
 			bitmapSaver.y = 0.5*(boardHeight - bitmapSaver.height);
-			
-			bitmapHolder.addEventListener(MouseEvent.MOUSE_DOWN, startDraw);
 		}
 		
-		private function startDraw(evt:MouseEvent):void {
-			stage.addEventListener(MouseEvent.MOUSE_UP, stopDraw);
-			
-			startX = lastMouseX = smoothedMouseX = lastSmoothedMouseX = bitmapHolder.mouseX;
-			startY = lastMouseY = smoothedMouseY = lastSmoothedMouseY = bitmapHolder.mouseY;
+		override protected function onEnterFrameHandler(e:Event):Boolean
+		{
+			if(!super.onEnterFrameHandler(e))return false;
+			drawLine();
+			e["updateAfterEvent"]();
+			return true;
+		}
+		
+		override protected function onMouseDownHandler(e:Event):void
+		{
+			super.onMouseDownHandler(e);
+			trace("mosue down");
+			startX = lastMouseX = smoothedMouseX = lastSmoothedMouseX = container.mouseX;
+			startY = lastMouseY = smoothedMouseY = lastSmoothedMouseY = container.mouseY;
 			lastThickness = 0;
 			lastRotation = Math.PI/2;
 			colorLevel = 0;
@@ -179,18 +178,38 @@ package view
 			//We will keep track of whether the mouse moves in between a mouse down and a mouse up.  If not,
 			//a small dot will be drawn.
 			mouseMoved = false;
-			
-			stage.addEventListener(MouseEvent.MOUSE_MOVE, drawLine);
-			//this.addEventListener(Event.ENTER_FRAME, drawLine);
 		}
 		
-		private function drawLine(evt:MouseEvent):void {
+		override protected function onMouseUpHandler(e:Event):void
+		{
+			super.onMouseUpHandler(e);
+			if (!mouseMoved) {
+				var randRadius:Number = dotRadius*(0.75+0.75*Math.random());
+				var dotColor:uint = (paintColorR1 << 16) | (paintColorG1 << 8) | (paintColorB1);
+				var dot:Sprite = new Sprite();
+				dot.graphics.beginFill(dotColor)
+				dot.graphics.drawEllipse(startX - randRadius, startY - randRadius, 2*randRadius, 2*randRadius);
+				dot.graphics.endFill();
+				bmd.draw(dot);
+			}
+			
+			//record undo bitmap and add to undo stack
+			var undoBuffer:BitmapData = new BitmapData(boardWidth, boardHeight, false);
+			undoBuffer.copyPixels(bmd,undoBuffer.rect,new Point(0,0));
+			undoStack.push(undoBuffer);
+			if (undoStack.length > numUndoLevels + 1) {
+				undoStack.splice(0,1);
+			}
+		}
+		
+		private function drawLine():void 
+		{
 			mouseMoved = true;
 			
 			lineLayer.graphics.clear();
 			
-			mouseChangeVectorX = bitmapHolder.mouseX - lastMouseX;
-			mouseChangeVectorY = bitmapHolder.mouseY - lastMouseY;
+			mouseChangeVectorX = container.mouseX - lastMouseX;
+			mouseChangeVectorY = container.mouseY - lastMouseY;
 			
 			
 			//Cusp detection - if the mouse movement is more than 90 degrees
@@ -211,8 +230,8 @@ package view
 			//We smooth out the mouse position.  The drawn line will not extend to the current mouse position; instead
 			//it will be drawn only a portion of the way towards the current mouse position.  This creates a nice
 			//smoothing effect.
-			smoothedMouseX = smoothedMouseX + smoothingFactor*(bitmapHolder.mouseX - smoothedMouseX);
-			smoothedMouseY = smoothedMouseY + smoothingFactor*(bitmapHolder.mouseY - smoothedMouseY);
+			smoothedMouseX = smoothedMouseX + smoothingFactor*(container.mouseX - smoothedMouseX);
+			smoothedMouseY = smoothedMouseY + smoothingFactor*(container.mouseY - smoothedMouseY);
 			
 			//We determine how far the mouse moved since the last position.  We use this distance to change
 			//the thickness and brightness of the line.
@@ -230,7 +249,7 @@ package view
 			//We use a similar smoothing technique to change the thickness of the line, so that it doesn't
 			//change too abruptly.
 			targetLineThickness = minThickness+thicknessFactor*dist;
-			lineThickness = lastThickness + thicknessSmoothingFactor*(targetLineThickness - lastThickness);
+			lineThickness = lastThickness + thicknessSmoothingFactor*(targetLineThickness - lastThickness)/5;
 			
 			/*
 			The "line" being drawn is actually composed of filled in shapes.  This is what allows
@@ -268,7 +287,7 @@ package view
 			lineLayer.graphics.curveTo(controlX2, controlY2, lastSmoothedMouseX - L0Cos0, lastSmoothedMouseY - L0Sin0);
 			lineLayer.graphics.lineTo(lastSmoothedMouseX + L0Cos0, lastSmoothedMouseY + L0Sin0);
 			lineLayer.graphics.endFill();
-			boardBitmapData.draw(lineLayer);
+			bmd.draw(lineLayer);
 			
 			var taperThickness:Number = tipTaperFactor*lineThickness;
 			
@@ -278,43 +297,10 @@ package view
 			lastThickness = lineThickness;
 			lastMouseChangeVectorX = mouseChangeVectorX;
 			lastMouseChangeVectorY = mouseChangeVectorY;
-			lastMouseX = bitmapHolder.mouseX;
-			lastMouseY = bitmapHolder.mouseY;
-			
-			evt.updateAfterEvent();
-			
+			lastMouseX = container.mouseX;
+			lastMouseY = container.mouseY;
 		}
 		
-		private function stopDraw(evt:MouseEvent):void {
-			//If the mouse didn't move, we will draw just a dot.  Its size will be randomized.
-			if (!mouseMoved) {
-				var randRadius:Number = dotRadius*(0.75+0.75*Math.random());
-				var dotColor:uint = (paintColorR1 << 16) | (paintColorG1 << 8) | (paintColorB1);
-				var dot:Sprite = new Sprite();
-				dot.graphics.beginFill(dotColor)
-				dot.graphics.drawEllipse(startX - randRadius, startY - randRadius, 2*randRadius, 2*randRadius);
-				dot.graphics.endFill();
-				boardBitmapData.draw(dot);
-			}
-			
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, drawLine);
-			stage.removeEventListener(MouseEvent.MOUSE_UP, stopDraw);
-			
-			
-			//record undo bitmap and add to undo stack
-			var undoBuffer:BitmapData = new BitmapData(boardWidth, boardHeight, false);
-			undoBuffer.copyPixels(boardBitmapData,undoBuffer.rect,new Point(0,0));
-			undoStack.push(undoBuffer);
-			if (undoStack.length > numUndoLevels + 1) {
-				undoStack.splice(0,1);
-			}
-			
-		}
-		
-		private function erase(evt:MouseEvent):void {
-		}
-		
-		//this private function assists with creating colors for the gradients.
 		private function darkenColor(c:uint, factor:Number):uint {
 			var r:Number = (c >> 16);
 			var g:Number = (c >> 8) & 0xFF;
