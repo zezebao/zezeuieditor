@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <rss>
+	<!-- 电脑上调试用鼠标绘画，属性设置为false,表示用鼠标进行绘画 ，注意，true，false为小写-->
+	<USE_TOUCH>false</USE_TOUCH>
 	<!-- 摄像头显示宽高，默认为400,400 -->
 	<CAMERA width='400' height='400'/>
 	
@@ -14,7 +16,7 @@
 		<IMG>images/bg/1.jpg</IMG>
 	</BACKGROUND>
 	
-	<!-- 功能按钮,打开状态，toggle值为true -->
+	<!-- 功能按钮,打开状态，toggle值为true,注意，true，false为小写 -->
 	<FUNCTIONS>
 		<PHOTO toggle='true'/><!-- 拍照 -->
 		<SIGN toggle='true'/><!-- 签字 -->

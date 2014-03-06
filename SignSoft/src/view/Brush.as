@@ -1,11 +1,14 @@
 ﻿package view 
 {
+	import data.Config;
+	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TouchEvent;
 	import flash.filters.BlurFilter;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
@@ -14,17 +17,8 @@
 	/**
 	 * 带笔触的书写
 	 */
-	public class Brush extends Sprite
+	public class Brush extends BaseBrush
 	{
-		private var bmd:BitmapData;
-		private var bm:Bitmap;
-		private var oldX:Number;
-		private var oldY:Number;
-		private var isDown:Boolean = false;
-		private var brush_mc:Sprite;
-		private var b_mc:Sprite ;
-		private var canNotDraw:Boolean = true;
-		private var forDraw_mc:Sprite;//清屏对象
 		private var tof:int = 4;//笔触
 		private var defaultScale:Number = 0.8;//默认笔触的大小
 		private var oldScale:Number;
@@ -34,85 +28,36 @@
 //		private var bf:BlurFilter=new BlurFilter(2,2,1);
 		private var bf:BlurFilter=new BlurFilter(6,6,10);
 		
-		//temp
-		private var clear_mc:Sprite;
-		
-		public function Brush() 
+		public function Brush(main:Main) 
 		{
-			if(stage)init();
-			else this.addEventListener(Event.ADDED_TO_STAGE,init);
+			super(main);
 		}
 		
-		private function init(evt:Event=null):void
+		protected override function onEnterFrameHandler(e:Event):Boolean 
 		{
-			bmd = new BitmapData(1920, 1080,true,0x0);
-			bm = new Bitmap(bmd);
-			brush_mc = new Sprite();
-			b_mc = new Sprite();
-			addChildAt(b_mc, 0);
-			b_mc.addChild(bm);
-			this.addEventListener(MouseEvent.MOUSE_DOWN,onMouseDownHandler);
-			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUpHandler);
+			if(!super.onEnterFrameHandler(e))return false;
 			
-			clear_mc = new Sprite();
-			forDraw_mc = new Sprite();
-			addChild(forDraw_mc);
-			
-			clear_mc.buttonMode = true;
-			clear_mc.addEventListener(MouseEvent.CLICK, doClick);
-			
-			forDraw_mc.visible = false;
-		}
-		
-		private function doClick(evt:MouseEvent):void 
-		{
-			bmd.draw(forDraw_mc);
-		}
-		
-		private function onEnterFrameHandler(e:MouseEvent):void 
-		{
-			if (! isDown) {
-				return;
-			}
-			if(Controller.brushType == 4)
-			{
-				var radio:Number = 40;
-				var sp:Sprite = new Sprite();
-				sp.graphics.beginFill(0,1);
-				sp.graphics.drawCircle(-radio/2,-radio/2,radio);
-				sp.graphics.endFill();
-				brush_mc.addChild(sp);
-				sp.x = stage.mouseX;
-				sp.y = stage.mouseY;
-					
-				bmd.draw(brush_mc,new Matrix(),new ColorTransform(),BlendMode.ERASE);
-				e.updateAfterEvent();
-				while (brush_mc.numChildren>0) {
-					brush_mc.removeChildAt(0);
-				}
-				return;
-			}
-			if (! isNaN(oldX)) {
-				//为防止鼠标移动速度过快，计算老坐标和新坐标直接的距离，在两个坐标中间填充若干笔触
-				const disX:Number=mouseX-oldX;
-				const disY:Number=mouseY-oldY;
-				const dis:Number = Math.sqrt(disX * disX + disY * disY);
-				var scale:Number = defaultScale - dis * cx;
+			//为防止鼠标移动速度过快，计算老坐标和新坐标直接的距离，在两个坐标中间填充若干笔触
+			const disX:Number=mouseX-oldX;
+			const disY:Number=mouseY-oldY;
+			const dis:Number = Math.sqrt(disX * disX + disY * disY);
+			var scale:Number = defaultScale - dis * cx;
 				//改变笔触的大小,越快越小
 //                if (dis > 0.12) { 
-				if (dis > 0.06) {
+			if (dis > 0.06) 
+			{
 //                    if (scale > 1) scale = 1;
 //					else if (scale < brushMin) scale = brushMin;
-					if (scale < brushMin) scale = brushMin;
+				if (scale < brushMin) scale = brushMin;
 					scale = (oldScale + scale) * 0.5;//0.5
-                }
+	            }
 				const count:int = dis * brushAlpha;
 				const scaleBili:Number = (oldScale-scale) / count;
 				var brush:BrushAsset, i:int;
 				for (i=0; i<count; i++) {
 					brush = new BrushAsset();
 					brush.gotoAndStop(tof);
-					brush_mc.addChild(brush);
+					brushSp.addChild(brush);
 					
 					var trans:ColorTransform = new ColorTransform();
 					trans.color = Controller.brushColor;
@@ -120,31 +65,27 @@
 					
 					//brush.filters = [bf];
 					brush.alpha = 0.6;
-                    brush.scaleX = brush.scaleY = oldScale-i * scaleBili; 
+	                brush.scaleX = brush.scaleY = oldScale-i * scaleBili; 
 					brush.x=(disX/count)*(i+1)+oldX;
 					brush.y=(disY/count)*(i+1)+oldY;
 				}
 				oldX = mouseX;
 				oldY = mouseY;
 				oldScale = scale;
-				bmd.draw(brush_mc);
-				e.updateAfterEvent();
+				bmd.draw(brushSp);
+				e["updateAfterEvent"]();
 				//删除填充的笔触
-				while (brush_mc.numChildren>0) {
-					brush_mc.removeChildAt(0);
-				}
+				while (brushSp.numChildren>0) {
+					brushSp.removeChildAt(0);
 			}
+			return true;
 		}
-		private function onMouseDownHandler(e:MouseEvent):void 
+		protected override function onMouseDownHandler(e:Event):void 
 		{
-			if (canNotDraw) {
-				//addEventListener(Event.ENTER_FRAME, _enterframe);
-				stage.addEventListener(MouseEvent.MOUSE_MOVE, onEnterFrameHandler);
-				isDown = true;
-				oldX = mouseX;
-				oldY = mouseY;
+			super.onMouseDownHandler(e);
+			if (canNotDraw) 
+			{
 				oldScale = 1;
-				
 				//计算笔触大小
 				defaultScale = 2 * (Controller.brushSize / 6) * 2;
 				//brushAlpha = 0.3 + (Controller.brushSize / 6) * 0.5;
@@ -154,13 +95,9 @@
 			}
 		}
 
-		private function onMouseUpHandler(e:MouseEvent):void
+		protected override function onMouseUpHandler(e:Event):void
 		{
-			//removeEventListener(Event.ENTER_FRAME, _enterframe);
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onEnterFrameHandler);
-			isDown = false;
-			oldX = NaN;
-			stopDrag();
+			super.onMouseUpHandler(e);
 		}
 	}
 	

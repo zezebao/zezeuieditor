@@ -24,11 +24,14 @@ package
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.utils.ByteArray;
+	import flash.utils.Dictionary;
 	
 	import view.Background;
+	import view.BaseBrush;
 	import view.BaseButton;
 	import view.Brush;
 	import view.BrushPen;
+	import view.BrushPencil;
 	import view.Canvas;
 	import view.Controller;
 	import view.VideoArea;
@@ -38,7 +41,7 @@ package
 	{
 		
 		private var _drawCon:Sprite;
-		private var _brush:Brush;
+		private var _brushs:Vector.<BaseBrush> = new Vector.<BaseBrush>();
 		private var _videoArea:VideoArea;
 		private var _controller:Controller;
 		private var _client:Client = new Client();
@@ -76,18 +79,29 @@ package
 			
 			_drawCon.addChild(Canvas.bitmap);
 			
-			_brush = new Brush();
-			_drawCon.addChild(_brush);
-			_brush.mouseEnabled = _brush.mouseChildren = false;
+			_brushs.push(null);
+			var brush:BaseBrush;
+			brush= new Brush(this);
+			_brushs.push(brush);
+			brush = new BrushPen(this);
+			_brushs.push(brush);
+			brush = new BrushPencil(this);
+			_brushs.push(brush);
 			
-//			var tmp:BrushPen = new BrushPen();
-//			addChild(tmp);
+			for (var i:int = 0; i < _brushs.length; i++) 
+			{
+				if(_brushs[i])
+				{
+					_drawCon.addChild(_brushs[i]);
+					_brushs[i].mouseChildren = _brushs[i].mouseEnabled = false;
+				}
+			}
 			
 			_videoArea = new VideoArea();
 			_drawCon.addChild(_videoArea);
 			_videoArea.hide();
 			
-			_controller = new Controller();
+			_controller = new Controller(this);
 			addChild(_controller);
 			_controller.visible = false;
 			
@@ -144,8 +158,38 @@ package
 		private function signClickHandler(target:BaseButton):void
 		{
 			_controller.visible = !_controller.visible;
-			_brush.mouseEnabled = _brush.mouseChildren = _controller.visible;
+			changeType();
 		}
+		
+		public function erase():void
+		{
+			for (var i:int = 0; i < _brushs.length; i++) 
+			{
+				if(_brushs[i])
+				{
+					_brushs[i].erase();
+				}
+			}
+		}
+		
+		public function changeType():void
+		{
+			for (var i:int = 0; i < _brushs.length; i++) 
+			{
+				if(_brushs[i])
+				{
+					_brushs[i].mouseChildren = _brushs[i].mouseEnabled = false;
+				}
+			}
+			if(Controller.brushType != 4)
+			{
+				_brushs[Controller.brushType].mouseChildren = _brushs[Controller.brushType].mouseEnabled = _controller.visible; 
+			}else
+			{
+				_brushs[3].mouseChildren = _brushs[3].mouseEnabled = true;
+			}
+		}
+		
 		private function saveClickHandler(target:BaseButton):void
 		{
 			var jpgenc:JPGEncoder = new JPGEncoder(80);
