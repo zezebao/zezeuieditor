@@ -1,10 +1,11 @@
-﻿package view 
+﻿package view.brush 
 {
 	import data.Config;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -13,13 +14,15 @@
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
+	
+	import view.Controller;
 
 	/**
 	 * 带笔触的书写
 	 */
-	public class Brush extends BaseBrush
+	public class WritingBrush extends BaseBrush
 	{
-		private var tof:int = 4;//笔触
+		private var tof:int = 2;//笔触
 		private var defaultScale:Number = 0.8;//默认笔触的大小
 		private var oldScale:Number;
 		private var cx:Number = 0.06;// .02;//粗细变化参数
@@ -28,7 +31,7 @@
 //		private var bf:BlurFilter=new BlurFilter(2,2,1);
 		private var bf:BlurFilter=new BlurFilter(6,6,10);
 		
-		public function Brush(main:Main) 
+		public function WritingBrush(main:IApplication) 
 		{
 			super(main);
 		}
@@ -41,7 +44,7 @@
 			const disX:Number=mouseX-oldX;
 			const disY:Number=mouseY-oldY;
 			const dis:Number = Math.sqrt(disX * disX + disY * disY);
-			var scale:Number = defaultScale - dis * cx;
+			var scale:Number = (defaultScale - dis * cx) + 0.15;
 				//改变笔触的大小,越快越小
 //                if (dis > 0.12) { 
 			if (dis > 0.06) 
@@ -49,11 +52,11 @@
 //                    if (scale > 1) scale = 1;
 //					else if (scale < brushMin) scale = brushMin;
 				if (scale < brushMin) scale = brushMin;
-					scale = (oldScale + scale) * 0.5;//0.5
+				scale = (oldScale + scale) * 0.5;//0.5
 	            }
 				const count:int = dis * brushAlpha;
 				const scaleBili:Number = (oldScale-scale) / count;
-				var brush:BrushAsset, i:int;
+				var brush:MovieClip, i:int;
 				for (i=0; i<count; i++) {
 					brush = new BrushAsset();
 					brush.gotoAndStop(tof);
@@ -65,12 +68,14 @@
 					
 					//brush.filters = [bf];
 					brush.alpha = 0.6;
-	                brush.scaleX = brush.scaleY = oldScale-i * scaleBili; 
+					brush.scaleX = brush.scaleY = (oldScale-i * scaleBili);
+	                 
 					brush.x=(disX/count)*(i+1)+oldX;
 					brush.y=(disY/count)*(i+1)+oldY;
 				}
 				oldX = mouseX;
 				oldY = mouseY;
+//				oldScale = scale - 0.15;
 				oldScale = scale;
 				bmd.draw(brushSp);
 				e["updateAfterEvent"]();
@@ -98,6 +103,7 @@
 		protected override function onMouseUpHandler(e:Event):void
 		{
 			super.onMouseUpHandler(e);
+			
 		}
 	}
 	

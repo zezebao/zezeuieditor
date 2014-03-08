@@ -1,4 +1,4 @@
-package view
+package view.brush
 {
 	import com.flashandmath.dg.GUI.GradientSwatch;
 	import com.flashandmath.dg.bitmapUtilities.BitmapSaver;
@@ -11,6 +11,8 @@ package view
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
+	
+	import view.Controller;
 	
 	public class BrushPen extends BaseBrush
 	{
@@ -89,7 +91,7 @@ package view
 		
 		private var colorChangeRate:Number;
 		
-		public function BrushPen(main:Main)
+		public function BrushPen(main:IApplication)
 		{
 			super(main);
 			initData();
@@ -166,7 +168,11 @@ package view
 		override protected function onMouseDownHandler(e:Event):void
 		{
 			super.onMouseDownHandler(e);
-			trace("mosue down");
+			
+			paintColorR1 = paintColorR2 = (Controller.brushColor >> 16);
+			paintColorG1 = paintColorG2 = (Controller.brushColor >> 8) & 0xFF;
+			paintColorB1 = paintColorB2 = (Controller.brushColor  & 0xFF);
+			
 			startX = lastMouseX = smoothedMouseX = lastSmoothedMouseX = container.mouseX;
 			startY = lastMouseY = smoothedMouseY = lastSmoothedMouseY = container.mouseY;
 			lastThickness = 0;
@@ -250,6 +256,10 @@ package view
 			//change too abruptly.
 			targetLineThickness = minThickness+thicknessFactor*dist;
 			lineThickness = lastThickness + thicknessSmoothingFactor*(targetLineThickness - lastThickness)/5;
+			
+			lineThickness += ((Controller.brushSize - 1) / 6) * 0.2;
+			
+			trace("lineThickness",lineThickness);
 			
 			/*
 			The "line" being drawn is actually composed of filled in shapes.  This is what allows

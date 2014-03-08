@@ -2,6 +2,10 @@
 <rss>
 	<!-- 电脑上调试用鼠标绘画，属性设置为false,表示用鼠标进行绘画 ，注意，true，false为小写-->
 	<USE_TOUCH>false</USE_TOUCH>
+	<SCREEN>
+		<WIDTH>1920</WIDTH>
+		<HEIGHT>1080</HEIGHT>
+	</SCREEN>>
 	<!-- 摄像头显示宽高，默认为400,400 -->
 	<CAMERA width='400' height='400'/>
 	
@@ -18,10 +22,11 @@
 	
 	<!-- 功能按钮,打开状态，toggle值为true,注意，true，false为小写 -->
 	<FUNCTIONS>
-		<PHOTO toggle='true'/><!-- 拍照 -->
-		<SIGN toggle='true'/><!-- 签字 -->
-		<SAVE toggle='true'/><!-- 保存 -->
-		<PREVIEW toggle='true'/><!-- 预览 -->
-		<PRINT toggle='true'/><!-- 打印 -->
+		<PHOTO toggle='true' x='1820' y='100'/><!-- 拍照 -->
+		<SIGN toggle='true'  x='1820' y='300'/><!-- 签字 -->
+		<SAVE toggle='true'  x='1820' y='500'/><!-- 保存 -->
+		<PREVIEW toggle='true'  x='1820' y='700'/><!-- 预览 -->
+		<PRINT toggle='true'  x='1820' y='900'/><!-- 打印 -->
+		<CONTOLLER x='1500' y='30'/><!-- 控制条 -->
 	</FUNCTIONS>
 </rss>

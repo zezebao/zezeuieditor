@@ -1,18 +1,27 @@
 package
 {
+	import Util.Utils;
 	
 	import com.adobe.images.JPGEncoder;
 	
 	import data.Config;
-	import data.ShareObjectManager;
+	import data.MyEvent;
+	
+	import external.Client;
+	import external.ProtocolType;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.ActivityEvent;
 	import flash.events.Event;
+	import flash.filesystem.File;
+	import flash.filesystem.FileMode;
+	import flash.filesystem.FileStream;
+	import flash.geom.Point;
 	import flash.media.Camera;
 	import flash.media.Video;
 	import flash.net.FileReference;
@@ -21,34 +30,41 @@ package
 	import flash.net.URLRequest;
 	import flash.printing.PrintJob;
 	import flash.printing.PrintJobOptions;
+	import flash.system.ApplicationDomain;
+	import flash.system.LoaderContext;
+	import flash.system.Security;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
+	import flash.utils.setTimeout;
 	
 	import view.Background;
-	import view.BaseBrush;
 	import view.BaseButton;
-	import view.Brush;
-	import view.BrushPen;
-	import view.BrushPencil;
 	import view.Canvas;
 	import view.Controller;
 	import view.VideoArea;
+	import view.brush.BaseBrush;
+	import view.brush.BrushPen;
+	import view.brush.BrushPencil;
+	import view.brush.WritingBrush;
+	import view.preview.Preview;
 	
 	[SWF(frameRate="60",width="1920",height="1080")]
-	public class Main extends Sprite
+	public class SignSoft extends Sprite implements IApplication
 	{
+		protected var _drawCon:Sprite;
+		protected var _brushs:Vector.<BaseBrush> = new Vector.<BaseBrush>();
+		protected var _videoArea:VideoArea;
+		protected var _controller:Controller;
+		protected var _preview:Preview;
 		
-		private var _drawCon:Sprite;
-		private var _brushs:Vector.<BaseBrush> = new Vector.<BaseBrush>();
-		private var _videoArea:VideoArea;
-		private var _controller:Controller;
-		private var _client:Client = new Client();
+		private var _tipLabel:TextField;
+		private var _tipCount:int;
 		
-		public function Main()
+		public function SignSoft()
 		{
-			ShareObjectManager.getInstance();
+			Utils.client = new Client();
 			loadConfig();
 		}
 		
@@ -57,6 +73,9 @@ package
 			var configLoader:URLLoader = new URLLoader();
 			configLoader.addEventListener(Event.COMPLETE,onCompleteHandler);
 			configLoader.load(new URLRequest("Config.xml"));
+			
+			var loader:Loader = new Loader();
+			loader.load(new URLRequest("images/mask.swf"),new LoaderContext(false,ApplicationDomain.currentDomain));
 		}
 		
 		protected function onCompleteHandler(event:Event):void
@@ -64,13 +83,20 @@ package
 			var xml:XML = XML((event.target as URLLoader).data);
 			Config.initConfig(xml);
 			
+			
 			initView();
 		}
 		
 		private function initView():void
 		{
 			stage.align = StageAlign.TOP_LEFT;
-			stage.scaleMode = StageScaleMode.NO_BORDER;
+			stage.scaleMode = StageScaleMode.EXACT_FIT;
+			
+			stage.nativeWindow.width = Config.SCREEN_WIDTH;
+//			stage.nativeWindow.height = 500;
+			
+//			stage.stageWidth = 500;
+			stage.stageHeight = Config.SCREEN_HEIGHT;
 			
 			_drawCon = new Sprite();
 			addChild(_drawCon);
@@ -81,7 +107,7 @@ package
 			
 			_brushs.push(null);
 			var brush:BaseBrush;
-			brush= new Brush(this);
+			brush= new WritingBrush(this);
 			_brushs.push(brush);
 			brush = new BrushPen(this);
 			_brushs.push(brush);
@@ -97,13 +123,11 @@ package
 				}
 			}
 			
-			_videoArea = new VideoArea();
-			_drawCon.addChild(_videoArea);
-			_videoArea.hide();
-			
 			_controller = new Controller(this);
 			addChild(_controller);
 			_controller.visible = false;
+			_controller.x = Config.defaultPos[Config.POS_CONTROLLER].x;
+			_controller.y = Config.defaultPos[Config.POS_CONTROLLER].y;
 			
 			var btn:BaseButton;
 			btn = new BaseButton(Config.POS_PHOTO);
@@ -122,6 +146,17 @@ package
 			btn.clickCallback = printClickHandler;
 			addChild(btn);
 			
+			btn = new BaseButton(Config.REPLACE_IMG,false);
+			btn.clickCallback = replaceHandler;
+			btn.x = 130;
+			btn.y = Config.SCREEN_HEIGHT - 50;
+			addChild(btn);
+			
+			_tipLabel = new TextField();
+			_tipLabel.defaultTextFormat = new TextFormat("微软雅黑",80);
+			_tipLabel.width = 1000;
+			_tipLabel.mouseEnabled = _tipLabel.mouseWheelEnabled = false;
+			addChild(_tipLabel);
 			
 			this.addEventListener(Event.ENTER_FRAME,onETHandler);
 			
@@ -132,33 +167,49 @@ package
 			tf.mouseEnabled = tf.mouseWheelEnabled = false;
 			tf.text = "制作中........";
 		}
-			
+		
+		private function replaceHandler(target:BaseButton):void
+		{
+			Utils.dispath(new MyEvent(MyEvent.REPLACE));
+		}
+		
 		protected var count:int = 0;
 		
 		protected function onETHandler(event:Event):void
 		{
-			/*
 			count ++;
 			if(count % 50 == 0)
 			{
-				var jpgenc:JPGEncoder = new JPGEncoder(80);
-				var bmd:BitmapData = new BitmapData(300,300);
-				bmd.draw(_drawCon);
-				var imgByteArray:ByteArray = jpgenc.encode(bmd);
-				_client.send(imgByteArray);
-//				_client.sendBD(bmd);
+				//Utils.client.sendMessage(ProtocolType.MOUSE_MOVE,new Point(stage.mouseX,stage.mouseY));
 			}
-			*/
 		}
 		
 		private function photoClickHandler(target:BaseButton):void
 		{
+			if(_videoArea == null)
+			{
+				_videoArea = new VideoArea();
+				_drawCon.addChild(_videoArea);
+				_videoArea.hide();
+			}
+			
 			_videoArea.show();
 		}
 		private function signClickHandler(target:BaseButton):void
 		{
 			_controller.visible = !_controller.visible;
 			changeType();
+		}
+		
+		public function clear():void
+		{
+			for (var i:int = 0; i < _brushs.length; i++) 
+			{
+				if(_brushs[i])
+				{
+					_brushs[i].clear();
+				}
+			}
 		}
 		
 		public function erase():void
@@ -192,17 +243,66 @@ package
 		
 		private function saveClickHandler(target:BaseButton):void
 		{
-			var jpgenc:JPGEncoder = new JPGEncoder(80);
-			var bmd:BitmapData = new BitmapData(1920,1080);
-			bmd.draw(_drawCon);
-			var imgByteArray:ByteArray = jpgenc.encode(bmd);
-			var file:FileReference = new FileReference();
-			file.save(imgByteArray,"test.jpg");
-			imgByteArray.clear();
+			_tipCount = 0;
+			_tipLabel.x = Config.SCREEN_WIDTH/2 - 100;
+			_tipLabel.y = Config.SCREEN_HEIGHT/2;
+			_tipLabel.text = "保存中...";
+			this.addEventListener(Event.ENTER_FRAME,drawFrame);
 		}
+		
+		protected function drawFrame(event:Event):void
+		{
+			if(_tipCount == 5)
+			{
+				var jpgenc:JPGEncoder = new JPGEncoder(80);
+				var bmd:BitmapData = new BitmapData(1920,1080);
+				bmd.draw(_drawCon);
+				var imgByteArray:ByteArray = jpgenc.encode(bmd);
+				
+//				var smallBmd:BitmapData = Util.Util.scaleBitmapData(bmd,0.2,0.2);
+//				var smallImgByteArray:ByteArray = jpgenc.encode(smallBmd);
+				var date:Date = new Date();
+				var picName:String = date.fullYear.toString() + "_" + (date.month + 1).toString() 
+					+ "_" + date.date.toString() + "_" + date.hours.toString() + "_" + date.minutes.toString();
+				
+				var path:String = File.applicationDirectory.nativePath + "/output/" + picName + ".jpg";
+				savePic(path,imgByteArray)
+//				savePic(File.applicationDirectory.nativePath + "/output/big/" + picName + ".jpg",imgByteArray)
+//				savePic(File.applicationDirectory.nativePath + "/output/small/" + picName + ".jpg",smallImgByteArray)
+				
+				_tipLabel.text = "保存成功";
+				
+				Utils.client.sendMessage({"path":path});
+			}
+			_tipCount ++;
+			if(_tipCount >= 50)
+			{
+				_tipLabel.text = "";
+				this.removeEventListener(Event.ENTER_FRAME,drawFrame);	
+			}
+		}
+		
+		private function savePic(path:String,data:ByteArray):void
+		{
+			var fl:File = new File(path);
+			var fs:FileStream = new FileStream();
+			try{
+				fs.open(fl,FileMode.WRITE);
+				fs.writeBytes(data);
+				fs.close();
+			}catch(e:Error){
+				trace(e.message);
+				return;
+			}
+		}
+		
 		private function previewClickHandler(target:BaseButton):void
 		{
-			
+			if(_preview == null)
+			{
+				_preview = new Preview();
+			}
+			addChild(_preview);
 		}
 		private function printClickHandler(target:BaseButton):void
 		{

@@ -1,5 +1,10 @@
 package view
 {
+	import Util.Utils;
+	
+	import data.Config;
+	import data.MyEvent;
+	
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -33,12 +38,14 @@ package view
 		private var _brushColorList:Vector.<MovieClip> = new Vector.<MovieClip>();
 		private var _glow:GlowFilter = new GlowFilter(0,0.6,3,3);		
 		
-		private var _main:Main;
+		private var _main:IApplication;
 		private var _downTime:Number;
 		private var _isDrag:Boolean = false;
 		private var _dragObj:Sprite;
 		
-		public function Controller(main:Main)
+		private var _resignBtn:BaseButton;
+		
+		public function Controller(main:IApplication)
 		{
 			this._main = main;
 			super();
@@ -50,6 +57,11 @@ package view
 		{
 			stage.addEventListener(Event.RESIZE,onResizeHandler);
 			onResizeHandler(null);
+			
+			_resignBtn = new BaseButton(Config.RESIGN_IMG);
+			addChild(_resignBtn);
+			_resignBtn.x = 113;
+			_resignBtn.y = 700;
 			
 			_brushTypeList.push(brush1);
 			_brushTypeList.push(brush2);
@@ -85,9 +97,13 @@ package view
 		
 		private function initEvent():void
 		{
+			Utils.addEventListener(MyEvent.REPLACE,replaceHandler);
 			stage.addEventListener(MouseEvent.MOUSE_UP,upHandler);
 			sizeList.addEventListener(MouseEvent.MOUSE_DOWN,downHandler);
 			color.addEventListener(MouseEvent.MOUSE_DOWN,downHandler);
+			
+			_resignBtn.addEventListener(MouseEvent.CLICK,onClickResignHandler);
+			
 			var i:int;
 			for (i = 0; i < _brushTypeList.length; i++) 
 			{
@@ -102,6 +118,26 @@ package view
 			{
 				_brushColorList[i].addEventListener(MouseEvent.CLICK,clickColor);
 			}
+		}
+		
+		private function replaceHandler(evt:Event):void
+		{
+			for (var i:int = 0; i < _brushTypeList.length; i++) 
+			{
+				_brushTypeList[i].x = (i % 2) * 123;
+				_brushTypeList[i].y = int(i / 2) * 142;
+			}
+			color.x = 0;
+			color.y = 486;
+			sizeList.x = 0;
+			sizeList.y = 283;
+			_resignBtn.x = 113;
+			_resignBtn.y = 700;
+		}
+		
+		protected function onClickResignHandler(event:MouseEvent):void
+		{
+			_main.clear();			
 		}
 		
 		protected function upHandler(event:MouseEvent):void
