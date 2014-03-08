@@ -1,14 +1,20 @@
 package data
 {
+	import flash.geom.Point;
+	import flash.utils.Dictionary;
+
 	public class Config
 	{
 		public static function get CONN_NAME():String
 		{
-			return "signSoftConnect_4__";
+			return "_signSoftConnect";
 		}
 		
 		public static var USE_TOUCH:Boolean = true;
 		
+		public static var defaultPos:Dictionary = new Dictionary();
+		
+		public static const POS_CONTROLLER:String = "posController";
 		public static const POS_PHOTO:String = "posPhoto";
 		public static const POS_SIGN:String = "posSign";
 		public static const POS_SAVE:String = "posSave";
@@ -21,6 +27,10 @@ package data
 		public static const PREVIEW_IMG:String = "preview.png";
 		public static const PRINT_IMG:String = "print.png";
 		public static const OK_IMG:String = "okBtn.png";
+		public static const HOME_IMG:String = "home.png";
+		public static const CLOSE_IMG:String = "closeBtn.png";
+		public static const REPLACE_IMG:String = "replace.png";
+		public static const RESIGN_IMG:String = "resign.png";
 		
 		public static var PHOTO_TOGGLE:Boolean = true;
 		public static var SIGN_TOGGLE:Boolean = true;
@@ -30,6 +40,9 @@ package data
 		
 		public static var CAMERA_WIDTH:int = 400;
 		public static var CAMERA_HEIGHT:int = 400;
+		
+		public static var SCREEN_WIDTH:int = 1920;
+		public static var SCREEN_HEIGHT:int = 1080;
 		
 		public static var UI_PATH:String;
 		public static var BGSND_PATH:String;
@@ -48,6 +61,9 @@ package data
 			CAMERA_WIDTH = int(xml.CAMERA.@width);
 			CAMERA_HEIGHT = int(xml.CAMERA.@height);
 			
+			SCREEN_WIDTH = int(xml.SCREEN.WIDTH);
+			SCREEN_HEIGHT = int(xml.SCREEN.HEIGHT); 
+			
 			USE_TOUCH = (String(xml.USE_TOUCH) =='true');
 			
 			PHOTO_TOGGLE = (xml.FUNCTIONS.PHOTO.@toggle=='true');
@@ -55,6 +71,13 @@ package data
 			SAVE_TOGGLE = (xml.FUNCTIONS.SAVE.@toggle=='true');
 			PREVIEW_TOGGLE = (xml.FUNCTIONS.PREVIEW.@toggle=='true');
 			PRINT_TOGGLE = (xml.FUNCTIONS.PRINT.@toggle=='true');
+			
+			defaultPos[POS_PHOTO] = new Point(xml.FUNCTIONS.PHOTO.@x,xml.FUNCTIONS.PHOTO.@y);
+			defaultPos[POS_SAVE] = new Point(xml.FUNCTIONS.SIGN.@x,xml.FUNCTIONS.SIGN.@y);
+			defaultPos[POS_SIGN] = new Point(xml.FUNCTIONS.SAVE.@x,xml.FUNCTIONS.SAVE.@y);
+			defaultPos[POS_PREVIEW] = new Point(xml.FUNCTIONS.PREVIEW.@x,xml.FUNCTIONS.PREVIEW.@y);
+			defaultPos[POS_PRINT] = new Point(xml.FUNCTIONS.PRINT.@x,xml.FUNCTIONS.PRINT.@y);
+			defaultPos[POS_CONTROLLER] = new Point(xml.FUNCTIONS.CONTOLLER.@x,xml.FUNCTIONS.CONTOLLER.@y);
 			
 			var len:int = xml.BACKGROUND.IMG.length();
 			for (var i:int = 0; i < len; i++) 
@@ -73,6 +96,10 @@ package data
 				case POS_PREVIEW:return PREVIEW_IMG;
 				case POS_PRINT:return PRINT_IMG;
 				case OK_IMG:return OK_IMG;
+				case HOME_IMG:return HOME_IMG;
+				case CLOSE_IMG:return CLOSE_IMG;
+				case REPLACE_IMG:return REPLACE_IMG;
+				case RESIGN_IMG:return RESIGN_IMG;
 			}
 			return "";
 		}

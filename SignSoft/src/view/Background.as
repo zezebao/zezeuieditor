@@ -15,19 +15,12 @@ package view
 	 */	
 	public class Background extends Sprite
 	{
-		private static var _instance:Background;
-		public static function getInstance():Background
-		{
-			return _instance;
-		}
-		
 		protected var _bg:Bitmap;
 		protected var _imgLoader:Loader;
 		
 		public function Background()
 		{
 			super();
-			_instance = this;
 			if(stage)addToStageHandler(null);
 			else this.addEventListener(Event.ADDED_TO_STAGE,addToStageHandler);
 		}
@@ -48,7 +41,6 @@ package view
 			_imgLoader.contentLoaderInfo.addEventListener(Event.COMPLETE,onBgCompleteHandler);
 			if(Config.BG_IMGS.length > 0)_imgLoader.load(new URLRequest(Config.BG_IMGS[0]));
 			trace(Config.BG_IMGS[0]);
-			
 			onResizeHandler();
 		}
 		
@@ -64,8 +56,8 @@ package view
 		
 		protected function onResizeHandler(event:Event=null):void
 		{
-			_bg.x = (stage.stageWidth - _bg.width) / 2;
-			_bg.y = (stage.stageHeight - _bg.height) / 2;
+//			_bg.x = (stage.stageWidth - _bg.width) / 2;
+//			_bg.y = (stage.stageHeight - _bg.height) / 2;
 		}
 	}
 }

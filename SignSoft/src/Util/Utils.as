@@ -1,14 +1,21 @@
 package Util
 {
+	import external.Client;
+	
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.filters.ColorMatrixFilter;
+	import flash.geom.Matrix;
 
-	public class Util extends EventDispatcher
+	public class Utils
 	{
-		public function Util()
+		public function Utils()
 		{
 		}
+		
+		public static var client:Client;
 		
 		/**
 		 * 灰度滤镜
@@ -33,6 +40,25 @@ package Util
 		public static function setGrey(obj:DisplayObject):void
 		{
 			obj.filters = [grayMatrix];
+		}
+		
+		public static function scaleBitmapData(bmpData:BitmapData, scaleX:Number, scaleY:Number):BitmapData
+		{
+			var matrix:Matrix = new Matrix();
+			matrix.scale(scaleX, scaleY);
+			var bmpData_:BitmapData = new BitmapData(scaleX * bmpData.width, scaleY * bmpData.height, true, 0);
+			bmpData_.draw(bmpData, matrix);
+			return bmpData_;
+		}
+		
+		private static var _dispatcher:EventDispatcher = new EventDispatcher();
+		public static function addEventListener(type:String,listener:Function):void
+		{
+			_dispatcher.addEventListener(type,listener);
+		}
+		public static function dispath(event:Event):void
+		{
+			_dispatcher.dispatchEvent(event);
 		}
 	}
 }

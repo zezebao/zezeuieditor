@@ -5,6 +5,7 @@ package view
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.FrameLabel;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.ActivityEvent;
 	import flash.events.Event;
@@ -14,12 +15,14 @@ package view
 	import flash.geom.Rectangle;
 	import flash.media.Camera;
 	import flash.media.Video;
+	import flash.system.ApplicationDomain;
 	import flash.text.TextField;
 	import flash.utils.getTimer;
 
 	public class VideoArea extends Sprite
 	{
-		private var _ms:MaskSp;
+		private var _ms:MovieClip;
+		private var _msWidget:MovieClip;
 		private var _downTime:Number;
 		private var _video:Video;
 		private var _okBtn:BaseButton;
@@ -41,14 +44,25 @@ package view
 			
 			_bm = new Bitmap(new BitmapData(Config.CAMERA_WIDTH,Config.CAMERA_HEIGHT,true,0x00000000));
 			addChild(_bm);
-			_bm.visible = false;
 			
-			_ms = new MaskSp();
+			var flag:Boolean = ApplicationDomain.currentDomain.hasDefinition("view.MaskSp");
+			if(flag)
+			{
+				var maskClass:Class = ApplicationDomain.currentDomain.getDefinition("view.MaskSp") as Class;
+				var maskWidgetClass:Class = ApplicationDomain.currentDomain.getDefinition("view.MaskWidget") as Class;
+				_ms = new maskClass() as MovieClip;
+				_msWidget = new maskWidgetClass() as MovieClip;
+			}else
+			{
+				_ms = new MaskSpBak();
+				_msWidget = new MovieClip();
+			}
 			_ms.scaleX = _ms.scaleY = Config.CAMERA_WIDTH / 400;
 			_ms.gotoAndStop(1);
+			_msWidget.gotoAndStop(1);
 			addChild(_ms);
+			addChild(_msWidget);
 			_video.mask = _ms;
-			_bm.mask = _ms;
 			
 			var camera:Camera = Camera.getCamera();
 			if(camera!=null)
@@ -86,9 +100,11 @@ package view
 			event.stopImmediatePropagation();
 			
 			_okBtn.visible = false; 
-			_bm.bitmapData = new BitmapData(Config.CAMERA_WIDTH,Config.CAMERA_HEIGHT);
-			var matrix:Matrix = new Matrix();
-			_bm.bitmapData.draw(_video,matrix);
+			_bm.bitmapData = new BitmapData(Config.CAMERA_WIDTH,Config.CAMERA_HEIGHT,true,0xff0000);
+			this.filters = [];
+			_bm.bitmapData.draw(this);
+			this.filters = [new GlowFilter(0x333333,1,6,6,6)];
+			
 			_bm.visible = true;
 		}
 		
@@ -115,6 +131,7 @@ package view
 				frame = 1;
 			}
 			_ms.gotoAndStop(frame);
+			_msWidget.gotoAndStop(frame);
 		}
 		
 		protected function onMouseUpHandler(event:MouseEvent):void
@@ -124,9 +141,9 @@ package view
 		
 		protected function onMouseDownHandler(event:MouseEvent):void
 		{
-			event.stopImmediatePropagation();
 			_downTime = getTimer();
-			this.startDrag(false,new Rectangle(0,0,stage.stageWidth - Config.CAMERA_WIDTH,stage.stageHeight - Config.CAMERA_HEIGHT));			
+			this.startDrag(false);
+			//this.startDrag(false,new Rectangle(0,0,stage.stageWidth - Config.CAMERA_WIDTH,stage.stageHeight - Config.CAMERA_HEIGHT));			
 		}
 		
 		private function activityHandler(e:ActivityEvent):void

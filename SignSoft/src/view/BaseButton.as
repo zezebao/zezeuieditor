@@ -1,9 +1,11 @@
 package view
 {
+	import Util.Utils;
+	
 	import caurina.transitions.Tweener;
 	
 	import data.Config;
-	import data.ShareObjectManager;
+	import data.MyEvent;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -27,11 +29,14 @@ package view
 		private var _position:Point;
 		private var _posPerertyName:String;
 		private var _downTime:Number;
+		private var _canMove:Boolean;
 		
-		public function BaseButton(posPerertyName:String)
+		public function BaseButton(posPerertyName:String,canMove:Boolean=true)
 		{
 			super();
+			
 			_imgLoader = new Loader();
+			_canMove = canMove;
 			_posPerertyName = posPerertyName;
 			_btnImg = new Bitmap();
 			addChild(_btnImg);
@@ -48,6 +53,7 @@ package view
 			stage.addEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
 			stage.addEventListener(Event.RESIZE,onResizeHandler);
 			onResizeHandler();
+			replaceHandler();
 		}
 		
 		private function load():void
@@ -62,6 +68,17 @@ package view
 			_imgLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onErrorHandler);
 			this.addEventListener(MouseEvent.CLICK,onClickHandler);
 			this.addEventListener(MouseEvent.MOUSE_DOWN,onMosueDownHandler);
+			Utils.addEventListener(MyEvent.REPLACE,replaceHandler);
+		}
+		
+		private function replaceHandler(evt:Event=null):void
+		{
+			var pos:Point = Config.defaultPos[_posPerertyName];
+			if(pos)
+			{
+				this.x = pos.x;
+				this.y = pos.y;
+			}				
 		}
 		
 		protected function removeEvent():void
@@ -80,14 +97,17 @@ package view
 			_downTime = getTimer();
 			var ts:Number = 1.05;
 			Tweener.addTween(this,{scaleX:ts,scaleY:ts,time:0.1});
-			this.startDrag(false,new Rectangle(0,0,stage.stageWidth - _btnImg.width,stage.stageHeight - _btnImg.height));
+			if(_canMove)
+			{
+//				this.startDrag(false,new Rectangle(0,0,stage.stageWidth - _btnImg.width,stage.stageHeight - _btnImg.height));
+				this.startDrag(false);				
+			}
 		}
 		
 		protected function onMouseUpHandler(event:MouseEvent):void
 		{
 			Tweener.addTween(this,{scaleX:1,scaleY:1,time:0.1});
 			this.stopDrag();
-			ShareObjectManager.getInstance().setProperty(_posPerertyName,new Point(stage.stageWidth - this.x,this.y));
 		}
 		
 		protected function onClickHandler(event:MouseEvent):void
@@ -113,10 +133,7 @@ package view
 		
 		protected function onResizeHandler(event:Event=null):void
 		{
-			var pos:Object = ShareObjectManager.getInstance().getProperty(_posPerertyName);
-			if(pos == null)return;
-			this.x = stage.stageWidth - pos["x"];
-			this.y = pos["y"];
+
 		}
 		
 		public function get position():Point
