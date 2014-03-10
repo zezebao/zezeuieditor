@@ -201,6 +201,12 @@ package
 			changeType();
 		}
 		
+		public function reset():void
+		{
+			if(_videoArea)_videoArea.hide();
+			clear();
+		}
+		
 		public function clear():void
 		{
 			for (var i:int = 0; i < _brushs.length; i++) 
@@ -273,6 +279,8 @@ package
 				_tipLabel.text = "保存成功";
 				
 				Utils.client.sendMessage({"path":path});
+				//重置画布
+				reset();
 			}
 			_tipCount ++;
 			if(_tipCount >= 50)
@@ -303,6 +311,7 @@ package
 				_preview = new Preview();
 			}
 			addChild(_preview);
+			reset();
 		}
 		private function printClickHandler(target:BaseButton):void
 		{

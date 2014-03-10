@@ -142,7 +142,7 @@ package view
 		protected function onMouseDownHandler(event:MouseEvent):void
 		{
 			_downTime = getTimer();
-			this.startDrag(false);
+//			this.startDrag(false);
 			//this.startDrag(false,new Rectangle(0,0,stage.stageWidth - Config.CAMERA_WIDTH,stage.stageHeight - Config.CAMERA_HEIGHT));			
 		}
 		
