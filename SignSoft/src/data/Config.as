@@ -40,6 +40,8 @@ package data
 		
 		public static var CAMERA_WIDTH:int = 400;
 		public static var CAMERA_HEIGHT:int = 400;
+		public static var CAMERA_X:int = 300;
+		public static var CAMERA_Y:int = 300;
 		
 		public static var SCREEN_WIDTH:int = 1920;
 		public static var SCREEN_HEIGHT:int = 1080;
@@ -60,6 +62,8 @@ package data
 			
 			CAMERA_WIDTH = int(xml.CAMERA.@width);
 			CAMERA_HEIGHT = int(xml.CAMERA.@height);
+			CAMERA_X = int(xml.CAMERA.@x);
+			CAMERA_Y = int(xml.CAMERA.@y);
 			
 			SCREEN_WIDTH = int(xml.SCREEN.WIDTH);
 			SCREEN_HEIGHT = int(xml.SCREEN.HEIGHT); 

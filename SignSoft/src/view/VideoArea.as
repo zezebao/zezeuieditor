@@ -37,9 +37,12 @@ package view
 		
 		private function init(evt:Event=null):void
 		{
+			this.removeEventListener(Event.ADDED_TO_STAGE,init);
+			
 			this.filters = [new GlowFilter(0x333333,1,6,6,6)];
 			
-			_video = new Video(Config.CAMERA_WIDTH,Config.CAMERA_HEIGHT);
+			//_video = new Video(Config.CAMERA_WIDTH,Config.CAMERA_HEIGHT);
+			_video = new Video(1920,1080);
 			addChild(_video); 
 			
 			_bm = new Bitmap(new BitmapData(Config.CAMERA_WIDTH,Config.CAMERA_HEIGHT,true,0x00000000));
@@ -85,14 +88,27 @@ package view
 			}
 			
 			_okBtn = new BaseButton(Config.OK_IMG);
-			addChild(_okBtn);
+//			addChild(_okBtn);
 			_okBtn.x = Config.CAMERA_WIDTH/2;
 			_okBtn.y = Config.CAMERA_HEIGHT - 50;
 			
+			initEvent();
+		}
+		
+		private function initEvent():void
+		{
 			this.addEventListener(MouseEvent.MOUSE_DOWN,onMouseDownHandler);
 			this.addEventListener(MouseEvent.CLICK,onClickHandler);
 			stage.addEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
 			_okBtn.addEventListener(MouseEvent.CLICK,onMouseClickHandler);
+		}
+		
+		private function removeEvent():void
+		{
+			this.removeEventListener(MouseEvent.MOUSE_DOWN,onMouseDownHandler);
+			this.removeEventListener(MouseEvent.CLICK,onClickHandler);
+			stage.removeEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
+			_okBtn.removeEventListener(MouseEvent.CLICK,onMouseClickHandler);
 		}
 		
 		protected function onMouseClickHandler(event:MouseEvent):void
@@ -149,6 +165,14 @@ package view
 		private function activityHandler(e:ActivityEvent):void
 		{
 			trace("activityHandler:"+e);
+		}
+		
+		public function dispose():void
+		{
+			if(this.parent)parent.removeChild(this);
+			_video.attachCamera(null);
+			_video.attachNetStream(null);
+			_video = null;
 		}
 	}
 }

@@ -7,7 +7,7 @@
 		<HEIGHT>1080</HEIGHT>
 	</SCREEN>>
 	<!-- 摄像头显示宽高，默认为400,400 -->
-	<CAMERA width='400' height='400'/>
+	<CAMERA width='400' height='400' x = '300' y = '300'/>
 	
 	<!-- UI文件夹路径 -->
 	<UI_PATH>images/ui/</UI_PATH>
@@ -15,9 +15,10 @@
 	<!-- 背景音乐,默认无 -->
 	<BG_SOUND></BG_SOUND>
 	
-	<!-- 背景图片 -->
+	<!-- 背景图片,第一个是照片背景，第二个是预览界面的背景 -->
 	<BACKGROUND>
 		<IMG>images/bg/1.jpg</IMG>
+		<IMG>images/bg/2.jpg</IMG>
 	</BACKGROUND>
 	
 	<!-- 功能按钮,打开状态，toggle值为true,注意，true，false为小写 -->
