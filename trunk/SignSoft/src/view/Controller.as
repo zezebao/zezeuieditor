@@ -158,7 +158,7 @@ package view
 		{
 			_downTime = getTimer();
 			_dragObj = event.currentTarget as Sprite;
-			_dragObj.startDrag(false);
+//			_dragObj.startDrag(false);
 		}
 		
 		protected function clickType(event:MouseEvent):void

@@ -37,6 +37,9 @@ package view
 			
 			_imgLoader = new Loader();
 			_canMove = canMove;
+			
+			_canMove = false;
+			
 			_posPerertyName = posPerertyName;
 			_btnImg = new Bitmap();
 			addChild(_btnImg);
