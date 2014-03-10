@@ -51,16 +51,22 @@ package view.preview
 			_bmCon.addEventListener(MouseEvent.MOUSE_DOWN,onMouseDownHandler);
 			this.addEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
 			this.addEventListener(TransformGestureEvent.GESTURE_ZOOM, zoomHandler);
+			this.addEventListener(TransformGestureEvent.GESTURE_ROTATE, rotateHandler);
+		}
+		
+		private function rotateHandler(event:TransformGestureEvent):void
+		{
+			_bmCon.rotation += event.rotation;
 		}
 		
 		private function zoomHandler(event:TransformGestureEvent):void
 		{
-			var scale:Number = _bm.scaleX;
+			var scale:Number = _bmCon.scaleX;
 			scale *= event.scaleX;
 			
 			if(scale > _maxScale)scale = _maxScale;
 			else if(scale < _minScale)scale = _minScale;
-			_bm.scaleX = _bm.scaleY = scale;
+			_bmCon.scaleX = _bmCon.scaleY = scale;
 		}
 		
 		protected function onClickCloseHandler(event:MouseEvent):void
@@ -85,9 +91,9 @@ package view.preview
 		protected function onCompleteHandler(event:Event):void
 		{
 			_bm.bitmapData = (_loader.content as Bitmap).bitmapData;
-			_bm.scaleX = _bm.scaleY = _minScale;
 			_bm.x = -_bm.width / 2;
 			_bm.y = -_bm.height / 2;
+			_bmCon.scaleX = _bmCon.scaleY = _minScale;
 			
 			_bmCon.x = Config.SCREEN_WIDTH / 2;
 			_bmCon.y = Config.SCREEN_HEIGHT / 2; 

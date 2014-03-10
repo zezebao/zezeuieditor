@@ -150,7 +150,7 @@ package
 			btn.clickCallback = replaceHandler;
 			btn.x = 130;
 			btn.y = Config.SCREEN_HEIGHT - 50;
-			addChild(btn);
+//			addChild(btn);
 			
 			_tipLabel = new TextField();
 			_tipLabel.defaultTextFormat = new TextFormat("微软雅黑",80);
@@ -190,10 +190,16 @@ package
 			{
 				_videoArea = new VideoArea();
 				_drawCon.addChild(_videoArea);
-				_videoArea.hide();
+				_videoArea.x = Config.CAMERA_X;
+				_videoArea.y = Config.CAMERA_Y;
+				_videoArea.show();
+			}else
+			{
+				_videoArea.dispose();
+				_videoArea = null;
 			}
 			
-			_videoArea.show();
+//			_videoArea.show();
 		}
 		private function signClickHandler(target:BaseButton):void
 		{
@@ -269,7 +275,8 @@ package
 //				var smallImgByteArray:ByteArray = jpgenc.encode(smallBmd);
 				var date:Date = new Date();
 				var picName:String = date.fullYear.toString() + "_" + (date.month + 1).toString() 
-					+ "_" + date.date.toString() + "_" + date.hours.toString() + "_" + date.minutes.toString();
+					+ "_" + date.date.toString() + "_" + date.hours.toString() 
+					+ "_" + date.minutes.toString() + "_" + date.seconds.toString();
 				
 				var path:String = File.applicationDirectory.nativePath + "/output/" + picName + ".jpg";
 				savePic(path,imgByteArray)

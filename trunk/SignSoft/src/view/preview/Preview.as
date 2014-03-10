@@ -1,6 +1,7 @@
 package view.preview
 {
 	import data.Config;
+	import data.PreviewSortItem;
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -47,7 +48,7 @@ package view.preview
 		
 		private function initView():void
 		{
-			_bg = new Background();
+			_bg = new Background(1);
 			addChild(_bg);
 			
 			_itemCon = new Sprite();
@@ -83,8 +84,8 @@ package view.preview
 				item.addEventListener(MouseEvent.CLICK,onClickItemHandler);
 				_itemCon.addChild(item);
 				
-				item.x = Config.SCREEN_WIDTH / 20 + int(i / 2) * (Config.SCREEN_WIDTH / 5 + Config.SCREEN_WIDTH / 40);
-				item.y = (i % 2) * (Config.SCREEN_HEIGHT / 5 + 100);
+				item.x = Config.SCREEN_WIDTH / 20 + int(i % 4) * (Config.SCREEN_WIDTH / 5 + Config.SCREEN_WIDTH / 40);
+				item.y = int(i / 4) * (Config.SCREEN_HEIGHT / 5 + 100);
 				
 				_imgItems.push(item);
 			}
@@ -100,7 +101,19 @@ package view.preview
 			var file:File = new File(File.applicationDirectory.nativePath + "/output/");
 			if(file.exists)
 			{
-				_imgList = file.getDirectoryListing();
+				var tmp:Array = file.getDirectoryListing();
+				var sortArr:Array = [];
+				for (var i:int = 0; i < tmp.length; i++) 
+				{
+					var sortItem:PreviewSortItem = new PreviewSortItem(tmp[i] as File);
+					sortArr.push(sortItem);
+				}
+				sortArr = sortArr.sortOn("time",Array.DESCENDING);
+				_imgList = [];
+				for (var j:int = 0; j < sortArr.length; j++) 
+				{
+					_imgList[j] = sortArr[j].file;
+				}
 				_totalPage = Math.ceil(_imgList.length / pageCount);
 			}
 			setPage();

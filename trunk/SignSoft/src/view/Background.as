@@ -17,10 +17,12 @@ package view
 	{
 		protected var _bg:Bitmap;
 		protected var _imgLoader:Loader;
+		private var _bgIndex:int = 0;
 		
-		public function Background()
+		public function Background(bgIndex:int = 0)
 		{
 			super();
+			_bgIndex = bgIndex;
 			if(stage)addToStageHandler(null);
 			else this.addEventListener(Event.ADDED_TO_STAGE,addToStageHandler);
 		}
@@ -39,14 +41,13 @@ package view
 			
 			_imgLoader = new Loader();
 			_imgLoader.contentLoaderInfo.addEventListener(Event.COMPLETE,onBgCompleteHandler);
-			if(Config.BG_IMGS.length > 0)_imgLoader.load(new URLRequest(Config.BG_IMGS[0]));
-			trace(Config.BG_IMGS[0]);
+			if(Config.BG_IMGS.length > _bgIndex)_imgLoader.load(new URLRequest(Config.BG_IMGS[_bgIndex]));
+			else if(Config.BG_IMGS.length > 0)_imgLoader.load(new URLRequest(Config.BG_IMGS[0]));
 			onResizeHandler();
 		}
 		
 		protected function onBgCompleteHandler(event:Event):void
 		{
-			trace("xxxxxx");
 			var bitmap:Bitmap = _imgLoader.content as Bitmap;
 			_bg.bitmapData = bitmap.bitmapData;
 			
