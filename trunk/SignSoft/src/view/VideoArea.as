@@ -42,7 +42,11 @@ package view
 			this.filters = [new GlowFilter(0x333333,1,6,6,6)];
 			
 			//_video = new Video(Config.CAMERA_WIDTH,Config.CAMERA_HEIGHT);
-			_video = new Video(1920,1080);
+			_video = new Video(Config.SCREEN_WIDTH,Config.SCREEN_HEIGHT);
+			var scale:Number = Math.max(Config.CAMERA_WIDTH / Config.SCREEN_WIDTH,Config.CAMERA_HEIGHT / Config.SCREEN_HEIGHT);
+			_video.scaleX = _video.scaleY = scale;
+			_video.x = -(_video.width - Config.CAMERA_WIDTH) * 0.5;
+			_video.y = -(_video.height - Config.CAMERA_HEIGHT) * 0.5;
 			addChild(_video); 
 			
 			_bm = new Bitmap(new BitmapData(Config.CAMERA_WIDTH,Config.CAMERA_HEIGHT,true,0x00000000));
@@ -67,11 +71,19 @@ package view
 			addChild(_msWidget);
 			_video.mask = _ms;
 			
+			_video.rotation = Config.CAMERA_ROTATION;
+			if(Config.CAMERA_ROTATION == 180)
+			{
+				_video.x += _video.width;
+				_video.y += _video.height;
+			}
+			
 			var camera:Camera = Camera.getCamera();
 			if(camera!=null)
 			{
-				camera.setMode(Config.CAMERA_WIDTH/2,Config.CAMERA_HEIGHT/2,60);
-				camera.setQuality(0,100);
+				//camera.setMode(Config.CAMERA_WIDTH/2,Config.CAMERA_HEIGHT/2,60);
+				camera.setMode(Config.SCREEN_WIDTH,Config.SCREEN_HEIGHT,60,false);
+//				camera.setQuality(0,100);
 				camera.addEventListener(ActivityEvent.ACTIVITY,activityHandler);
 				
 				_video.attachCamera(camera);

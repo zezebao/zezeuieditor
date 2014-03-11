@@ -46,6 +46,7 @@ package
 	import view.VideoArea;
 	import view.brush.BaseBrush;
 	import view.brush.BrushPen;
+	import view.brush.BrushPenII;
 	import view.brush.BrushPencil;
 	import view.brush.WritingBrush;
 	import view.preview.Preview;
@@ -109,7 +110,7 @@ package
 			var brush:BaseBrush;
 			brush= new WritingBrush(this);
 			_brushs.push(brush);
-			brush = new BrushPen(this);
+			brush = new BrushPenII(this);
 			_brushs.push(brush);
 			brush = new BrushPencil(this);
 			_brushs.push(brush);
@@ -315,7 +316,7 @@ package
 		{
 			if(_preview == null)
 			{
-				_preview = new Preview();
+				_preview = new Preview(this);
 			}
 			addChild(_preview);
 			reset();

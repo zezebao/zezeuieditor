@@ -3,6 +3,8 @@ package view.brush
 	import com.flashandmath.dg.GUI.GradientSwatch;
 	import com.flashandmath.dg.bitmapUtilities.BitmapSaver;
 	
+	import data.Config;
+	
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -10,7 +12,7 @@ package view.brush
 	
 	import view.Controller;
 	
-	public class BrushPen extends BaseBrush
+	public class BrushPenII extends BaseBrush
 	{
 		private var lineLayer:Sprite;
 		private var lastSmoothedMouseX:Number;
@@ -84,7 +86,7 @@ package view.brush
 		
 		private var colorChangeRate:Number;
 		
-		public function BrushPen(main:IApplication)
+		public function BrushPenII(main:IApplication)
 		{
 			super(main);
 			initData();
@@ -93,8 +95,8 @@ package view.brush
 		private function initData():void 
 		{
 			
-			boardWidth = 1920;
-			boardHeight = 1080;
+			boardWidth = Config.SCREEN_WIDTH;
+			boardHeight = Config.SCREEN_HEIGHT;
 			
 			minThickness = 0.2;
 			thicknessFactor = 0.25;
@@ -159,6 +161,16 @@ package view.brush
 			//We will keep track of whether the mouse moves in between a mouse down and a mouse up.  If not,
 			//a small dot will be drawn.
 			mouseMoved = false;
+			
+			super.onMouseDownHandler(e);
+			if (canNotDraw) 
+			{
+				var lineStyle:Number = 1 + 20 * (Controller.brushSize / (6 * 3));
+				brushSp.graphics.lineStyle(lineStyle,Controller.brushColor);
+				brushSp.graphics.moveTo(mouseX,mouseY);
+				
+				addChild(brushSp);
+			}
 		}
 		
 		override protected function onMouseUpHandler(e:Event):void
@@ -181,6 +193,8 @@ package view.brush
 			if (undoStack.length > numUndoLevels + 1) {
 				undoStack.splice(0,1);
 			}
+			
+			brushSp.graphics.clear();
 		}
 		
 		private function drawLine():void 
@@ -232,9 +246,7 @@ package view.brush
 			targetLineThickness = minThickness+thicknessFactor*dist;
 			lineThickness = lastThickness + thicknessSmoothingFactor*(targetLineThickness - lastThickness)/5;
 			
-			lineThickness += ((Controller.brushSize - 1) / 6) * 0.2;
-			
-			trace("lineThickness",lineThickness);
+			lineThickness += ((Controller.brushSize - 1) / 4) * 0.8;
 			
 			/*
 			The "line" being drawn is actually composed of filled in shapes.  This is what allows
@@ -272,7 +284,7 @@ package view.brush
 			lineLayer.graphics.curveTo(controlX2, controlY2, lastSmoothedMouseX - L0Cos0, lastSmoothedMouseY - L0Sin0);
 			lineLayer.graphics.lineTo(lastSmoothedMouseX + L0Cos0, lastSmoothedMouseY + L0Sin0);
 			lineLayer.graphics.endFill();
-			bmd.draw(lineLayer);
+			//bmd.draw(lineLayer);
 			
 			var taperThickness:Number = tipTaperFactor*lineThickness;
 			
@@ -284,6 +296,14 @@ package view.brush
 			lastMouseChangeVectorY = mouseChangeVectorY;
 			lastMouseX = container.mouseX;
 			lastMouseY = container.mouseY;
+			
+			
+			brushSp.graphics.lineStyle(lineThickness,Controller.brushColor);
+			brushSp.graphics.lineTo(mouseX,mouseY);
+			trace("lineto:",mouseX,mouseY);
+			oldX = mouseX;
+			oldY = mouseY;
+			bmd.draw(brushSp);
 		}
 		
 		private function darkenColor(c:uint, factor:Number):uint {

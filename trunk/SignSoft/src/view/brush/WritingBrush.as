@@ -1,19 +1,9 @@
 ﻿package view.brush 
 {
-	import data.Config;
-	
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
-	import flash.display.BlendMode;
 	import flash.display.MovieClip;
-	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
-	import flash.events.TouchEvent;
 	import flash.filters.BlurFilter;
 	import flash.geom.ColorTransform;
-	import flash.geom.Matrix;
-	import flash.geom.Rectangle;
 	
 	import view.Controller;
 
@@ -43,7 +33,7 @@
 			//为防止鼠标移动速度过快，计算老坐标和新坐标直接的距离，在两个坐标中间填充若干笔触
 			const disX:Number=mouseX-oldX;
 			const disY:Number=mouseY-oldY;
-			const dis:Number = Math.sqrt(disX * disX + disY * disY);
+			const dis:Number = Math.sqrt(disX * disX + disY * disY) * 1.1;
 			var scale:Number = (defaultScale - dis * cx) + 0.15;
 				//改变笔触的大小,越快越小
 //                if (dis > 0.12) { 

@@ -7,7 +7,7 @@
 		<HEIGHT>1080</HEIGHT>
 	</SCREEN>>
 	<!-- 摄像头显示宽高，默认为400,400 -->
-	<CAMERA width='400' height='400' x = '300' y = '300'/>
+	<CAMERA width='400' height='400' x = '300' y = '300' rotation='180'/>
 	
 	<!-- UI文件夹路径 -->
 	<UI_PATH>images/ui/</UI_PATH>
@@ -30,4 +30,6 @@
 		<PRINT toggle='true'  x='1820' y='900'/><!-- 打印 -->
 		<CONTOLLER x='1500' y='30'/><!-- 控制条 -->
 	</FUNCTIONS>
+	<!-- 预览界面缩略图位置 -->
+	<PREVIEW x='120' y='150'/>
 </rss>

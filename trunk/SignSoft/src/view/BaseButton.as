@@ -31,14 +31,19 @@ package view
 		private var _downTime:Number;
 		private var _canMove:Boolean;
 		
-		public function BaseButton(posPerertyName:String,canMove:Boolean=true)
+		private var _defaultScale:Number;
+		
+		public function BaseButton(posPerertyName:String,canMove:Boolean=true,defaultScale:Number = 1)
 		{
 			super();
 			
 			_imgLoader = new Loader();
 			_canMove = canMove;
-			
+			_defaultScale = defaultScale;
+			scaleX = scaleY = _defaultScale;
+			/////////////////////////////
 			_canMove = false;
+			/////////////////////////////
 			
 			_posPerertyName = posPerertyName;
 			_btnImg = new Bitmap();
@@ -98,7 +103,7 @@ package view
 		{
 			event.stopImmediatePropagation();
 			_downTime = getTimer();
-			var ts:Number = 1.05;
+			var ts:Number = _defaultScale + 0.05;
 			Tweener.addTween(this,{scaleX:ts,scaleY:ts,time:0.1});
 			if(_canMove)
 			{
@@ -109,7 +114,7 @@ package view
 		
 		protected function onMouseUpHandler(event:MouseEvent):void
 		{
-			Tweener.addTween(this,{scaleX:1,scaleY:1,time:0.1});
+			Tweener.addTween(this,{scaleX:_defaultScale,scaleY:_defaultScale,time:0.1});
 			this.stopDrag();
 		}
 		

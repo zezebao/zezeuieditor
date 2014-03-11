@@ -14,6 +14,7 @@ package view.preview
 	import flash.text.TextFormat;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
+	import flash.utils.getTimer;
 	
 	import flashx.textLayout.elements.Configuration;
 	
@@ -25,7 +26,7 @@ package view.preview
 	
 	public class Preview extends Sprite
 	{
-		private const pageCount:int = 8;
+		private const pageCount:int = 5;
 		
 		private var _homeBtn:BaseButton;
 		private var _imgItems:Vector.<PreviewItemView> = new Vector.<PreviewItemView>();
@@ -37,10 +38,12 @@ package view.preview
 		private var _imgList:Array = [];
 		private var _pageTf:TextField;
 		private var _imgView:PreviewImg;
+		private var _main:IApplication;
 		
-		public function Preview()
+		public function Preview(main:IApplication)
 		{
 			super();
+			_main = main;
 			initView();
 			if(stage)init();
 			else this.addEventListener(Event.ADDED_TO_STAGE,init);
@@ -80,12 +83,16 @@ package view.preview
 		{
 			for (var i:int = 0; i < pageCount; i++) 
 			{
-				var item:PreviewItemView = new PreviewItemView();
-				item.addEventListener(MouseEvent.CLICK,onClickItemHandler);
+				var item:PreviewItemView = new PreviewItemView(this);
+				item.doubleClickEnabled = true;
+				item.addEventListener(MouseEvent.MOUSE_DOWN,onClickItemHandler);
+				item.addEventListener(MouseEvent.DOUBLE_CLICK,onItemDoubleClickHandler);
 				_itemCon.addChild(item);
 				
-				item.x = Config.SCREEN_WIDTH / 20 + int(i % 4) * (Config.SCREEN_WIDTH / 5 + Config.SCREEN_WIDTH / 40);
-				item.y = int(i / 4) * (Config.SCREEN_HEIGHT / 5 + 100);
+				//item.x = Config.SCREEN_WIDTH / 20 + int(i % 4) * (Config.SCREEN_WIDTH / 5 + Config.SCREEN_WIDTH / 40);
+				//item.y = int(i / 4) * (Config.SCREEN_HEIGHT / 5 + 100);
+				item.x = Config.PREVIEW_X + (i % pageCount) * (320 + 25);
+				item.y = Config.PREVIEW_Y;
 				
 				_imgItems.push(item);
 			}
@@ -95,8 +102,17 @@ package view.preview
 		{
 			Multitouch.inputMode = MultitouchInputMode.GESTURE;
 			stage.addEventListener(Event.RESIZE,onResizeHandler);
-			onResizeHandler(null);
 			
+			_homeBtn.addEventListener(MouseEvent.CLICK,onClickHandler);
+			_bg.addEventListener(MouseEvent.MOUSE_DOWN,onMouseDownHandler);
+			stage.addEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
+			
+			updatePages();
+			onResizeHandler(null);
+		}
+		
+		private function updatePages():void
+		{
 			//var file:File = new File(File.applicationDirectory.nativePath + "/output/small/");
 			var file:File = new File(File.applicationDirectory.nativePath + "/output/");
 			if(file.exists)
@@ -117,9 +133,6 @@ package view.preview
 				_totalPage = Math.ceil(_imgList.length / pageCount);
 			}
 			setPage();
-			_homeBtn.addEventListener(MouseEvent.CLICK,onClickHandler);
-			_bg.addEventListener(MouseEvent.MOUSE_DOWN,onMouseDownHandler);
-			stage.addEventListener(MouseEvent.MOUSE_UP,onMouseUpHandler);
 		}
 		
 		protected function onMouseUpHandler(event:MouseEvent):void
@@ -142,6 +155,18 @@ package view.preview
 		protected function onMouseDownHandler(event:MouseEvent):void
 		{
 			_downX = stage.mouseX;
+		}
+		
+		public function delItem(item:PreviewItemView):void
+		{
+			
+			var file:File=new File(); 
+			file.nativePath=item.bigPicPath;
+			if(file.exists)
+			{
+				file.deleteFile();	
+			}
+			updatePages();
 		}
 		
 		public function nextPage():void
@@ -194,13 +219,19 @@ package view.preview
 			}
 		}
 		
-		protected function onClickItemHandler(event:MouseEvent):void
+		protected function onItemDoubleClickHandler(event:MouseEvent):void
 		{
 			var item:PreviewItemView = event.currentTarget as PreviewItemView;
 			if(item.bigPicPath != "")
 			{
 				_imgView.load(item.bigPicPath);
 			}
+		}
+		
+		protected function onClickItemHandler(event:MouseEvent):void
+		{
+			var item:PreviewItemView = event.currentTarget as PreviewItemView;
+			item.showDelBtn();
 		}
 		
 		protected function onClickHandler(event:MouseEvent):void
