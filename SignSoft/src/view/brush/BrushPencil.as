@@ -1,18 +1,7 @@
 ﻿package view.brush 
 {
-	import data.Config;
-	
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
-	import flash.display.BlendMode;
-	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
-	import flash.events.TouchEvent;
-	import flash.filters.BlurFilter;
-	import flash.geom.ColorTransform;
-	import flash.geom.Matrix;
-	import flash.geom.Rectangle;
+	
 	import view.Controller;
 
 	/**
