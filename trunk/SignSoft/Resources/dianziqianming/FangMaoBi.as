@@ -74,12 +74,17 @@
 				const dis:Number = Math.sqrt(disX * disX + disY * disY);
 				var scale:Number = defaultScale - dis * cx;
 				//改变笔触的大小,越快越小
-                if (dis > 0.12) { 
+                //if (dis > 0.12) { 
+                if (dis > 0.06) { 
                     if (scale > 1) scale = 1;
 					else if (scale < brushMin) scale = brushMin;
 					scale = (oldScale + scale) * 0.52;//0.5
                 }
-				const count:int = dis * brushAlpha;
+
+                scale *= 1.4;
+
+				var count:int = dis * brushAlpha;
+				count *= 2;
 				const scaleBili:Number = (oldScale-scale) / count;
 				var brush:MovieClip, i:int;
 				for (i=0; i<count; i++) {
@@ -88,7 +93,7 @@
 					brush_mc.addChild(brush);
 					//brush.filters = [bf];
 					brush.alpha = 0.6;
-                    brush.scaleX = brush.scaleY = oldScale-i * scaleBili; 
+                    brush.scaleX = brush.scaleY = (oldScale-i * scaleBili); 
 					brush.x=(disX/count)*(i+1)+oldX;
 					brush.y=(disY/count)*(i+1)+oldY;
 				}
