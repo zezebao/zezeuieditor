@@ -49,6 +49,7 @@ package
 	import view.brush.BrushPenII;
 	import view.brush.BrushPencil;
 	import view.brush.WritingBrush;
+	import view.brush.WritingBrushII;
 	import view.preview.Preview;
 	
 	[SWF(frameRate="60",width="1920",height="1080")]
@@ -108,7 +109,8 @@ package
 			
 			_brushs.push(null);
 			var brush:BaseBrush;
-			brush= new WritingBrush(this);
+			//brush= new WritingBrush(this);
+			brush= new WritingBrushII(this);
 			_brushs.push(brush);
 			brush = new BrushPenII(this);
 			_brushs.push(brush);

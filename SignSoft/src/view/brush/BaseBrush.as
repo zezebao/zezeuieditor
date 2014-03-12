@@ -31,7 +31,7 @@ package view.brush
 		protected var emptySp:Sprite;//清屏对象
 		protected var moveSpeed:Point = new Point();
 		
-		private var _main:IApplication;
+		protected var _main:IApplication;
 		
 		public function BaseBrush(main:IApplication) 
 		{
