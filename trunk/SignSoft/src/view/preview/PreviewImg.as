@@ -84,8 +84,8 @@ package view.preview
 		protected function onMouseUpHandler(event:MouseEvent):void
 		{
 			_bmCon.stopDrag();
-			if(getTimer() - _downTime > 300)return;
-			clear();			
+//			if(getTimer() - _downTime > 300)return;
+//			clear();			
 		}
 		
 		protected function onCompleteHandler(event:Event):void

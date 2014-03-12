@@ -25,7 +25,7 @@ package view
 		private var _msWidget:MovieClip;
 		private var _downTime:Number;
 		private var _video:Video;
-		private var _okBtn:BaseButton;
+		public var _okBtn:BaseButton;
 		private var _bm:Bitmap;
 		
 		public function VideoArea()
@@ -100,7 +100,7 @@ package view
 			}
 			
 			_okBtn = new BaseButton(Config.OK_IMG);
-//			addChild(_okBtn);
+			addChild(_okBtn);
 			_okBtn.x = Config.CAMERA_WIDTH/2;
 			_okBtn.y = Config.CAMERA_HEIGHT - 50;
 			

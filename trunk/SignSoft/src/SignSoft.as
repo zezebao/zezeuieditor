@@ -267,6 +267,8 @@ package
 		{
 			if(_tipCount == 5)
 			{
+				if(_videoArea != null)_videoArea._okBtn.visible = false;
+				
 				var jpgenc:JPGEncoder = new JPGEncoder(80);
 				var bmd:BitmapData = new BitmapData(1920,1080);
 				bmd.draw(_drawCon);
