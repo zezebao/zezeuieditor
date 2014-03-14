@@ -18,6 +18,7 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.ActivityEvent;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
@@ -35,6 +36,7 @@ package
 	import flash.system.Security;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
+	import flash.ui.Keyboard;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.setTimeout;
@@ -169,6 +171,33 @@ package
 			_drawCon.addChild(tf);
 			tf.mouseEnabled = tf.mouseWheelEnabled = false;
 			tf.text = "制作中........";
+			
+			stage.addEventListener(KeyboardEvent.KEY_UP,onKeyUpHandler);
+		}
+		
+		protected function onKeyUpHandler(event:KeyboardEvent):void
+		{
+			if(event.keyCode == Keyboard.Q && Config.USE_TOUCH)
+			{
+				Config.USE_TOUCH = false;
+				
+				_brushs[1].dispose();
+				_brushs[2].dispose();
+				_brushs[3].dispose();
+				
+				var brush:BaseBrush;
+				brush= new WritingBrushII(this);
+				_brushs[1] = brush;
+				_drawCon.addChild(brush);
+				brush = new BrushPenII(this);
+				_brushs[2] = brush;
+				_drawCon.addChild(brush);
+				brush = new BrushPencil(this);
+				_brushs[3] = brush;
+				_drawCon.addChild(brush);
+				
+				trace("测试用鼠标");
+			}
 		}
 		
 		private function replaceHandler(target:BaseButton):void

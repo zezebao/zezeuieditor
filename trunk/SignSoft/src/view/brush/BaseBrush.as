@@ -93,6 +93,7 @@ package view.brush
 		
 		protected function onEnterFrameHandler(e:Event):Boolean 
 		{
+			if(! stage)return false;
 			if (! isDown)return false; 
 				
 			if(Controller.brushType == 4)
@@ -125,6 +126,7 @@ package view.brush
 		
 		protected function onMouseUpHandler(e:Event):void
 		{
+			if(! stage)return;
 			if(Config.USE_TOUCH)
 			{
 				stage.removeEventListener(TouchEvent.TOUCH_MOVE, onEnterFrameHandler);	
@@ -135,6 +137,11 @@ package view.brush
 			isDown = false;
 			oldX = NaN;
 			stopDrag();
+		}
+		
+		public function dispose():void
+		{
+			if(parent)parent.removeChild(this);
 		}
 	}
 }
