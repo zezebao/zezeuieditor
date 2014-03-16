@@ -32,6 +32,7 @@ package view.preview
 			
 			_bm = new Bitmap();
 			//_bm.scaleX = _bm.scaleY = 320 / 1920;
+			_bm.scaleX = _bm.scaleY = 0.16;
 			_bm.filters = [new GlowFilter(0,1,2,2,100)];
 			addChild(_bm);
 			
@@ -39,7 +40,7 @@ package view.preview
 			_delBtn.clickCallback = delClickBack;
 			_delBtn.alpha = 0.4;
 			addChild(_delBtn);
-			_delBtn.x = 300;
+			_delBtn.x = 0.16 * Config.SCREEN_WIDTH - 20;
 			_delBtn.y = 20;
 			_delBtn.visible = false;
 			
@@ -50,6 +51,7 @@ package view.preview
 		private function delClickBack(target:BaseButton):void
 		{
 			_preview.delItem(this);		
+			_delBtn.visible = false;
 		}
 		
 		public function load(path:String):void
@@ -88,8 +90,6 @@ package view.preview
 			var bm:Bitmap = _loader.content as Bitmap;			
 			bitmapData = bm.bitmapData;
 			_bm.bitmapData = bitmapData;
-			_bm.width = 320;
-			_bm.height = 180;
 		}
 	}
 }

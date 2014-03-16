@@ -52,9 +52,10 @@ package
 	import view.brush.BrushPencil;
 	import view.brush.WritingBrush;
 	import view.brush.WritingBrushII;
+	import view.newBrush.NewWritingBrush;
 	import view.preview.Preview;
 	
-	[SWF(frameRate="60",width="1920",height="1080")]
+	[SWF(frameRate="60")]
 	public class SignSoft extends Sprite implements IApplication
 	{
 		protected var _drawCon:Sprite;
@@ -94,7 +95,7 @@ package
 		private function initView():void
 		{
 			stage.align = StageAlign.TOP_LEFT;
-			stage.scaleMode = StageScaleMode.EXACT_FIT;
+			stage.scaleMode = StageScaleMode.NO_SCALE;
 			
 			stage.nativeWindow.width = Config.SCREEN_WIDTH;
 //			stage.nativeWindow.height = 500;
@@ -112,7 +113,14 @@ package
 			_brushs.push(null);
 			var brush:BaseBrush;
 			//brush= new WritingBrush(this);
-			brush= new WritingBrushII(this);
+			if(Config.BRUSH == 1)
+			{
+				brush = new NewWritingBrush(this);	
+			}else
+			{
+				//brush= new WritingBrushII(this);	
+				brush= new WritingBrush(this);
+			}
 			_brushs.push(brush);
 			brush = new BrushPenII(this);
 			_brushs.push(brush);
@@ -301,7 +309,7 @@ package
 				if(_videoArea != null)_videoArea._okBtn.visible = false;
 				
 				var jpgenc:JPGEncoder = new JPGEncoder(80);
-				var bmd:BitmapData = new BitmapData(1920,1080);
+				var bmd:BitmapData = new BitmapData(Config.SCREEN_WIDTH,Config.SCREEN_HEIGHT);
 				bmd.draw(_drawCon);
 				var imgByteArray:ByteArray = jpgenc.encode(bmd);
 				
