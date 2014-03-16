@@ -50,6 +50,8 @@ package view
 		{
 			var bitmap:Bitmap = _imgLoader.content as Bitmap;
 			_bg.bitmapData = bitmap.bitmapData;
+			_bg.width = Config.SCREEN_WIDTH;
+			_bg.height = Config.SCREEN_HEIGHT;
 			
 			_imgLoader.unloadAndStop();
 			onResizeHandler();

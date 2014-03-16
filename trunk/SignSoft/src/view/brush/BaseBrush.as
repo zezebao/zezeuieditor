@@ -42,7 +42,7 @@ package view.brush
 		
 		protected function init(evt:Event=null):void
 		{
-			bmd = new BitmapData(1920, 1080,true,0x0);
+			bmd = new BitmapData(Config.SCREEN_WIDTH, Config.SCREEN_HEIGHT,true,0x0);
 			bm = new Bitmap(bmd);
 			brushSp = new Sprite();
 			container = new Sprite();

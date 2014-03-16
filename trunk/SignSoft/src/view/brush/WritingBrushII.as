@@ -49,7 +49,7 @@
 			const disY:Number=mouseY-oldY;
 			const dis:Number = Math.sqrt(disX * disX + disY * disY) * 1;
 			
-			var scale:Number = (defaultScale - dis * cx * 0.5) + 0.45;
+			var scale:Number = (defaultScale - dis * cx * 2) + 0.45;
 				//改变笔触的大小,越快越小
 //			if (dis > 0.06)
 			if (1)
@@ -154,7 +154,7 @@
 				brush.x=(disX/count)*(i+1)+oldX;
 				brush.y=(disY/count)*(i+1)+oldY;
 			}
-			bmd.draw(brushSp);
+//			bmd.draw(brushSp);
 			while (brushSp.numChildren>0) { brushSp.removeChildAt(0); }
 			
 			

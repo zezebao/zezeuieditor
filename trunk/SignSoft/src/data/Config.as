@@ -10,6 +10,8 @@ package data
 			return "_signSoftConnect";
 		}
 		
+		public static var FIRST_DELAY:int = 30; 
+		
 		public static var USE_TOUCH:Boolean = true;
 		
 		public static var defaultPos:Dictionary = new Dictionary();
@@ -54,6 +56,8 @@ package data
 		public static var BGSND_PATH:String;
 		public static var BG_IMGS:Vector.<String> = new Vector.<String>();
 		
+		public static var BRUSH:int = 2;
+		
 		public function Config()
 		{
 		}
@@ -63,6 +67,9 @@ package data
 			UI_PATH = String(xml.UI_PATH);
 			if(UI_PATH.charAt(UI_PATH.length - 1) != '/')UI_PATH += "/";
 			BGSND_PATH = String(xml.BG_SOUND);
+			
+			BRUSH = int(xml.BRUSH);
+			FIRST_DELAY = int(xml.FIRST_DELAY);
 			
 			CAMERA_WIDTH = int(xml.CAMERA.@width);
 			CAMERA_HEIGHT = int(xml.CAMERA.@height);

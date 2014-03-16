@@ -89,9 +89,9 @@ package view.preview
 				item.addEventListener(MouseEvent.DOUBLE_CLICK,onItemDoubleClickHandler);
 				_itemCon.addChild(item);
 				
-				//item.x = Config.SCREEN_WIDTH / 20 + int(i % 4) * (Config.SCREEN_WIDTH / 5 + Config.SCREEN_WIDTH / 40);
-				//item.y = int(i / 4) * (Config.SCREEN_HEIGHT / 5 + 100);
-				item.x = Config.PREVIEW_X + (i % pageCount) * (320 + 25);
+				var scale:Number = 0.16;
+				item.x = Config.SCREEN_WIDTH * 0.05 + int(i % pageCount) * (Config.SCREEN_WIDTH * 0.18);
+//				item.x = Config.PREVIEW_X + (i % pageCount) * (320 + 25);
 				item.y = Config.PREVIEW_Y;
 				
 				_imgItems.push(item);
