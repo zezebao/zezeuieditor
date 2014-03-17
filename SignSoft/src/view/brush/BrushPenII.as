@@ -98,7 +98,7 @@ package view.brush
 			boardWidth = Config.SCREEN_WIDTH;
 			boardHeight = Config.SCREEN_HEIGHT;
 			
-			minThickness = 0.2;
+			minThickness = 2;
 			thicknessFactor = 0.25;
 			
 			smoothingFactor = 0.3;  //Should be set to something between 0 and 1.  Higher numbers mean less smoothing.
@@ -152,7 +152,7 @@ package view.brush
 			
 			startX = lastMouseX = smoothedMouseX = lastSmoothedMouseX = container.mouseX;
 			startY = lastMouseY = smoothedMouseY = lastSmoothedMouseY = container.mouseY;
-			lastThickness = 0;
+			lastThickness = 3;
 			lastRotation = Math.PI/2;
 			colorLevel = 0;
 			lastMouseChangeVectorX = 0;
@@ -206,14 +206,6 @@ package view.brush
 			mouseChangeVectorX = container.mouseX - lastMouseX;
 			mouseChangeVectorY = container.mouseY - lastMouseY;
 			
-			
-			//Cusp detection - if the mouse movement is more than 90 degrees
-			//from the last motion, we will draw all the way out to the last
-			//mouse position before proceeding.  We handle this by drawing the
-			//previous tipLayer, and resetting the last smoothed mouse position
-			//to the last actual mouse position.
-			//We use a dot product to determine whether the mouse movement is
-			//more than 90 degrees from the last motion.
 			if (mouseChangeVectorX*lastMouseChangeVectorX + mouseChangeVectorY*lastMouseChangeVectorY < 0) {
 				smoothedMouseX = lastSmoothedMouseX = lastMouseX;
 				smoothedMouseY = lastSmoothedMouseY = lastMouseY;
@@ -221,15 +213,9 @@ package view.brush
 				lastThickness = tipTaperFactor*lastThickness;
 			}
 			
-			
-			//We smooth out the mouse position.  The drawn line will not extend to the current mouse position; instead
-			//it will be drawn only a portion of the way towards the current mouse position.  This creates a nice
-			//smoothing effect.
 			smoothedMouseX = smoothedMouseX + smoothingFactor*(container.mouseX - smoothedMouseX);
 			smoothedMouseY = smoothedMouseY + smoothingFactor*(container.mouseY - smoothedMouseY);
 			
-			//We determine how far the mouse moved since the last position.  We use this distance to change
-			//the thickness and brightness of the line.
 			dx = smoothedMouseX - lastSmoothedMouseX;
 			dy = smoothedMouseY - lastSmoothedMouseY;
 			dist = Math.sqrt(dx*dx + dy*dy);
@@ -241,17 +227,11 @@ package view.brush
 				lineRotation = 0;
 			}
 			
-			//We use a similar smoothing technique to change the thickness of the line, so that it doesn't
-			//change too abruptly.
 			targetLineThickness = minThickness+thicknessFactor*dist;
-			lineThickness = lastThickness + thicknessSmoothingFactor*(targetLineThickness - lastThickness)/5;
+			lineThickness = lastThickness + thicknessSmoothingFactor*(targetLineThickness - lastThickness)/3;
 			
 			lineThickness += ((Controller.brushSize - 1) / 4) * 0.8;
 			
-			/*
-			The "line" being drawn is actually composed of filled in shapes.  This is what allows
-			us to create a varying thickness of the line.
-			*/
 			sin0 = Math.sin(lastRotation);
 			cos0 = Math.cos(lastRotation);
 			sin1 = Math.sin(lineRotation);
@@ -297,10 +277,10 @@ package view.brush
 			lastMouseX = container.mouseX;
 			lastMouseY = container.mouseY;
 			
-			
+			lineThickness = Math.max(1,lineThickness);
 			brushSp.graphics.lineStyle(lineThickness,Controller.brushColor);
 			brushSp.graphics.lineTo(mouseX,mouseY);
-			trace("lineto:",mouseX,mouseY);
+			trace("lineThickness:",lineThickness);
 			oldX = mouseX;
 			oldY = mouseY;
 			bmd.draw(brushSp);

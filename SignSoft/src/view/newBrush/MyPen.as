@@ -1,11 +1,16 @@
 package view.newBrush
 {
+	import data.Config;
+	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.filters.BlurFilter;
+	import flash.filters.GlowFilter;
 	import flash.geom.ColorTransform;
+	import flash.geom.Point;
+	import flash.utils.getTimer;
 	
 	import view.Controller;
 	import view.newBrush.TargetPoint;
@@ -27,7 +32,14 @@ package view.newBrush
 		private var bmd:BitmapData;
 		
 		private var brushCon:Sprite;
-		private var bf:BlurFilter=new BlurFilter(2,2,1);
+		private var bf:BlurFilter=new BlurFilter(2,2,5);
+		
+		///////////////////////////////////////////
+		private var prePos:Point = new Point();
+		/**前一个是否该补全*/
+		private var isPreDraw:Boolean = false;
+		private var preScale:Number = 1;
+		private var sizeFactor:Number = 0.02;
 		
 		public function MyPen()
 		{
@@ -38,25 +50,12 @@ package view.newBrush
 			this.nextpoint = null;
 			this.i_end = 0.0;
 			this.myimg = null;
-			this.i_minwidth = 5;
+			this.i_minwidth = Config.SIZE_CHANGE;//7;
 			this.n_list = new Vector.<TargetPoint>();
 			this.pen_color = 0x000000;
-//			this.gr = g;
-			/*
-			myImage myImage = new myImage();
-			myImage.setwidth(40);
-			myImage.sety(90);
-			myImage.setheight(5);
-			myImage.setx(90);
-			ResourceManager resourceManager = new ResourceManager(typeof(Resource1));
-			myImage.setimg((Bitmap)resourceManager.GetObject(ebjl5iduDGjiB8jAyt.eh1msj65w(10)));
-			this.myimg = myImage;
-			*/
 			myimg = new Bitmap(new BitmapData(24,20));
 			myimg.width = 40;
-			myimg.height = 15;
-//			myimg.x = myimg.y = 90;
-			
+			myimg.height = 5;
 			brushCon = new Sprite();
 			addChild(brushCon);
 		}
@@ -156,43 +155,85 @@ package view.newBrush
 		{
 			var num:Number = 0.0;
 			var num2:Number = A_2 - this.old_width;
-			while (num < 1.0)
+			
+			var scale:Number;
+			var brush:BrushAsset;
+			var len:int = Math.ceil(A_3);
+			var i:int;
+			for (i = 0; i < len; i++) 
 			{
 				var num3:Number = Math.min(this.old_width + num2 * num, this.myimg.width);
 				if(num3 > 0)
 				{
 					var tagFPOINT:TargetPoint = this.cale_point(A_0, A_1, num);
+					var num4:int = ((Math.random() > 0.5) ? 1 : -1) * int(Math.random() * 1.2);
+					var num5:Number = tagFPOINT.getx() - num3 / 2.0 + num4;
+					var num6:Number = tagFPOINT.gety() - num3 / 2.0 + num4;
 					
-					if (Math.random() > 0.2)
-					{
-						var num4:int = ((Math.random() > 0.5) ? 1 : -1) * int(Math.random() * 1.2);
-						var num5:Number = tagFPOINT.getx() - num3 / 2.0 + num4;
-						var num6:Number = tagFPOINT.gety() - num3 / 2.0 + num4;
-						
-						var minScale:Number = 0.05;
-						if(isFround)minScale = 0.7;
-						var scale:Number = num3 / 40;
-						scale = Math.max(minScale,scale);
-						scale *= (Controller.brushSize / 6) * 3;
-						
-						var brush:BrushAsset = new BrushAsset();
-						brush.gotoAndStop(2);
-						brush.filters = [bf];
-						brushCon.addChild(brush);
-						
-						var trans:ColorTransform = new ColorTransform();
-						trans.color = Controller.brushColor;
-						brush.transform.colorTransform = trans;
-						brush.scaleX = brush.scaleY = scale;
-						
-						brush.x= num5
-						brush.y= num6;
-					}
+					var minScale:Number = 0.15;
+					if(isFround)minScale = 0.5;
+					scale = num3 / myimg.width;
+					scale = Math.max(minScale,scale);
+					scale *= (Controller.brushSize / 6) * 3;
+					
+					brush = new BrushAsset();
+					brush.gotoAndStop(2);
+					brush.filters = [bf];
+					brushCon.addChild(brush);
+					
+					var trans:ColorTransform = new ColorTransform();
+					trans.color = Controller.brushColor;
+					brush.transform.colorTransform = trans;
+					brush.scaleX = brush.scaleY = scale;
+					
+					brush.x= num5 + 15;
+					brush.y= num6 + 15;
 				}
 				
 				num += 1.0 / A_3;
 			}
 			
+			if(isPreDraw)
+			{
+				drawPre();	
+			}
+			isPreDraw = false;
+			
+			//trace("delta:",Math.abs(preScale - scale),"--------------",preScale,scale);
+			//差距太大，补笔
+			if(Math.abs(preScale - scale) > 0.2)
+			{
+				//isPreDraw = true; 
+				//drawPre();
+			}
+			
+			function drawPre():void
+			{
+				trace("drawPew::::::::::::::::::::::::::::::::::::::::::::::");
+				len = 100
+				for (i = 1; i < len; i++)
+				{
+					brush = new BrushAsset();
+					brush.gotoAndStop(3);
+					brush.filters = [bf];
+					brush.alpha = 0.3;
+					brushCon.addChild(brush);
+					
+					var trans:ColorTransform = new ColorTransform();
+					trans.color = Controller.brushColor;
+//					trans.color = 0xff0000;
+					brush.transform.colorTransform = trans;
+					brush.scaleX = brush.scaleY = scale;
+					
+					brush.x= prePos.x + (A_0.getx() - prePos.x) * i / len;
+					brush.y= prePos.y + (A_0.gety() - prePos.y) * i / len;
+				}
+			}
+			
+			prePos.x = A_0.getx();
+			prePos.y = A_0.gety();
+			preScale = scale;
+				
 			bmd.draw(brushCon);
 			while (brushCon.numChildren>0) { brushCon.removeChildAt(0); }
 		}
@@ -216,10 +257,16 @@ package view.newBrush
 			this.i_cwidth = 0.0;
 			this.nextpoint = null;
 			this.i_end = 0.0;
+			
+			this.preScale = 1.0;
+			prePos.x = stage.mouseX;
+			prePos.y = stage.mouseY;
+			isPreDraw = false;
 		}
 		
 		public function drawend():void
 		{
+			isPreDraw = false;
 			if (this.i_end > 1.0)
 			{
 				var tagFPOINT:TargetPoint = new TargetPoint();

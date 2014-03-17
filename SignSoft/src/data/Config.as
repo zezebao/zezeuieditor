@@ -10,7 +10,8 @@ package data
 			return "_signSoftConnect";
 		}
 		
-		public static var FIRST_DELAY:int = 30; 
+		public static var FIRST_DELAY:int = 30;
+		public static var SIZE_CHANGE:int = 7; 
 		
 		public static var USE_TOUCH:Boolean = true;
 		
@@ -70,6 +71,7 @@ package data
 			
 			BRUSH = int(xml.BRUSH);
 			FIRST_DELAY = int(xml.FIRST_DELAY);
+			SIZE_CHANGE = int(xml.SIZE_CHANGE);
 			
 			CAMERA_WIDTH = int(xml.CAMERA.@width);
 			CAMERA_HEIGHT = int(xml.CAMERA.@height);
