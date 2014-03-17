@@ -2,8 +2,8 @@ package view.newBrush
 {
 	public class TargetPoint
 	{
-		private var x:int;
-		private var y:int;
+		private var x:Number;
+		private var y:Number;
 		private var time:Number;
 		private var time2:Number;
 		private var time3:Number;
@@ -30,19 +30,19 @@ package view.newBrush
 		{
 			return this.time3;
 		}
-		public function setx(value:int):void
+		public function setx(value:Number):void
 		{
 			this.x = value;
 		}
-		public function sety(value:int):void
+		public function sety(value:Number):void
 		{
 			this.y = value;
 		}
-		public function getx():int
+		public function getx():Number
 		{
 			return this.x;
 		}
-		public function gety():int
+		public function gety():Number
 		{
 			return this.y;
 		}
