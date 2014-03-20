@@ -15,6 +15,7 @@ package
 	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
+	import flash.display.StageDisplayState;
 	import flash.display.StageScaleMode;
 	import flash.events.ActivityEvent;
 	import flash.events.Event;
@@ -31,12 +32,14 @@ package
 	import flash.net.URLRequest;
 	import flash.printing.PrintJob;
 	import flash.printing.PrintJobOptions;
+	import flash.profiler.showRedrawRegions;
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
 	import flash.system.Security;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.ui.Keyboard;
+	import flash.ui.Mouse;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.setTimeout;
@@ -77,10 +80,10 @@ package
 		{
 			var configLoader:URLLoader = new URLLoader();
 			configLoader.addEventListener(Event.COMPLETE,onCompleteHandler);
-			configLoader.load(new URLRequest("Config.xml"));
+			configLoader.load(new URLRequest("Config.xml?" + Math.random()));
 			
 			var loader:Loader = new Loader();
-			loader.load(new URLRequest("images/mask.swf"),new LoaderContext(false,ApplicationDomain.currentDomain));
+			loader.load(new URLRequest("images/mask.swf?" + Math.random()),new LoaderContext(false,ApplicationDomain.currentDomain));
 		}
 		
 		protected function onCompleteHandler(event:Event):void
@@ -102,6 +105,9 @@ package
 			
 //			stage.stageWidth = 500;
 			stage.stageHeight = Config.SCREEN_HEIGHT;
+			
+			stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+			Mouse.hide();
 			
 			_drawCon = new Sprite();
 			addChild(_drawCon);
@@ -139,8 +145,8 @@ package
 			_controller = new Controller(this);
 			addChild(_controller);
 			_controller.visible = false;
-			_controller.x = Config.defaultPos[Config.POS_CONTROLLER].x;
-			_controller.y = Config.defaultPos[Config.POS_CONTROLLER].y;
+//			_controller.x = Config.defaultPos[Config.POS_CONTROLLER].x;
+//			_controller.y = Config.defaultPos[Config.POS_CONTROLLER].y;
 			
 			var btn:BaseButton;
 			btn = new BaseButton(Config.POS_PHOTO);
@@ -174,11 +180,13 @@ package
 			this.addEventListener(Event.ENTER_FRAME,onETHandler);
 			
 			var tf:TextField = new TextField();
-			tf.defaultTextFormat = new TextFormat("",50);
-			tf.width = 1000;
-			_drawCon.addChild(tf);
+			tf.defaultTextFormat = new TextFormat("",300);
+			tf.width = 2000;
+			tf.height = 1000;
+			tf.alpha = 0.3;
+//			_drawCon.addChild(tf);
 			tf.mouseEnabled = tf.mouseWheelEnabled = false;
-			tf.text = "制作中........";
+			tf.text = "SignSoft";
 			
 			stage.addEventListener(KeyboardEvent.KEY_UP,onKeyUpHandler);
 		}
@@ -205,6 +213,17 @@ package
 				_drawCon.addChild(brush);
 				
 				trace("测试用鼠标");
+			}else if(event.keyCode == Keyboard.F)
+			{
+				if(stage.displayState == StageDisplayState.FULL_SCREEN)
+				{
+					stage.displayState = StageDisplayState.NORMAL;
+					Mouse.show();
+				}else 
+				{
+					stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+					Mouse.hide();
+				}
 			}
 		}
 		

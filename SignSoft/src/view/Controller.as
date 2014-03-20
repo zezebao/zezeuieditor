@@ -60,8 +60,8 @@ package view
 			
 			_resignBtn = new BaseButton(Config.RESIGN_IMG);
 			addChild(_resignBtn);
-			_resignBtn.x = 113;
-			_resignBtn.y = 700;
+//			_resignBtn.x = 113;
+//			_resignBtn.y = 700;
 			
 			_brushTypeList.push(brush1);
 			_brushTypeList.push(brush2);
@@ -91,6 +91,23 @@ package view
 			}
 			
 			brush1.filters = sizeList.size3.filters = _brushColorList[0].filters = [_glow];
+			
+			
+			_resignBtn.x = int(Config.xml.FUNCTIONS.CLEAR.@x);
+			_resignBtn.y = int(Config.xml.FUNCTIONS.CLEAR.@y);
+			
+			brush1.x = int(Config.xml.FUNCTIONS.BRUSH1.@x);
+			brush1.y = int(Config.xml.FUNCTIONS.BRUSH1.@y);
+			brush2.x = int(Config.xml.FUNCTIONS.BRUSH2.@x);
+			brush2.y = int(Config.xml.FUNCTIONS.BRUSH2.@y);
+			brush3.x = int(Config.xml.FUNCTIONS.BRUSH3.@x);
+			brush3.y = int(Config.xml.FUNCTIONS.BRUSH3.@y);
+			brush4.x = int(Config.xml.FUNCTIONS.BRUSH4.@x);
+			brush4.y = int(Config.xml.FUNCTIONS.BRUSH4.@y);
+			color.x = int(Config.xml.FUNCTIONS.COLOR.@x);
+			color.y = int(Config.xml.FUNCTIONS.COLOR.@y);
+			sizeList.x = int(Config.xml.FUNCTIONS.SIZE.@x);
+			sizeList.y = int(Config.xml.FUNCTIONS.SIZE.@y);
 			
 			initEvent();
 		}
@@ -219,9 +236,8 @@ package view
 		
 		protected function onResizeHandler(event:Event):void
 		{
-			// TODO Auto-generated method stub
-			this.x = stage.stageWidth - 500;
-			this.y = 20;
+//			this.x = stage.stageWidth - 500;
+//			this.y = 20;
 		}
 		
 		public function change():void

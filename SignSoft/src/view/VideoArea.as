@@ -101,8 +101,10 @@ package view
 			
 			_okBtn = new BaseButton(Config.OK_IMG);
 			addChild(_okBtn);
-			_okBtn.x = Config.CAMERA_WIDTH/2;
-			_okBtn.y = Config.CAMERA_HEIGHT - 50;
+//			_okBtn.x = Config.CAMERA_WIDTH/2;
+//			_okBtn.y = Config.CAMERA_HEIGHT - 50;
+			_okBtn.x = int(Config.xml.CAMERA.@btnX);
+			_okBtn.y = int(Config.xml.CAMERA.@btnY);
 			
 			initEvent();
 		}
