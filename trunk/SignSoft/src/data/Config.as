@@ -10,8 +10,11 @@ package data
 			return "_signSoftConnect";
 		}
 		
+		public static var xml:XML;
+		
 		public static var FIRST_DELAY:int = 30;
 		public static var SIZE_CHANGE:int = 7; 
+		public static var FIRST_MIN_SCALE:Number = 0.5;
 		
 		public static var USE_TOUCH:Boolean = true;
 		
@@ -63,8 +66,10 @@ package data
 		{
 		}
 		
-		public static function initConfig(xml:XML):void
+		public static function initConfig(_xml:XML):void
 		{
+			xml = _xml;
+			
 			UI_PATH = String(xml.UI_PATH);
 			if(UI_PATH.charAt(UI_PATH.length - 1) != '/')UI_PATH += "/";
 			BGSND_PATH = String(xml.BG_SOUND);
@@ -72,6 +77,7 @@ package data
 			BRUSH = int(xml.BRUSH);
 			FIRST_DELAY = int(xml.FIRST_DELAY);
 			SIZE_CHANGE = int(xml.SIZE_CHANGE);
+			FIRST_MIN_SCALE = int(xml.FIRST_MIN_SCALE);
 			
 			CAMERA_WIDTH = int(xml.CAMERA.@width);
 			CAMERA_HEIGHT = int(xml.CAMERA.@height);

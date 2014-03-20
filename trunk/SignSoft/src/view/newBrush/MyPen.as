@@ -171,7 +171,7 @@ package view.newBrush
 					var num6:Number = tagFPOINT.gety() - num3 / 2.0 + num4;
 					
 					var minScale:Number = 0.15;
-					if(isFround)minScale = 0.5;
+					if(isFround)minScale = Config.FIRST_MIN_SCALE;
 					scale = num3 / myimg.width;
 					scale = Math.max(minScale,scale);
 					scale *= (Controller.brushSize / 6) * 3;

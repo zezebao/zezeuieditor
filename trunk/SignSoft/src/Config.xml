@@ -1,9 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <rss>
+	<!-- 【注意：SIZE_CHANGE,FIRST_DELAY,FIRST_MIN_SCALE仅对新版毛笔字起效】 -->
 	<!-- 粗细变化比例,经过测试，5到30为比较合适的值，值越大，粗细变化越小，取值范围为[5到40]-->
 	<SIZE_CHANGE>7</SIZE_CHANGE>
 	<!-- 由于第一笔出问题，添加第一笔粗细缩放延迟时间，60 为1秒 ,控制在30以内或者左右为佳-->
 	<FIRST_DELAY>20</FIRST_DELAY>
+	<!-- 第一笔在FIRST_DELAY时间内最小笔锋,取值范围[0-1] -->
+	<FIRST_MIN_SCALE>0.5</FIRST_MIN_SCALE>
+	
 	<!-- 毛笔字算法选择，参数：1 / 2  【1：新版，2：旧版】 -->
 	<BRUSH>1</BRUSH>
 	<!-- 电脑上调试用鼠标绘画，属性设置为false,表示用鼠标进行绘画 ，注意，true，false为小写-->
@@ -13,7 +17,7 @@
 		<HEIGHT>1024</HEIGHT>
 	</SCREEN>
 	<!-- 摄像头显示宽高，默认为400,400 -->
-	<CAMERA width='400' height='400' x = '300' y = '300' rotation='0'/>
+	<CAMERA width='400' height='400' x = '300' y = '300' btnX = '150' btnY = '350' rotation='0'/>
 	
 	<!-- UI文件夹路径 -->
 	<UI_PATH>images/ui/</UI_PATH>
@@ -34,7 +38,15 @@
 		<SAVE toggle='true'  x='1180' y='500'/><!-- 保存 -->
 		<PREVIEW toggle='true'  x='1180' y='700'/><!-- 预览 -->
 		<PRINT toggle='true'  x='1180' y='900'/><!-- 打印 -->
-		<CONTOLLER x='860' y='30'/><!-- 控制条 -->
+		<BRUSH1 x='860' y='30'/><!-- 毛笔 -->
+		<BRUSH2 x='983' y='30'/><!-- 钢笔 -->
+		<BRUSH3 x='860' y='172'/><!-- 铅笔 -->
+		<BRUSH4 x='983' y='172'/><!-- 橡皮擦 -->
+		<COLOR x='860' y='312'/><!-- 颜色 -->
+		<SIZE x='860' y='516'/><!-- 笔刷大小 -->
+		<CLEAR x='973' y='730'/><!-- 清除 -->
+		
+		<CONTOLLER x='860' y='30'/><!-- 控制条【注：此项废弃】 -->
 	</FUNCTIONS>
 	<!-- 预览界面缩略图位置 -->
 	<PREVIEW x='120' y='150'/>
