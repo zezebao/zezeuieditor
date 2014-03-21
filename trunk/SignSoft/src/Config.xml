@@ -38,13 +38,14 @@
 		<SAVE toggle='true'  x='1180' y='500'/><!-- 保存 -->
 		<PREVIEW toggle='true'  x='1180' y='700'/><!-- 预览 -->
 		<PRINT toggle='true'  x='1180' y='900'/><!-- 打印 -->
-		<BRUSH1 x='860' y='30'/><!-- 毛笔 -->
-		<BRUSH2 x='983' y='30'/><!-- 钢笔 -->
-		<BRUSH3 x='860' y='172'/><!-- 铅笔 -->
-		<BRUSH4 x='983' y='172'/><!-- 橡皮擦 -->
-		<COLOR x='860' y='312'/><!-- 颜色 -->
-		<SIZE x='860' y='516'/><!-- 笔刷大小 -->
-		<CLEAR x='973' y='730'/><!-- 清除 -->
+		<BRUSH1 toggle='true'  x='860' y='30'/><!-- 毛笔 -->
+		<BRUSH2 toggle='true'  x='983' y='30'/><!-- 钢笔 -->
+		<BRUSH3 toggle='true'  x='860' y='172'/><!-- 铅笔 -->
+		<BRUSH4 toggle='true'  x='983' y='172'/><!-- 橡皮擦 -->
+		<COLOR toggle='true'  x='860' y='312'/><!-- 颜色 -->
+		<SIZE toggle='true'  x='860' y='516'/><!-- 笔刷大小 -->
+		<CLEAR toggle='true'  x='973' y='730'/><!-- 清除 -->
+		<RETURN toggle='true'  x='100' y='730'/><!-- 返回 -->
 		
 		<CONTOLLER x='860' y='30'/><!-- 控制条【注：此项废弃】 -->
 	</FUNCTIONS>

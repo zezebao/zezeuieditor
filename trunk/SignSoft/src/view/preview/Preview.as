@@ -60,6 +60,9 @@ package view.preview
 			
 			_homeBtn = new BaseButton(Config.HOME_IMG,false);
 			addChild(_homeBtn);
+			_homeBtn.x = int(Config.xml.FUNCTIONS.RETURN.@x);
+			_homeBtn.y = int(Config.xml.FUNCTIONS.RETURN.@y);
+			_homeBtn.visible = int(Config.xml.FUNCTIONS.RETURN.@toggle == 'true');
 			
 			_pageTf = new TextField();
 			_pageTf.defaultTextFormat = new TextFormat("微软雅黑",80);
@@ -245,8 +248,8 @@ package view.preview
 		
 		protected function onResizeHandler(event:Event):void
 		{
-			_homeBtn.x = 100;
-			_homeBtn.y = Config.SCREEN_HEIGHT - 100;
+			//_homeBtn.x = 100;
+			//_homeBtn.y = Config.SCREEN_HEIGHT - 100;
 			
 			_pageTf.x = Config.SCREEN_WIDTH / 2;
 			_pageTf.y = Config.SCREEN_HEIGHT - 130;
