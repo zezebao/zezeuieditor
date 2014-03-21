@@ -92,23 +92,29 @@ package view
 			
 			brush1.filters = sizeList.size3.filters = _brushColorList[0].filters = [_glow];
 			
-			
+			_resignBtn.visible = int(Config.xml.FUNCTIONS.CLEAR.@toggle == 'true');
 			_resignBtn.x = int(Config.xml.FUNCTIONS.CLEAR.@x);
 			_resignBtn.y = int(Config.xml.FUNCTIONS.CLEAR.@y);
 			
 			brush1.x = int(Config.xml.FUNCTIONS.BRUSH1.@x);
 			brush1.y = int(Config.xml.FUNCTIONS.BRUSH1.@y);
+			brush1.visible = int(Config.xml.FUNCTIONS.BRUSH1.@toggle == 'true');
 			brush2.x = int(Config.xml.FUNCTIONS.BRUSH2.@x);
 			brush2.y = int(Config.xml.FUNCTIONS.BRUSH2.@y);
+			brush2.visible = int(Config.xml.FUNCTIONS.BRUSH2.@toggle == 'true');
 			brush3.x = int(Config.xml.FUNCTIONS.BRUSH3.@x);
 			brush3.y = int(Config.xml.FUNCTIONS.BRUSH3.@y);
+			brush3.visible = int(Config.xml.FUNCTIONS.BRUSH3.@toggle == 'true');
 			brush4.x = int(Config.xml.FUNCTIONS.BRUSH4.@x);
 			brush4.y = int(Config.xml.FUNCTIONS.BRUSH4.@y);
+			brush4.visible = int(Config.xml.FUNCTIONS.BRUSH4.@toggle == 'true');
 			color.x = int(Config.xml.FUNCTIONS.COLOR.@x);
 			color.y = int(Config.xml.FUNCTIONS.COLOR.@y);
+			color.visible = int(Config.xml.FUNCTIONS.COLOR.@toggle == 'true');
 			sizeList.x = int(Config.xml.FUNCTIONS.SIZE.@x);
 			sizeList.y = int(Config.xml.FUNCTIONS.SIZE.@y);
-			
+			sizeList.visible = int(Config.xml.FUNCTIONS.SIZE.@toggle == 'true');
+
 			initEvent();
 		}
 		
