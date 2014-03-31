@@ -7,9 +7,6 @@
 	<FIRST_DELAY>20</FIRST_DELAY>
 	<!-- 第一笔在FIRST_DELAY时间内最小笔锋,取值范围[0-1] -->
 	<FIRST_MIN_SCALE>0.5</FIRST_MIN_SCALE>
-	
-	<!-- 毛笔字算法选择，参数：1 / 2  【1：新版，2：旧版】 -->
-	<BRUSH>1</BRUSH>
 	<!-- 电脑上调试用鼠标绘画，属性设置为false,表示用鼠标进行绘画 ，注意，true，false为小写-->
 	<USE_TOUCH>false</USE_TOUCH>
 	<SCREEN>

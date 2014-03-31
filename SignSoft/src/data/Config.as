@@ -74,7 +74,7 @@ package data
 			if(UI_PATH.charAt(UI_PATH.length - 1) != '/')UI_PATH += "/";
 			BGSND_PATH = String(xml.BG_SOUND);
 			
-			BRUSH = int(xml.BRUSH);
+//			BRUSH = int(xml.BRUSH);
 			FIRST_DELAY = int(xml.FIRST_DELAY);
 			SIZE_CHANGE = int(xml.SIZE_CHANGE);
 			FIRST_MIN_SCALE = int(xml.FIRST_MIN_SCALE);
@@ -100,8 +100,8 @@ package data
 			PRINT_TOGGLE = (xml.FUNCTIONS.PRINT.@toggle=='true');
 			
 			defaultPos[POS_PHOTO] = new Point(xml.FUNCTIONS.PHOTO.@x,xml.FUNCTIONS.PHOTO.@y);
-			defaultPos[POS_SAVE] = new Point(xml.FUNCTIONS.SIGN.@x,xml.FUNCTIONS.SIGN.@y);
-			defaultPos[POS_SIGN] = new Point(xml.FUNCTIONS.SAVE.@x,xml.FUNCTIONS.SAVE.@y);
+			defaultPos[POS_SAVE] = new Point(xml.FUNCTIONS.SIGN.@x,xml.FUNCTIONS.SAVE.@y);
+			defaultPos[POS_SIGN] = new Point(xml.FUNCTIONS.SAVE.@x,xml.FUNCTIONS.SIGN.@y);
 			defaultPos[POS_PREVIEW] = new Point(xml.FUNCTIONS.PREVIEW.@x,xml.FUNCTIONS.PREVIEW.@y);
 			defaultPos[POS_PRINT] = new Point(xml.FUNCTIONS.PRINT.@x,xml.FUNCTIONS.PRINT.@y);
 			defaultPos[POS_CONTROLLER] = new Point(xml.FUNCTIONS.CONTOLLER.@x,xml.FUNCTIONS.CONTOLLER.@y);
@@ -115,6 +115,7 @@ package data
 		
 		public static function getBtnPath(property:String):String
 		{
+			if(property.indexOf(".png") != -1)return property;
 			switch(property)
 			{
 				case POS_PHOTO:return PHOTO_IMG;

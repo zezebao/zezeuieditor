@@ -36,11 +36,11 @@ package view.preview
 			_bm.filters = [new GlowFilter(0,1,2,2,100)];
 			addChild(_bm);
 			
-			_delBtn = new BaseButton(Config.CLOSE_IMG,false,0.5);
+			_delBtn = new BaseButton(Config.CLOSE_IMG,false,1);
 			_delBtn.clickCallback = delClickBack;
-			_delBtn.alpha = 0.4;
+//			_delBtn.alpha = 0.4;
 			addChild(_delBtn);
-			_delBtn.x = 0.16 * Config.SCREEN_WIDTH - 20;
+			_delBtn.x = 0.16 * Config.SCREEN_WIDTH - 40;
 			_delBtn.y = 20;
 			_delBtn.visible = false;
 			

@@ -1,5 +1,6 @@
 package view
 {
+	import Util.AddImgToContainer;
 	import Util.Utils;
 	
 	import data.Config;
@@ -67,6 +68,11 @@ package view
 			_brushTypeList.push(brush2);
 			_brushTypeList.push(brush3);
 			_brushTypeList.push(brush4);
+			
+			new AddImgToContainer(Config.UI_PATH + "brush1.png",brush1);
+			new AddImgToContainer(Config.UI_PATH + "brush2.png",brush2);
+			new AddImgToContainer(Config.UI_PATH + "brush3.png",brush3);
+			new AddImgToContainer(Config.UI_PATH + "clear.png",brush4);
 			
 			_brushSizeList.push(sizeList.size1);
 			_brushSizeList.push(sizeList.size2);
