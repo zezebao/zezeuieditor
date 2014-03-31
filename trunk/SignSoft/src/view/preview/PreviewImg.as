@@ -40,7 +40,7 @@ package view.preview
 			_bm = new Bitmap();
 			_bmCon.addChild(_bm);
 			
-			_closeBtn = new BaseButton(Config.CLOSE_IMG,false);
+			_closeBtn = new BaseButton("closeBtn2.png",false);
 			addChild(_closeBtn);
 			_closeBtn.visible = false;
 			_closeBtn.x = Config.SCREEN_WIDTH - 60;

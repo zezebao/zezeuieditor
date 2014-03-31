@@ -152,17 +152,22 @@ package
 			btn = new BaseButton(Config.POS_PHOTO);
 			btn.clickCallback = photoClickHandler;
 			addChild(btn);
+			btn.visible = Config.PHOTO_TOGGLE;
 			btn = new BaseButton(Config.POS_SAVE);
 			btn.clickCallback = saveClickHandler;
+			btn.visible = Config.SAVE_TOGGLE;
 			addChild(btn);
 			btn = new BaseButton(Config.POS_SIGN);
 			btn.clickCallback = signClickHandler;
+			btn.visible = Config.SIGN_TOGGLE;
 			addChild(btn);
 			btn = new BaseButton(Config.POS_PREVIEW);
 			btn.clickCallback = previewClickHandler;
+			btn.visible = Config.PREVIEW_TOGGLE;
 			addChild(btn);
 			btn = new BaseButton(Config.POS_PRINT);
 			btn.clickCallback = printClickHandler;
+			btn.visible = Config.PRINT_TOGGLE;
 			addChild(btn);
 			
 			btn = new BaseButton(Config.REPLACE_IMG,false);
@@ -224,6 +229,9 @@ package
 					stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
 					Mouse.hide();
 				}
+			}else if(event.keyCode == Keyboard.S)
+			{
+				Mouse.show();
 			}
 		}
 		
@@ -268,7 +276,13 @@ package
 		
 		public function reset():void
 		{
-			if(_videoArea)_videoArea.hide();
+			if(_videoArea)
+			{
+				_videoArea.dispose();
+				_videoArea = null;
+			}
+			_controller.visible = false;
+			changeType();
 			clear();
 		}
 		
@@ -305,7 +319,9 @@ package
 			}
 			if(Controller.brushType != 4)
 			{
-				_brushs[Controller.brushType].mouseChildren = _brushs[Controller.brushType].mouseEnabled = _controller.visible; 
+				trace(Controller.brushType);
+				if(_brushs[Controller.brushType])
+					_brushs[Controller.brushType].mouseChildren = _brushs[Controller.brushType].mouseEnabled = _controller.visible; 
 			}else
 			{
 				_brushs[3].mouseChildren = _brushs[3].mouseEnabled = true;

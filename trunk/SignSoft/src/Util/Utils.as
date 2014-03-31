@@ -4,6 +4,7 @@ package Util
 	
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.filters.ColorMatrixFilter;
